@@ -1,4 +1,3 @@
-import { Button } from "azure-devops-ui/Button";
 import { History } from "history";
 import * as React from "react";
 import { makeUrlSafe } from "../lib/urlSafe";
@@ -7,6 +6,9 @@ import { CardIcon } from "./cardIcon";
 import "./sessionCard.scss";
 import { Link } from "azure-devops-ui/Link";
 import { MoreButton } from "azure-devops-ui/Menu";
+import { Dialog } from "azure-devops-ui/Dialog";
+import { Observer } from "azure-devops-ui/Observer";
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
 
 const CardTitle: React.StatelessComponent = props => (
     <h2 className="session-card--title flex-grow" {...props} />
@@ -38,6 +40,8 @@ export interface ICardProps {
 }
 
 export class SessionCard extends React.Component<ICardProps> {
+    private isEndSessionDialogOpen = new ObservableValue<boolean>(false);
+
     render(): JSX.Element {
         const {
             hideContextMenu,
@@ -47,6 +51,15 @@ export class SessionCard extends React.Component<ICardProps> {
             },
             onEndSession
         } = this.props;
+
+        const onDismiss = () => {
+            this.isEndSessionDialogOpen.value = false;
+        };
+
+        const onDismissAndEndSession = () => {
+            onDismiss();
+            onEndSession(id);
+        }
 
         return (
             <div className="session-card">
@@ -62,24 +75,53 @@ export class SessionCard extends React.Component<ICardProps> {
                         </CardTitle>
 
                         {!hideContextMenu && (
-                            <MoreButton
-                                className="session-card--menu"
-                                contextualMenuProps={{
-                                    menuProps: {
-                                        onActivate: (ev: any) =>
-                                            ev.stopPropagation(),
-                                        id: "card-more",
-                                        items: [
-                                            {
-                                                id: "session-end",
-                                                text: "End session",
-                                                onActivate: () =>
-                                                    onEndSession(id)
-                                            }
-                                        ]
-                                    }
-                                }}
-                            />
+                            <div>
+                                <MoreButton
+                                    className="session-card--menu"
+                                    contextualMenuProps={{
+                                        menuProps: {
+                                            onActivate: (ev: any) =>
+                                                ev.stopPropagation(),
+                                            id: "card-more",
+                                            items: [
+                                                {
+                                                    id: "session-end",
+                                                    text: "End session",
+                                                    onActivate: () => {
+                                                        this.isEndSessionDialogOpen.value = true;
+                                                        onEndSession(id)
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }}
+                                />
+
+                                <Observer isEndSessionDialogOpen={this.isEndSessionDialogOpen}>
+                                    {(props: { isEndSessionDialogOpen: boolean }) => {
+                                        return props.isEndSessionDialogOpen ? (
+                                            <Dialog
+                                                titleProps={{ text: "Confirm" }}
+                                                footerButtonProps={[
+                                                    {
+                                                        text: "Cancel",
+                                                        onClick: onDismiss,
+                                                        primary: true
+                                                    },
+                                                    {
+                                                        text: "End Session",
+                                                        onClick: onDismissAndEndSession
+                                                    }
+                                                ]}
+                                                onDismiss={onDismiss}
+                                            >
+                                                Are you sure that you want to end this Estimate session?
+                                                This will end the session for every participant.
+                                            </Dialog>
+                                        ) : null;
+                                    }}
+                                </Observer>
+                            </div>
                         )}
                     </div>
 
