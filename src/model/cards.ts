@@ -132,7 +132,58 @@ export const defaultCardSets: ICardSet[] = [
                 value: null
             },
             {
-                identifier: "🌭",
+                identifier: "☕",
+                value: null
+            }
+        ]
+    },
+    {
+        id: "reese",
+        type: CardSetType.Numeric,
+        name: "Default without 3 (The Reese)",
+        cards: [
+            {
+                identifier: "1",
+                value: 1
+            },
+            {
+                identifier: "3",
+                value: 3
+            },
+            {
+                identifier: "5",
+                value: 5
+            },
+            {
+                identifier: "8",
+                value: 8
+            },
+            {
+                identifier: "13",
+                value: 13
+            },
+            {
+                identifier: "20",
+                value: 20
+            },
+            {
+                identifier: "40",
+                value: 40
+            },
+            {
+                identifier: "100",
+                value: 100
+            },
+            {
+                identifier: "?",
+                value: null
+            },
+            {
+                identifier: "∞",
+                value: null
+            },
+            {
+                identifier: "🥨",
                 value: null
             }
         ]
