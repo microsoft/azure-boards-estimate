@@ -371,5 +371,56 @@ export const defaultCardSets: ICardSet[] = [
                 value: null
             }
         ]
+    },
+    {
+        id: "ten",
+        type: CardSetType.Numeric,
+        name: "0-10",
+        cards: [
+            {
+                identifier: "0",
+                value: 0
+            },
+            {
+                identifier: "1",
+                value: 1
+            },
+            {
+                identifier: "2",
+                value: 2
+            },
+            {
+                identifier: "3",
+                value: 3
+            },
+            {
+                identifier: "4",
+                value: 4
+            },
+            {
+                identifier: "5",
+                value: 5
+            },
+            {
+                identifier: "6",
+                value: 6
+            },
+            {
+                identifier: "7",
+                value: 7
+            },
+            {
+                identifier: "8",
+                value: 8
+            },
+            {
+                identifier: "9",
+                value: 9
+            },
+            {
+                identifier: "10",
+                value: 10
+            }
+        ]
     }
 ];
