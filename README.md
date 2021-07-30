@@ -5,7 +5,7 @@ Play Planning Poker in Azure DevOps. Select work from an iteration, query, or yo
 
 ## Support
 
-See [Support](https://github.com/microsoft/azure-boards-estimate/SUPPORT.md) in our GitHub repository for information about how to report issues and get help.
+See [Support](SUPPORT.md) in our GitHub repository for information about how to report issues and get help.
 
 ## Contributing
 
