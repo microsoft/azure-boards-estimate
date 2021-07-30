@@ -6,7 +6,7 @@ import { Services } from "../services";
 import { defineIncomingOperation, defineOperation, IChannel } from "./channels";
 import { ISnapshot } from "../../model/snapshots";
 
-const baseUrl = "https://estimate-backend.azurewebsites.net/";
+const baseUrl = "https://msdevlabs-estimate-backend.azurewebsites.net/";
 
 enum Action {
     Join = "join",

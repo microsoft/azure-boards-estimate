@@ -1,18 +1,15 @@
-# Estimate 2 
-
-Please file issues for any bugs/feedback here: https://github.com/cschleiden/azure-boards-estimate/
-
-------
-
-## Important information for users of version 1 (8/23/2019):
-
-Version 1 of the extension will be turned off in a few days. Please talk to your admin to upgrade to Version 2 otherwise you won't be able to connect to sesions.
-
-------
+# Estimate
 
 Play Planning Poker in Azure DevOps. Select work from an iteration, query, or your backlog, estimate the effort of those items with your team, and immediately update the work items.
 
+## Support
+
+See [Support](https://github.com/microsoft/azure-boards-estimate/SUPPORT.md) in our GitHub repository for information about how to report issues and get help.
+
 ## Updates
+
+**7/30/2021** - 2.3.0
+- Moved extension to new home for future development.
 
 **8/28/2019** - 2.2.0
 - Allow restricting selecting work items/commiting values to the creator of the session [#43](https://github.com/cschleiden/azure-boards-estimate/issues/43)

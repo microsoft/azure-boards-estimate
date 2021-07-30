@@ -1,6 +1,6 @@
 {
     "id": "estimate-dev",
-    "name": "Estimate DEV",
+    "name": "Estimate (dev)",
     "public": false,
     "baseUri": "https://localhost:3000"    
 }

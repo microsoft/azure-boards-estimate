@@ -1,10 +1,10 @@
 {
     "manifestVersion": 1,
     "id": "estimate",
-    "version": "2.2.3",
+    "version": "2.3.0",
     "name": "Estimate",
     "description": "Planning Poker in Azure Boards.",
-    "publisher": "cschleiden",
+    "publisher": "ms-devlabs",
     "scopes": ["vso.project", "vso.work", "vso.work_write"],
     "targets": [
         {
@@ -28,11 +28,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/cschleiden/azure-boards-estimate"
+        "url": "https://github.com/microsoft/azure-boards-estimate"
     },
     "links": {
         "support": {
-            "url": "mailto:christopher.schleiden@microsoft.com"
+            "url": "https://github.com/microsoft/azure-boards-estimate/SUPPORT.md"
         }
     },
     "branding": {
