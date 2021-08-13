@@ -153,7 +153,15 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                                     x.identifier ===
                                                                     e.cardIdentifier
                                                             )!;
-                                                            sum += parseInt((card!.value!.toString() || "0"));
+                                                            if (
+                                                                card!.value !=
+                                                                null
+                                                            ) {
+                                                                sum += parseInt(
+                                                                    card!.value!.toString() ||
+                                                                        "0"
+                                                                );
+                                                            }
                                                             return sum;
                                                         }, 0) / (estimates!.length || 1)}
                                                     </div>
