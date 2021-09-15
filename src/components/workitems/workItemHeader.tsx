@@ -1,3 +1,4 @@
+import { ILocationService } from "azure-devops-extension-api";
 import { IWorkItemFormNavigationService } from "azure-devops-extension-api/WorkItemTracking";
 import * as DevOps from "azure-devops-extension-sdk";
 import * as React from "react";
@@ -10,24 +11,28 @@ export interface IWorkItemHeaderProps {
 }
 
 export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
+    private workItemUrl = "#";
+
+    async componentDidMount() {
+        const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
+        this.workItemUrl = await locationService.routeUrl(
+            "ms.vss-work-web.work-items-form-route-with-id",
+            { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
+    }
+
     render(): JSX.Element {
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
-
-        // This is really fragile...
-        const host = DevOps.getHost();
-        const url = `https://dev.azure.com/${
-            host.name
-        }/${project}/_workitems/edit/${id}`;
 
         return (
             <div className="work-item-header">
                 <div className="work-item-header--header">
                     <a
                         className="work-item-header--info"
-                        href={url}
+                        href={this.workItemUrl}
                         target="_blank"
+                        rel="noreferrer"
                         onClick={async ev => {
                             if (
                                 !ev.ctrlKey &&
