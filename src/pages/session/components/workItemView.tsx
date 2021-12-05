@@ -251,7 +251,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
     private doCommitCard = (card: ICard): void => {
         const { commitEstimate } = this.props;
-        console.log("this.props.reveal()",this.props)
         commitEstimate(card.value);
     };
 }

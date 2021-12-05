@@ -15,7 +15,6 @@ export class Votes extends React.Component<IVotesProps> {
     render(): JSX.Element {
         const { estimates, cardSet, revealed } = this.props;
 
-        console.log(estimates)
 
         const votes = estimates.slice(0);
         votes.sort((a, b) =>

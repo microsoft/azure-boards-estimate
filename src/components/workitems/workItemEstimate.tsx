@@ -22,7 +22,7 @@ function getEstimateDisplay(
         c => estimate != null && "?" && c.value == estimate
     );
     if (cardIdx >= 0) {
-        console.log("solid test", cardSet.cards[cardIdx].identifier)
+        
         return cardSet.cards[cardIdx].identifier;
      }
 
