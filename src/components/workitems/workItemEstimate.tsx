@@ -19,11 +19,12 @@ function getEstimateDisplay(
     estimate?: string | number
 ): string {
     const cardIdx = cardSet.cards.findIndex(
-        c => estimate != null && c.value == estimate
+        c => estimate != null && "?" && c.value == estimate
     );
     if (cardIdx >= 0) {
+        console.log("solid test", cardSet.cards[cardIdx].identifier)
         return cardSet.cards[cardIdx].identifier;
-    }
+     }
 
-    return `${estimate != null ? estimate : "-"}`;
+    return `${estimate != null  ? estimate : "-"}`;
 }
