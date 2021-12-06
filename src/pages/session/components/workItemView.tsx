@@ -170,10 +170,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                                 );
                                                             }
                                                             return sum;
-                                                        }, 0) / (    estimates.filter(i =>{
-                                                            return i.cardIdentifier !== "?"
-                                                            
-                                                        }).length || 1)}
+                                                        }, 0) / (estimates!.length || 1)}
                                           
                                                     </div>
                                                 </>
