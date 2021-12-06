@@ -31,19 +31,20 @@ export const TeamServiceId = "TeamService";
 export class TeamService implements ITeamService {
     public async getAllTeams(projectId: string): Promise<ITeam[]> {
         const client = getClient(CoreRestClient);
-         const LIMIT = 5000;
+         let LIMIT = true;
         let skip = 0
         const gettingAllTeams = async () =>{
             const allData : any = []
-            for (let i = 0; i < LIMIT; i++) {
+            while (LIMIT) {
              const teams = await client.getTeams(projectId, false, 1000, skip);
               allData.push(teams)
               skip += 1000
-              if( skip === LIMIT || !teams.length)  
+              if(!teams.length)  
               return allData.flat()
-            }
+             }
         }
         const data = await gettingAllTeams()
+        console.log("hej",data)
          const allTeams = data.map(({ id, name }:ITeam) => ({
             id,
             name
