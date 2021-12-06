@@ -148,18 +148,12 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
                                                     <SubTitle>Average</SubTitle>
                                                     <div className="flex-column flex-self-start">
-
-
-
                                                         {(estimates || []).reduce((sum, e) => {
                                                             const card = cardSet.cards.find(
                                                                 x =>
                                                                     x.identifier ===
                                                                     e.cardIdentifier
-                                                            )!;
-
-
-                                                            if (
+                                                            )!;  if (
 
                                                                 card!.value !=
                                                                 null
