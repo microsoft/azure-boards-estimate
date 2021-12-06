@@ -81,7 +81,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                     contextualMenuProps={{
                                         menuProps: {
                                             onActivate: (ev: any) =>
-                                                ev.stopPropagation(),
+                                                ev.stopPropagation,
                                             id: "card-more",
                                             items: [
                                                 {
