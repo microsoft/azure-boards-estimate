@@ -4,6 +4,7 @@ import { getClient, IProjectPageService } from "azure-devops-extension-api";
 import * as DevOps from "azure-devops-extension-sdk";
 import { IService } from "./services";
 
+
 export interface ITeam {
     id: string;
     name: string;
@@ -12,7 +13,18 @@ export interface ITeam {
 export interface IIteration {
     id: string;
     name: string;
+   
 }
+
+export interface  Nawal {
+    id: string;
+    name: string;
+    description: string;
+    projectId: string;
+    projectName: string;
+    url: string;
+}
+
 
 export interface ITeamService extends IService {
     getAllTeams(projectId: string): Promise<ITeam[]>;
@@ -20,23 +32,35 @@ export interface ITeamService extends IService {
     getIterationsForTeam(teamId: string): Promise<IIteration[]>;
 }
 
+
 export const TeamServiceId = "TeamService";
 
 export class TeamService implements ITeamService {
-    public async getAllTeams(projectId: string): Promise<ITeam[]> {
-        const client = getClient(CoreRestClient);
-        const teams = await client.getTeams(projectId, undefined, 2000);
-        const mappedTeams = teams.map(({ id, name }) => ({
-            id,
-            name
-        }));
+public async getAllTeams(projectId: string): Promise<ITeam[]> {
+    const client = getClient(CoreRestClient);
+     const LIMIT = 5000;
+    let skip = 0
 
-        mappedTeams.sort((a, b) => a.name.localeCompare(b.name));
-
-        return mappedTeams;
+    const gettingAllTeams=  async () => {
+        const allData = []
+        for (let i = 0; i < LIMIT; i++) {
+         const teams = await client.getTeams(projectId, false, 1000, skip);
+          allData.push(teams)
+          skip += 1000
+          if( skip === LIMIT || !teams.length)  
+          return allData.flat()
+        }
     }
+    const data:any = await gettingAllTeams()
+    const allTeams = data && data.map(({ id, name}:ITeam) => ({
+        id,
+        name
+    }));
+    allTeams.sort((a:any, b:any) => a.name.localeCompare(b.name));
+   return allTeams;
+}
 
-    public async getIterationsForTeam(teamId: string): Promise<IIteration[]> {
+  public async getIterationsForTeam(teamId: string): Promise<IIteration[]> {
         const projectService: IProjectPageService = await DevOps.getService<
             IProjectPageService
         >("ms.vss-tfs-web.tfs-page-data-service");
