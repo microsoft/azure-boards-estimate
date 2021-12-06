@@ -77,7 +77,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                     <CardContent>
                         <div className="flex-grow flex-column">
                             <WorkItemDescription workItem={selectedWorkItem} />
-
+                     
                             <WorkItemEstimate
                                 cardSet={cardSet}
                                 estimate={selectedWorkItem.estimate}
@@ -145,15 +145,22 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             </div>
                                             {showAverage && (
                                                 <>
+                                               
                                                     <SubTitle>Average</SubTitle>
                                                     <div className="flex-column flex-self-start">
+                                                     
+                                                       
+                                                   
                                                         {(estimates || []).reduce((sum, e) => {
                                                             const card = cardSet.cards.find(
                                                                 x =>
                                                                     x.identifier ===
                                                                     e.cardIdentifier
                                                             )!;
+
+                                                   
                                                             if (
+                                                              
                                                                 card!.value !=
                                                                 null
                                                             ) {
@@ -164,6 +171,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                             }
                                                             return sum;
                                                         }, 0) / (estimates!.length || 1)}
+                                          
                                                     </div>
                                                 </>
                                             )}
@@ -211,6 +219,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
     private doReveal = () => {
         this.props.reveal();
+  
     };
 
     private doEstimate = (card: ICard): void => {
