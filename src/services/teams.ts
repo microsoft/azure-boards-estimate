@@ -44,8 +44,7 @@ export class TeamService implements ITeamService {
              }
         }
         const data = await gettingAllTeams()
-        console.log("hej",data)
-         const allTeams = data.map(({ id, name }:ITeam) => ({
+        const allTeams = data.map(({ id, name }:ITeam) => ({
             id,
             name
         }));
