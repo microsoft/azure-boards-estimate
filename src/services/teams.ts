@@ -49,8 +49,7 @@ export class TeamService implements ITeamService {
             name
         }));
         allTeams.sort((a :any, b:any) => a.name.localeCompare(b.name));
-        console.log(allTeams)
-        return allTeams;
+      return allTeams;
     }
 
 
