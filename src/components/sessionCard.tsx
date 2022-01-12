@@ -89,7 +89,6 @@ export class SessionCard extends React.Component<ICardProps> {
                                                     text: "End session",
                                                     onActivate: () => {
                                                         this.isEndSessionDialogOpen.value = true;
-                                                        onEndSession(id)
                                                     }
                                                 }
                                             ]
