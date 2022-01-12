@@ -8,6 +8,12 @@ See [Support](https://github.com/microsoft/azure-boards-estimate/#support) in ou
 
 ## Updates
 
+**TBD** - 2.4.0
+- Cannot select shared query [#59](https://github.com/microsoft/azure-boards-estimate/issues/59)
+- Work items which exceeds the limit of 200 [#45](https://github.com/microsoft/azure-boards-estimate/issues/45)
+- Developer vote "?" counted as 0 in average calculation [#28](https://github.com/microsoft/azure-boards-estimate/issues/28)
+- Only show top 1000 teams/boards in drop down for new Estimate [#18](https://github.com/microsoft/azure-boards-estimate/issues/18)
+
 **7/30/2021** - 2.3.0
 - Moved extension to new home for future development.
 
@@ -65,7 +71,10 @@ Each estimation is saved to your work items as soon as you have estimated
 
 ## Starting a new session
 
-1.  Start a new session from the backlog context menu or use the *Estimate* hub and select an iteration
+1.  Start a new session:  
+    - From backlog by selecting workitems and opening the context menu
+    -  Create a Query and start start the session from the context menu or save it to the shared queries and use the *Estimate* hub and select the query
+    -  Use the *Estimate* hub and select an iteration
 2.  Share the generated link with your team members, so that they are able to join
 3.  Once all members have joined, everyone picks a card
 4.  After everyone has picked a card, click `Reveal` to reveal everyone's estimate
