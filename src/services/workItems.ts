@@ -103,6 +103,19 @@ export class WorkItemService implements IWorkItemService {
         });
     }
 
+    private getBaches(array: any[], batchSize: number): any[] {
+        const output: any[] = [],
+            arrayLength = array.length;
+        let arrayIndex = 0,
+            chunkOrdinal = 0;
+        while (arrayIndex < arrayLength) {
+            output[chunkOrdinal++] = array.slice(
+                arrayIndex,
+                (arrayIndex += batchSize)
+            );
+        }
+        return output;
+    }
     async getWorkItems(workItemIds: number[]): Promise<IWorkItem[]> {
         if (!workItemIds || workItemIds.length === 0) {
             return [];
@@ -110,17 +123,30 @@ export class WorkItemService implements IWorkItemService {
 
         // Get all work items
         const workItemTrackingClient = getClient(WorkItemTrackingRestClient);
-        const workItems = await workItemTrackingClient.getWorkItemsBatch({
-            ids: workItemIds,
-            fields: [
-                "System.Id",
-                "System.Title",
-                "System.WorkItemType",
-                "System.TeamProject"
-            ],
-            $expand: 0 /* None */,
-            errorPolicy: 2 /* Omit */
-        } as WorkItemBatchGetRequest);
+        const workItems = [];
+        let wiBatches = [];
+        if (workItemIds.length > 200) {
+            wiBatches = this.getBaches(workItemIds, 200);
+        } else {
+            wiBatches = [workItemIds];
+        }
+        for (let i = 0; i < wiBatches.length; i++) {
+            const allWorkItems = await workItemTrackingClient.getWorkItemsBatch(
+                {
+                    ids: wiBatches[i],
+                    fields: [
+                        "System.Id",
+                        "System.Title",
+                        "System.WorkItemType",
+                        "System.TeamProject"
+                    ],
+                    $expand: 0 /* None */,
+                    errorPolicy: 2 /* Omit */
+                } as WorkItemBatchGetRequest
+            );
+
+            workItems.push(...allWorkItems);
+        }
 
         const mappedWorkItems: IWorkItem[] = workItems.map(wi => {
             return {
@@ -259,16 +285,21 @@ export class WorkItemService implements IWorkItemService {
             }
         }
 
-        // Get work item data
-        const workItemsFieldData = await workItemTrackingClient.getWorkItemsBatch(
-            {
-                ids: workItemIds,
-                fields: Array.from(fields.values()),
-                $expand: 0 /* WorkItemExpand.None */,
-                errorPolicy: 2 /* WorkItemErrorPolicy.Omit */
-            } as WorkItemBatchGetRequest
-        );
 
+        // Get work item data
+        let workItemsFieldData = [];
+        for (let i = 0; i < wiBatches.length; i++) {
+            const allWorkItemsFieldData = await workItemTrackingClient.getWorkItemsBatch(
+                {
+                    ids: wiBatches[i],
+                    fields: Array.from(fields.values()),
+                    $expand: 0 /* WorkItemExpand.None */,
+                    errorPolicy: 2 /* WorkItemErrorPolicy.Omit */
+                } as WorkItemBatchGetRequest
+            );
+
+            workItemsFieldData.push(...allWorkItemsFieldData);
+        }
         const mappedWorkItemsById: { [id: number]: IWorkItem } = {};
         mappedWorkItems.forEach(x => (mappedWorkItemsById[x.id] = x));
 
