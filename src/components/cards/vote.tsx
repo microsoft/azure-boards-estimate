@@ -17,7 +17,7 @@ export interface IVoteProps {
 export class Vote extends React.Component<IVoteProps> {
     render(): JSX.Element {
         const { identity, card, revealed } = this.props;
-
+     
         return (
             <div className="vote-container">
                 <Card
@@ -32,7 +32,7 @@ export class Vote extends React.Component<IVoteProps> {
                     disabled={true}
                 />
 
-                <Tooltip text={identity.displayName}>
+        <Tooltip text={identity.displayName}>
                     <div>
                         <VssPersona
                             identityDetailsProvider={{
