@@ -77,7 +77,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                     <CardContent>
                         <div className="flex-grow flex-column">
                             <WorkItemDescription workItem={selectedWorkItem} />
-
+                     
                             <WorkItemEstimate
                                 cardSet={cardSet}
                                 estimate={selectedWorkItem.estimate}
@@ -216,7 +216,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
     private doReveal = () => {
         this.props.reveal();
-
     };
 
     private doEstimate = (card: ICard): void => {

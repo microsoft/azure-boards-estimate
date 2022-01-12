@@ -30,7 +30,8 @@ export class WorkItemTypeIcon extends React.Component<
         }
 
         const client = getClient(WorkItemTrackingRestClient);
-        const iconJson = await client.getWorkItemIconJson(icon, color);
+        const allIcons = await client.getWorkItemIcons();
+        const iconJson = allIcons.find(i => i.id == icon);
 
         this.setState({
             icon: iconJson
