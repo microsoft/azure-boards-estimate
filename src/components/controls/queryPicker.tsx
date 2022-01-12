@@ -12,7 +12,7 @@ import {
 } from "office-ui-fabric-react/lib/utilities/selectableOption/SelectableOption.types";
 import * as React from "react";
 import "./queryPicker.scss";
-import { Button } from "azure-devops-ui/Button";
+import { IconButton } from "office-ui-fabric-react";
 
 interface IQueryOption extends ISelectableOption {
     hasChildren: boolean;
@@ -251,8 +251,7 @@ export class QueryPicker extends React.Component<
                 }}
             >
                 {option.hasChildren && (
-                    <Button
-                        subtle={true}
+                    <IconButton
                         iconProps={{
                             iconName: option.isExpanded
                                 ? "ChevronDown"
