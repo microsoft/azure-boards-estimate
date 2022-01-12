@@ -61,13 +61,13 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                         commandBarItems={
                             [
                                 canReveal &&
-                                    ({
-                                        id: "action-reveal",
-                                        text: "Reveal",
-                                        important: true,
-                                        isPrimary: true,
-                                        onActivate: this.doReveal
-                                    } as IHeaderCommandBarItem)
+                                ({
+                                    id: "action-reveal",
+                                    text: "Reveal",
+                                    important: true,
+                                    isPrimary: true,
+                                    onActivate: this.doReveal
+                                } as IHeaderCommandBarItem)
                             ].filter(x => !!x) as IHeaderCommandBarItem[]
                         }
                     >
@@ -139,39 +139,36 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                                 this,
                                                                 card
                                                             )) ||
-                                                            undefined
+                                                        undefined
                                                     );
                                                 })}
                                             </div>
                                             {showAverage && (
                                                 <>
-                                               
+
                                                     <SubTitle>Average</SubTitle>
                                                     <div className="flex-column flex-self-start">
-                                                     
-                                                       
-                                                   
                                                         {(estimates || []).reduce((sum, e) => {
                                                             const card = cardSet.cards.find(
                                                                 x =>
                                                                     x.identifier ===
                                                                     e.cardIdentifier
-                                                            )!;
+                                                            )!;  if (
 
-                                                   
-                                                            if (
-                                                              
                                                                 card!.value !=
                                                                 null
                                                             ) {
                                                                 sum += parseInt(
                                                                     card!.value!.toString() ||
-                                                                        "0"
+                                                                    "0"
                                                                 );
                                                             }
                                                             return sum;
-                                                        }, 0) / (estimates!.length || 1)}
-                                          
+                                                        }, 0) / (estimates.filter(i => {
+                                                            return i.cardIdentifier !== "?"
+
+                                                        }).length || 1)}
+
                                                     </div>
                                                 </>
                                             )}
@@ -219,7 +216,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
     private doReveal = () => {
         this.props.reveal();
-  
     };
 
     private doEstimate = (card: ICard): void => {
