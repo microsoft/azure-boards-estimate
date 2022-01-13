@@ -25,6 +25,7 @@
   "scripts": {
     "watch": "react-scripts start",
     "build": "react-scripts build",
+    "build:release": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
