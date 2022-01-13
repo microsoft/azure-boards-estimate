@@ -34,8 +34,11 @@ stages:
   - job: 'BuildPack'
     displayName: "Build and package"
     pool:
-      vmImage: windows-latest
+      vmImage: ubuntu-latest
     steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
     - template: build.yml@pipeline-templates
     - template: package.yml@pipeline-templates
       parameters:
