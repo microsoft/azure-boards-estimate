@@ -30,6 +30,7 @@ resources:
       name: Sage/pipeline-templates
       ref: main
 
+
 stages:
 - stage: 'Build'
   jobs:
