@@ -1,5 +1,3 @@
-# TODO
-
 variables:
 - name: major
   value: '2'
@@ -30,14 +28,13 @@ resources:
       name: Sage/pipeline-templates
       ref: main
 
-
 stages:
 - stage: 'Build'
   jobs:
   - job: 'BuildPack'
     displayName: "Build and package"
     pool:
-      vmImage: ubuntu-latest
+      vmImage: windows-latest
     steps:
     - template: build.yml@pipeline-templates
     - template: package.yml@pipeline-templates
