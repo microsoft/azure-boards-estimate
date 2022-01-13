@@ -28,7 +28,7 @@ resources:
     - repository: pipeline-templates
       type: git
       name: Sage/pipeline-templates
-      ref: master
+      ref: main
 
 stages:
 - stage: 'Build'
