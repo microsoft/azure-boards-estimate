@@ -4,7 +4,7 @@ variables:
 - name: minor
   value: '3'
 - name: extensionName
-  value: 'azure-boards-estimate'
+  value: 'estimate'
 - name: marketplaceServiceConnection
   value: 'marketplaceServiceConnection'
 - name: publisherId
