@@ -65,7 +65,7 @@ stages:
   jobs:
   - template: deploy.yml@pipeline-templates
     parameters:
-      environment: 'preview'
+      environment: 'test'
       extensionName: $(extensionName)
       marketplaceConnectedServiceName: $(marketplaceServiceConnection)
       publisherId: $(publisherId)
