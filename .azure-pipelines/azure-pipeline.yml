@@ -83,3 +83,4 @@ stages:
       marketplaceConnectedServiceName: $(marketplaceServiceConnection)
       publisherId: $(publisherId)
       publicExtensionName: $(publicExtensionName)
+      extensionVisibility: 'public'
