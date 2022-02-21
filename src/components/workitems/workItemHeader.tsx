@@ -13,25 +13,26 @@ export interface IWorkItemHeaderProps {
 export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
     private workItemUrl = "#";
 
-    async componentDidMount() {
+    async componentDidUpdate() {
         const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
         this.workItemUrl = await locationService.routeUrl(
             "ms.vss-work-web.work-items-form-route-with-id",
             { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
+
+
+            console.log("test", await locationService.routeUrl(
+                "ms.vss-work-web.work-items-form-route-with-id",
+                { project: this.props.workItem.project, id: this.props.workItem.id.toString() }))
     }
+  
 
 
 
     
     render(): JSX.Element {
-
-
-        
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
-
-       
         return (
             <div className="work-item-header">
                 <div className="work-item-header--header">
@@ -55,7 +56,7 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
                                 >(
                                     "ms.vss-work-web.work-item-form-navigation-service"
                                 );
-                             service.openWorkItem(id, true) 
+                             service.openWorkItem(id) 
                             }
                         }}
                     >
