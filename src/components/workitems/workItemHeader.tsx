@@ -20,16 +20,10 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
             { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
 
 
-            console.log("test", await locationService.routeUrl(
-                "ms.vss-work-web.work-items-form-route-with-id",
-                { project: this.props.workItem.project, id: this.props.workItem.id.toString() }))
+            
     }
   
-
-
-
-    
-    render(): JSX.Element {
+  render(): JSX.Element {
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
