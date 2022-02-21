@@ -20,11 +20,18 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
             { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
     }
 
+
+
+    
     render(): JSX.Element {
+
+
+        
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
 
+       
         return (
             <div className="work-item-header">
                 <div className="work-item-header--header">
@@ -38,7 +45,8 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
                                 !ev.ctrlKey &&
                                 !ev.metaKey &&
                                 !ev.altKey &&
-                                !ev.shiftKey
+                                !ev.shiftKey 
+                              
                             ) {
                                 ev.preventDefault();
 
@@ -47,14 +55,14 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
                                 >(
                                     "ms.vss-work-web.work-item-form-navigation-service"
                                 );
-                                service.openWorkItem(id);
+                             service.openWorkItem(id, true) 
                             }
                         }}
                     >
                         <WorkItemTypeIcon icon={icon} color={color} />
                         {workItemType} {id}
                     </a>
-                    <div className="work-item-header--title">{title}</div>
+                    <div className="work-item-header--title">{title}  </div>
                 </div>
             </div>
         );
