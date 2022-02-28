@@ -89,7 +89,8 @@ class Session extends React.Component<
             activeUsers
         } = this.props;
 
- 
+
+
         if (status.loading || !session) {
             return (
                 <div className="absolute-fill flex-column flex-grow flex-center justify-center">
@@ -98,6 +99,7 @@ class Session extends React.Component<
                 </div>
             );
         }
+
 
         return (
             <Page
@@ -178,7 +180,7 @@ class Session extends React.Component<
                     
                         ))}
                           </div>
-                     {!!selectedWorkItem && <WorkItemView />}
+                     {!!selectedWorkItem && <WorkItemView  users={activeUsers}/>}
                     {!selectedWorkItem && (
                         <div className="flex-grow flex-column flex-center justify-center">
                             <i>Select a work item on the left to get started</i>
