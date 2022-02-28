@@ -12,25 +12,28 @@ export interface IWorkItemHeaderProps {
 
 export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
     private workItemUrl = "#";
+    
+    private ILocationService locationService;
 
     async componentDidMount() {
-        const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
-        this.workItemUrl = await locationService.routeUrl(
-            "ms.vss-work-web.work-items-form-route-with-id",
-            { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
+        this.locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
     }
 
     render(): JSX.Element {
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
+        
+        const workItemUrl = await this.locationService.routeUrl(
+            "ms.vss-work-web.work-items-form-route-with-id",
+            { project: project, id: id.toString() });
 
         return (
             <div className="work-item-header">
                 <div className="work-item-header--header">
                     <a
                         className="work-item-header--info"
-                        href={this.workItemUrl}
+                        href={workItemUrl}
                         target="_blank"
                         rel="noreferrer"
                         onClick={async ev => {
