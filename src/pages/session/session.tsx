@@ -99,6 +99,9 @@ class Session extends React.Component<
             );
         }
 
+
+        console.log("test=>",activeUsers)
+         
         return (
             <Page
                 className="absolute-fill"
