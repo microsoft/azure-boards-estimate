@@ -61,8 +61,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         } = this.props;
 
 
-        console.log("estimate",estimates)
-        console.log("cardSet",cardSet)
+       
 
         return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
