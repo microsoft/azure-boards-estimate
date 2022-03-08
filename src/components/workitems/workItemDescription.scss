@@ -3,10 +3,19 @@
 .work-item-description {
     border-radius: 6px;
     background-color: $neutral-4;
+     padding: 10px;
+     min-height: 60px;
+    margin: 1%;
 
+  
+}
+
+.work-item-description-bottom{
+    border-radius: 6px;
+    background-color: $neutral-4;
     padding: 10px;
-
     min-height: 60px;
+    margin: 1%;
 }
 
 .html-content {

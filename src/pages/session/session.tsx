@@ -89,6 +89,7 @@ class Session extends React.Component<
             activeUsers
         } = this.props;
 
+ 
         if (status.loading || !session) {
             return (
                 <div className="absolute-fill flex-column flex-grow flex-center justify-center">
@@ -154,6 +155,8 @@ class Session extends React.Component<
 
                 <div className="page-content page-content-top flex-row session-content">
                     <div className="work-item-list v-scroll-auto flex-column custom-scrollbar flex-noshrink">
+
+                 
                         {workItems.map(workItem => (
                             <WorkItemCard
                                 key={workItem.id}
@@ -172,15 +175,17 @@ class Session extends React.Component<
                                     undefined
                                 }
                             />
+                    
                         ))}
-                    </div>
-                    {!!selectedWorkItem && <WorkItemView />}
+                          </div>
+                     {!!selectedWorkItem && <WorkItemView />}
                     {!selectedWorkItem && (
                         <div className="flex-grow flex-column flex-center justify-center">
                             <i>Select a work item on the left to get started</i>
                         </div>
-                    )}
+                    )} 
                 </div>
+            
             </Page>
         );
     }

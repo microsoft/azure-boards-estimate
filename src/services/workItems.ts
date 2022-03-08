@@ -138,14 +138,14 @@ export class WorkItemService implements IWorkItemService {
                         "System.Id",
                         "System.Title",
                         "System.WorkItemType",
-                        "System.TeamProject"
+                        "System.TeamProject",
+                        "Microsoft.VSTS.Common.AcceptanceCriteria",
                     ],
                     $expand: 0 /* None */,
                     errorPolicy: 2 /* Omit */
                 } as WorkItemBatchGetRequest
             );
-
-            workItems.push(...allWorkItems);
+       workItems.push(...allWorkItems);
         }
 
         const mappedWorkItems: IWorkItem[] = workItems.map(wi => {
@@ -154,6 +154,7 @@ export class WorkItemService implements IWorkItemService {
                 id: wi.id,
                 title: wi.fields["System.Title"],
                 workItemType: wi.fields["System.WorkItemType"],
+                AcceptanceCriteria: wi.fields["Microsoft.VSTS.Common.AcceptanceCriteria"],
                 description: ""
             };
         });
