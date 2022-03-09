@@ -10,48 +10,45 @@ export interface IWorkItemHeaderProps {
     workItem: IWorkItem;
 }
 
-export class WorkItemHeader extends React.Component<IWorkItemHeaderProps> {
+type MyState = { url: string };
+export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyState > {
     private workItemUrl = "#";
+    constructor(props:any) {
+        super(props);
+        this.state = {url: ""};
+      }
 
-    async componentDidMount() {
+    async componentDidUpdate() {
         const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
         this.workItemUrl = await locationService.routeUrl(
             "ms.vss-work-web.work-items-form-route-with-id",
             { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
-    }
-
-    render(): JSX.Element {
+            this.setState({url: this.workItemUrl})
+           }
+    
+       render(): JSX.Element {
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
 
+         const openWi = async (ev:any)=>{
+            if(!ev.ctrlKey && !ev.metaKey &&!ev.altKey && !ev.shiftKey){
+            ev.preventDefault();
+            const service = await DevOps.getService<IWorkItemFormNavigationService>("ms.vss-work-web.work-item-form-navigation-service");
+            service.openWorkItem(id);
+        }
+      }
         return (
             <div className="work-item-header">
                 <div className="work-item-header--header">
                     <a
-                        className="work-item-header--info"
-                        href={this.workItemUrl}
+                       className="work-item-header--info"
+                        href={this.state.url}
                         target="_blank"
-                        rel="noreferrer"
-                        onClick={async ev => {
-                            if (
-                                !ev.ctrlKey &&
-                                !ev.metaKey &&
-                                !ev.altKey &&
-                                !ev.shiftKey
-                            ) {
-                                ev.preventDefault();
-
-                                const service = await DevOps.getService<
-                                    IWorkItemFormNavigationService
-                                >(
-                                    "ms.vss-work-web.work-item-form-navigation-service"
-                                );
-                                service.openWorkItem(id);
-                            }
-                        }}
+                    
+                        onClick={(ev)=> openWi(ev)}
                     >
-                        <WorkItemTypeIcon icon={icon} color={color} />
+                      <WorkItemTypeIcon icon={icon} color={color} />
                         {workItemType} {id}
                     </a>
                     <div className="work-item-header--title">{title}</div>
