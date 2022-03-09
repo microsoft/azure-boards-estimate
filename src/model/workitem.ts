@@ -10,4 +10,6 @@ export interface IWorkItem {
 
     icon?: string;
     color?: string;
+    AcceptanceCriteria?: any,
+
 }

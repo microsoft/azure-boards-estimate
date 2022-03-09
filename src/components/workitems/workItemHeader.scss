@@ -1,15 +1,13 @@
 @import "azure-devops-ui/Core/_platformCommon.scss";
 
 .work-item-header {
-    min-height: 80px;
+   
 
     &--header {
         display: flex;
         flex-direction: column;
 
-        min-height: 32px;
-
-        margin-bottom: 20px;
+       
     }
 
     &--info {
@@ -30,8 +28,9 @@
 
     &--title {
         flex-grow: 1;
-
         font-size: 18px;
         font-weight: 700;
+        padding: 0px 20px;
     }    
 }
+
