@@ -28,6 +28,5 @@ export const WorkItemDescription: React.StatelessComponent<{
                 }}
             />
         </div>
-
     </>
 );

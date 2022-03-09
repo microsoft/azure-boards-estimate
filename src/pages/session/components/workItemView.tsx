@@ -19,6 +19,7 @@ import { commitEstimate, estimate, reveal } from "../sessionActions";
 import { CustomEstimate } from "./customEstimate";
 import "./workItemView.scss";
 import { canPerformAdminActions } from "../selector";
+import { IUserInfo } from "../../../model/user";
 
 interface IWorkItemProps {
     identity: IIdentity;
@@ -33,12 +34,15 @@ interface IWorkItemProps {
     canReveal: boolean;
     showAverage: boolean;
     canPerformAdminActions: boolean;
+    users: IUserInfo[]
+   
 }
 
 const Actions = {
     estimate,
     reveal,
     commitEstimate
+  
 };
 
 class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
@@ -51,8 +55,13 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
             estimates,
             canReveal,
             revealed,
-            showAverage
+            showAverage,
+            users
+            
         } = this.props;
+
+
+       
 
         return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
@@ -96,7 +105,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                     )}
                             </div>
 
-                            <SubTitle>All votes</SubTitle>
+                            <SubTitle>All votes   {estimates ? estimates.length : 0}/{users.length}</SubTitle>
                             <Votes
                                 cardSet={cardSet}
                                 estimates={estimates || []}
