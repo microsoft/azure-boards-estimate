@@ -54,7 +54,7 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyStat
                     >
                       <WorkItemTypeIcon icon={icon} color={color} />
                         {workItemType} {id}
-                        {     console.log("test", this.state)}
+                     
                     </a>
                     <div className="work-item-header--title">{title}</div>
                 </div>
