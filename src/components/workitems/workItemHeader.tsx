@@ -18,20 +18,24 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyStat
         this.state = {url: ""};
       }
 
-    async componentDidUpdate() {
+    async clickHandler() {
         const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
         this.workItemUrl = await locationService.routeUrl(
             "ms.vss-work-web.work-items-form-route-with-id",
             { project: this.props.workItem.project, id: this.props.workItem.id.toString() });
             this.setState({url: this.workItemUrl})
+        
            }
-    
+
        render(): JSX.Element {
         const {
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
 
+   
+
          const openWi = async (ev:any)=>{
+            this.clickHandler()
             if(!ev.ctrlKey && !ev.metaKey &&!ev.altKey && !ev.shiftKey){
             ev.preventDefault();
             const service = await DevOps.getService<IWorkItemFormNavigationService>("ms.vss-work-web.work-item-form-navigation-service");
@@ -50,6 +54,7 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyStat
                     >
                       <WorkItemTypeIcon icon={icon} color={color} />
                         {workItemType} {id}
+                        {     console.log("test", this.state)}
                     </a>
                     <div className="work-item-header--title">{title}</div>
                 </div>
