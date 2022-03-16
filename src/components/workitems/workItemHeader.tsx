@@ -18,7 +18,6 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyStat
         this.state = {url: ""};
       }
 
-      //onClick
     async clickHandler() {
         const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
         this.workItemUrl = await locationService.routeUrl(
