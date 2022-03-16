@@ -96,12 +96,14 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                             <div className="card-container">
                                 {cardSet &&
                                     cardSet.cards.map(card =>
-                                        this.renderCard(
+                                     <div className="votes-container">  
+                                           { this.renderCard(
                                             card,
                                             revealed,
                                             card.identifier === selectedCardId,
                                             this.doEstimate.bind(this, card)
-                                        )
+                                        )}
+                                     </div>
                                     )}
                             </div>
 
@@ -132,7 +134,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                 choose one to commit the value
                                                 to the work item:
                                             </div>
-                                            <div>
+                                            <div className="test">
                                                 {(estimates || []).map(e => {
                                                     const card = cardSet.cards.find(
                                                         x =>

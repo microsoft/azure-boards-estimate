@@ -1,0 +1,5 @@
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+input:focus {
+    color: $primary-text;
+}

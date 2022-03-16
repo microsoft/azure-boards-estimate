@@ -23,6 +23,7 @@ export class CardSetPicker extends React.Component<ICardSetPickerProps> {
 
         return (
             <Dropdown
+                className="main-dropdown"
                 selectedKey={selectedCardSetId}
                 options={
                     (cardSets &&
