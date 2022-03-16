@@ -134,7 +134,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                 choose one to commit the value
                                                 to the work item:
                                             </div>
-                                            <div className="test">
+                                            <div >
                                                 {(estimates || []).map(e => {
                                                     const card = cardSet.cards.find(
                                                         x =>
