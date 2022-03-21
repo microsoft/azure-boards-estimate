@@ -26,7 +26,10 @@
     position: relative;
     color: $primary-text;
     margin: 5px;
-    background: $backgroundColor
+    background: $backgroundColor;
+    color: $primary-text !important;
+ 
+
 }
 
 .card--frame {
