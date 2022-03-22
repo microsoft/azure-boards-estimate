@@ -75,6 +75,7 @@ class Session extends React.Component<
 
     componentDidMount() {
         this.props.loadSession(this.props.match.params.id);
+     
     }
 
     render(): JSX.Element {
@@ -97,6 +98,9 @@ class Session extends React.Component<
                 </div>
             );
         }
+
+
+    
 
 
         return (
@@ -154,7 +158,7 @@ class Session extends React.Component<
                 </CustomHeader>
 
                 <div className="page-content page-content-top flex-row session-content">
-                    <div className="work-item-list v-scroll-auto flex-column custom-scrollbar flex-noshrink">
+                    <div className="work-item-list v-scroll-auto flex-column flex-noshrink">
 
                  
                         {workItems.map(workItem => (

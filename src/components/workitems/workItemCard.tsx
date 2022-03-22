@@ -26,10 +26,7 @@ export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
     } = props;
 
 
-    //   React.useEffect(() => {
-    //     document.body.style.overflow = "hidden";
-    //     document.body.style.overflow = "unset"
-    //   }, []);
+     
 
 
     return (
