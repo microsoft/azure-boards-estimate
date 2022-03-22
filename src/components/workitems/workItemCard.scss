@@ -34,7 +34,8 @@ overflow: hidden;
 
     &--title {
         overflow-wrap: break-word  !important;
-    padding: 0px 5px;
+        overflow: hidden;
+        padding: 0px 5px;
        
     }
 
