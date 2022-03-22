@@ -90,7 +90,7 @@ class SettingsPanel extends React.Component<
                                         } as IListBoxItem<IField>)
                                 )
                             }}
-                            className="input-wd"
+                          
                         />
                     </SimpleTableCell>
                 );
@@ -144,7 +144,7 @@ class SettingsPanel extends React.Component<
                         </p>
 
                         <Table<IWorkItemType>
-                            className={"input-wd"}
+                         
                             columns={this.columns}
                             itemProvider={
                                 new ArrayItemProvider(this.props.workItemTypes)
