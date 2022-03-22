@@ -19,14 +19,21 @@ export const WorkItemDescription: React.StatelessComponent<{
                 }}
             />
         </div>
-        <div className="sub-header-warapper"> <SubTitle> Acceptance criteria</SubTitle></div>
-         <div className="work-item-description-bottom">
-            <div
-                className="html-content"
-                dangerouslySetInnerHTML={{
-                    __html: props.workItem.AcceptanceCriteria
-                }}
-            />
-        </div>
+        {props.workItem.AcceptanceCriteria && props.workItem.AcceptanceCriteria.length !== 55 ?
+            <>
+                <div className="sub-header-warapper"> <SubTitle> Acceptance criteria</SubTitle></div>
+                <div className="work-item-description-bottom">
+                    <div
+                        className="html-content"
+                        dangerouslySetInnerHTML={{
+                            __html: props.workItem.AcceptanceCriteria
+                        }}
+                    />
+                </div>
+            </>
+
+            : null
+        }
+
     </>
 );

@@ -87,12 +87,13 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                         <div className="flex-grow flex-column">
                             <WorkItemDescription workItem={selectedWorkItem} />
                      
+                     <div className="card-sub-container">
                             <WorkItemEstimate
                                 cardSet={cardSet}
                                 estimate={selectedWorkItem.estimate}
                             />
 
-                            <SubTitle>Your vote</SubTitle>
+                            <SubTitle>Your vote </SubTitle>
                             <div className="card-container">
                                 {cardSet &&
                                     cardSet.cards.map(card =>
@@ -189,8 +190,11 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             />
                                         </>
                                     )}
+
                                 </>
+                            
                             )}
+                                </div>
                         </div>
                     </CardContent>
                 </CustomCard>
