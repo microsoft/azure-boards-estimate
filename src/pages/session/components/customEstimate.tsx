@@ -5,7 +5,16 @@ import { Button } from "azure-devops-ui/Button";
 export const CustomEstimate: React.FC<{
     commitEstimate: (value: string) => void;
 }> = props => {
-    const [value, setValue] = React.useState();
+    const [value, setValue] = React.useState("");
+
+
+    const returnInputvalue =()=>{
+        if(value.includes(",")){
+           return value.replace(/,/g, ".");
+         }
+         return value
+     }
+    
 
     return (
         <div className="flex-row">
@@ -22,7 +31,7 @@ export const CustomEstimate: React.FC<{
             />
             <Button
                 onClick={() => {
-                    props.commitEstimate(value);
+                    props.commitEstimate(returnInputvalue());
                 }}
             >
                 Save
