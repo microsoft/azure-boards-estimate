@@ -3,10 +3,12 @@
 .vote-container {
     display: flex;
     flex-direction: column;
-
-    align-items: center;
+     align-items: center;
+     color: $primary-text;
 }
 
 .vote-card {
     margin-bottom: 5px;
+    color: $primary-text;
 }
+

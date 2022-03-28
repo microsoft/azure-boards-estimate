@@ -1,16 +1,6 @@
 @import "azure-devops-ui/Core/_platformCommon.scss";
 
-.work-item-description {
-    border-radius: 6px;
-    background-color: $neutral-4;
-     padding: 10px;
-     min-height: 60px;
-    margin: 1%;
-
-  
-}
-
-.work-item-description-bottom{
+.work-item {
     border-radius: 6px;
     background-color: $neutral-4;
     padding: 10px;
@@ -19,23 +9,7 @@
 }
 
 .html-content {
-    ul,
-    ol {
-        padding-left: 40px;
-    }
-
-    li {
-        list-style: inherit;
-    }
-
-    a {
-        text-decoration: underline;
-    }
-
-    pre {
-        background-color: rgba(234, 234, 234, 1);
-        background-color: rgba(var(--palette-neutral-8, 234, 234, 234), 1);
-        display: inline-block;
-        min-width: 100%;
+    td{
+        color : $primary-text;
     }
 }

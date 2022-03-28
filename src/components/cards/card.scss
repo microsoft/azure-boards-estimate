@@ -5,6 +5,8 @@
     background: transparent;
     padding: 0;
     outline: none;
+   
+
 }
 
 .card--base {
@@ -12,34 +14,33 @@
     background: transparent;
     padding: 0;
     outline: none;
-
+  
     perspective: 1000px;
     transform: perspective(1000px);
     transform-style: preserve-3d;
-}
+    }
 
 .card--flip {
     transition: 0.3s;
-    transform-style: preserve-3d;
-
+    transform-style: preserve-3d;  
     position: relative;
-
+    color: $primary-text;
     margin: 5px;
+    background: $backgroundColor;
+    color: $primary-text !important;
+ 
+
 }
 
 .card--frame {
-    display: block;
-    text-align: center;
-
+    color: $primary-text;
+    display: block;    text-align: center;
     box-shadow: 0 6.4px 14.4px 0 $calloutShadowColor;
     border-radius: $radius-medium;
-
     user-select: none;
-
     transition: linear all 0.2s;
     backface-visibility: hidden;
     transform-style: preserve-3d;
-
     position: absolute;
     top: 0;
     left: 0;
