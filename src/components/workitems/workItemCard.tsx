@@ -42,7 +42,10 @@ export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
                     </div>
                     <div className="work-item-card--title">{title}</div>
                 </div>
+                <div className="estimate-container">
                 <WorkItemEstimate cardSet={cardSet} estimate={estimate} />
+                </div>
+                
             </Card>
         </div>
     );
