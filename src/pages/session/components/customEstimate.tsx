@@ -21,8 +21,7 @@ export const CustomEstimate: React.FC<{
                 onClick={() => {
                     props.commitEstimate(value);
                 }}
-            >
-                Save
+            >  Save
             </Button>
         </div>
     );

@@ -1,3 +1,8 @@
+@import "azure-devops-ui/Core/_platformCommon.scss";
 .work-item-view {
-    margin: 4px 12px;
+margin: 4px 12px;
 }
+.votes-container{
+    display: inline-block;
+}
+

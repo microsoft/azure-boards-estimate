@@ -32,9 +32,7 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyStat
             workItem: { id, project, title, workItemType, icon, color }
         } = this.props;
 
-   
-
-         const openWi = async (ev:any)=>{
+       const openWi = async (ev:any)=>{
             this.clickHandler()
             if(!ev.ctrlKey && !ev.metaKey &&!ev.altKey && !ev.shiftKey){
             ev.preventDefault();
@@ -54,7 +52,7 @@ export class WorkItemHeader extends React.Component<IWorkItemHeaderProps, MyStat
                     >
                       <WorkItemTypeIcon icon={icon} color={color} />
                         {workItemType} {id}
-                     
+                       
                     </a>
                     <div className="work-item-header--title">{title}</div>
                 </div>
