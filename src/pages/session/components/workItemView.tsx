@@ -119,7 +119,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                 <>
                                     <SubTitle>Actions</SubTitle>
                                     {canReveal && (
-                                        <div className="flex-column flex-self-start">
+                                        <div>
                                             <Button
                                                 primary
                                                 onClick={this.doReveal}
