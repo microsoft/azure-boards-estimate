@@ -6,6 +6,8 @@ import { SubTitle } from "../subtitle";
 export const WorkItemDescription: React.StatelessComponent<{
     workItem: IWorkItem;
 }> = props => (
+
+    
     <>
         <div className="sub-header-warapper">
             <SubTitle>Description</SubTitle>
@@ -19,7 +21,7 @@ export const WorkItemDescription: React.StatelessComponent<{
                 }}
             />
         </div>
-        {props.workItem.AcceptanceCriteria && props.workItem.AcceptanceCriteria.length !== 55 ?
+        {   props.workItem.AcceptanceCriteria.replaceAll("</?(?!br)([^>]+)>", "$1").length > 0 ?
             <>
                 <div className="sub-header-warapper"> <SubTitle> Acceptance criteria</SubTitle></div>
                 <div className="work-item-description-bottom">
