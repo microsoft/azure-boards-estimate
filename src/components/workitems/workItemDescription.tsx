@@ -24,7 +24,7 @@ export const WorkItemDescription: React.StatelessComponent<{
                 }}
             />
         </div>
-        {   props.workItem.AcceptanceCriteria.replaceAll("</?(?!br)([^>]+)>", "$1").length > 0 ?
+        { props.workItem.AcceptanceCriteria  &&  props.workItem.AcceptanceCriteria.replaceAll("</?(?!br)([^>]+)>", "$1").length > 0 ?
             <>
                 <div className="sub-header-warapper"> <SubTitle> Acceptance criteria </SubTitle></div>
                 <div className="work-item-description-bottom">
