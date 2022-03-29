@@ -91,11 +91,8 @@ class SettingsPanel extends React.Component<
                                 )
                               
                             }}
-<<<<<<< HEAD
                             className="dropdwon-inputs-field"
-=======
                           
->>>>>>> master
                         />
                     </SimpleTableCell>
                 );
