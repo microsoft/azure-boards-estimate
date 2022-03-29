@@ -44,7 +44,7 @@ class SettingsPanel extends React.Component<
                 tableItem: IWorkItemType
             ) =>
                 renderSimpleCell(rowIndex, columnIndex, tableColumn, tableItem),
-            width: -50
+           width: 200,
         },
         {
             id: "estimationFieldRefName",
@@ -67,6 +67,7 @@ class SettingsPanel extends React.Component<
                                     this,
                                     workItemType
                                 ),
+                              
                                 selection: new ListSelection({
                                     multiSelect: false,
                                     selectOnFocus: false,
@@ -90,12 +91,17 @@ class SettingsPanel extends React.Component<
                                 )
                               
                             }}
+<<<<<<< HEAD
                             className="dropdwon-inputs-field"
+=======
+                          
+>>>>>>> master
                         />
                     </SimpleTableCell>
                 );
             },
-            width: -50
+            width: 200,
+        
         }
     ];
     private onSelect = (
@@ -131,7 +137,7 @@ class SettingsPanel extends React.Component<
                         <Spinner size={SpinnerSize.large} />
                     </div>
                 ) : (
-                    <div className="settings-panel--content">
+                    <div className="settings-panel--content  input-wd">
                         <p>
                             Select a field to store the estimation for each work
                             item type you are planning to estimate.
@@ -143,6 +149,7 @@ class SettingsPanel extends React.Component<
                         </p>
 
                         <Table<IWorkItemType>
+                         
                             columns={this.columns}
                             itemProvider={
                                 new ArrayItemProvider(this.props.workItemTypes)

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { TextField } from "azure-devops-ui/TextField";
 import { Button } from "azure-devops-ui/Button";
+import "./customEstimate.scss"
 
 export const CustomEstimate: React.FC<{
     commitEstimate: (value: string) => void;
@@ -10,6 +11,7 @@ export const CustomEstimate: React.FC<{
     return (
         <div className="flex-row">
             <TextField
+                className={"estimate-input-field"}
                 value={value}
                 onChange={(
                     event: React.ChangeEvent<
@@ -24,8 +26,7 @@ export const CustomEstimate: React.FC<{
                 onClick={() => {
                     props.commitEstimate(value);
                 }}
-            >
-                Save
+            >  Save
             </Button>
         </div>
     );

@@ -2,6 +2,7 @@ import "./workItemDescription.scss";
 import * as React from "react";
 import { IWorkItem } from "../../model/workitem";
 import { SubTitle } from "../subtitle";
+import { withRouter } from "react-router-dom";
 
 export const WorkItemDescription: React.StatelessComponent<{
     workItem: IWorkItem;
@@ -9,11 +10,13 @@ export const WorkItemDescription: React.StatelessComponent<{
 
     
     <>
+
+
         <div className="sub-header-warapper">
             <SubTitle>Description</SubTitle>
         </div>
 
-        <div className="work-item-description">
+        <div className="work-item">
             <div
                 className="html-content"
                 dangerouslySetInnerHTML={{
