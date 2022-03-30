@@ -17,8 +17,8 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> = (props) => {
     const { workItem: { id, project, title, workItemType, icon, color, } } = props;
     const [currentHostName, setCurrentHostName] = React.useState<string>("#")
 
-     const getCurrentHost = async () => {
-        const locationService = await DevOps.getHost()
+     const getCurrentHost =  () => {
+        const locationService = DevOps.getHost()
         setCurrentHostName(locationService.name)
     }
 
