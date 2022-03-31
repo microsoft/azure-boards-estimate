@@ -1,6 +1,21 @@
-@import "azure-devops-ui/Core/_platformCommon.scss";
 
-input {
-    color: $primary-text;
- 
+@import "node_modules/azure-devops-ui/Core/_platformCommon.scss";
+
+
+.custom-values-input {
+   margin: 10px 0px;
+   padding: 5px;
+   color: $primary-text;
+   background: $backgroundColor;
+   border: 1px solid $neutral-20;
+   outline: none;
+
+
+ }
+
+ input::-webkit-outer-spin-button,
+ input::-webkit-inner-spin-button {
+ -webkit-appearance: none;
 }
+
+  

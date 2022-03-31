@@ -4,25 +4,20 @@ import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
 
 export const CustomEstimate: React.FC<{
-    commitEstimate: (value: string) => void;
+    commitEstimate: (value: number | null ) => void;
 }> = props => {
-    const [value, setValue] = React.useState();
+    const [value, setValue] = React.useState<number | null>(null);
 
     return (
         <div className="flex-row">
-            <TextField
-                className={"estimate-input-field"}
-                value={value}
-                onChange={(
-                    event: React.ChangeEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                    >,
-                    value: string
-                ) => {
-                    setValue(value);
-                }}
+          <input
+             className="custom-values-input"
+             onChange={(e) => setValue(Number(e.target.value))}
+               type="number"
+             
             />
             <Button
+                className="custom-values-input"
                 onClick={() => {
                     props.commitEstimate(value);
                 }}

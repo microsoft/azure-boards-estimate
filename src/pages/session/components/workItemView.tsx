@@ -200,7 +200,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         );
     }
 
-    private doCommitValue = (value: string) => {
+    private doCommitValue = (value: number | null) => {
         const { commitEstimate } = this.props;
         commitEstimate(value);
     };
