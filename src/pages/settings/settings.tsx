@@ -91,7 +91,7 @@ class SettingsPanel extends React.Component<
                                 )
                               
                             }}
-                            className="dropdwon-inputs-field"
+                            className="dropdown-inputs-field"
                           
                         />
                     </SimpleTableCell>
