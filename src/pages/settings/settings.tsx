@@ -89,7 +89,9 @@ class SettingsPanel extends React.Component<
                                             data: f
                                         } as IListBoxItem<IField>)
                                 )
+                              
                             }}
+                            className="dropdown-input-field"
                           
                         />
                     </SimpleTableCell>
