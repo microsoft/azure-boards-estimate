@@ -1,10 +1,11 @@
 
 import * as React from "react";
-import { IWorkItemFormNavigationService } from "azure-devops-extension-api/WorkItemTracking";
+import { IWorkItemFormNavigationService, WorkItemQueryResult, WorkItemTrackingRestClient } from "azure-devops-extension-api/WorkItemTracking";
 import * as DevOps from "azure-devops-extension-sdk";
 import { IWorkItem } from "../../model/workitem";
 import { WorkItemTypeIcon } from "./typeIcon";
 import "./workItemHeader.scss";
+import { getClient } from "azure-devops-extension-api";
 
 
 
@@ -12,7 +13,7 @@ export interface IWorkItemHeaderProps {
     workItem: IWorkItem;
 
 }
-export const WorkItemHeader: React.FC<IWorkItemHeaderProps> = (props) => {
+export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
 
     const { workItem: { id, project, title, workItemType, icon, color, } } = props;
     const [currentHostName, setCurrentHostName] = React.useState<string>("#")
@@ -32,8 +33,13 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> = (props) => {
             ev.preventDefault();
             const service = await DevOps.getService<IWorkItemFormNavigationService>("ms.vss-work-web.work-item-form-navigation-service");
             service.openWorkItem(id);
+       
+         
         }
     }
+
+
+
 
     let currentCustomUrl = `https://dev.azure.com/${currentHostName}/${project}/_workitems/edit/${id}/`
 
@@ -60,3 +66,36 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> = (props) => {
 }
 
 
+// export const workItemLinksQuery = (
+//     workItemId: number,
+//     linkType: string
+//   ) => `SELECT [System.Id]
+//           FROM WorkItemLinks
+//           WHERE ([Source].[System.Id] = ${workItemId}) AND
+//           ([System.Links.LinkType] = '${linkType}') AND
+//           ([Target].[System.State] <> 'Removed')
+//           MODE (MustContain)`;
+  
+//           export async function wiqlQuery(
+//             query: string,
+//             projectName: string
+//           ): Promise<WorkItemQueryResult> {
+//             return getClient(WorkItemTrackingRestClient).queryByWiql(
+//               { query },
+//               projectName
+//             );
+//           }
+          
+          
+//           export const getWorkItemLinks = async (
+//             workItemId: number,
+//             projectName: string,
+//             linkType: string
+//           ) => {
+//             const query = workItemLinksQuery(workItemId, linkType);
+//             const queryResponse = await wiqlQuery(query, projectName);
+          
+//             return queryResponse.workItemRelations
+//               .map((w) => w.target.id)
+//               .filter((w) => w !== workItemId);
+//           };
