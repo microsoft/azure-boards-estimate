@@ -37,6 +37,7 @@ export class CardSetPicker extends React.Component<ICardSetPickerProps> {
                     this.renderCardSet as IRenderFunction<ISelectableOption>
                 }
                 onChanged={this.onChange as (option: IDropdownOption) => void}
+               
             />
         );
     }

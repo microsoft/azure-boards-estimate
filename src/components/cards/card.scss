@@ -5,6 +5,8 @@
     background: transparent;
     padding: 0;
     outline: none;
+    color: $primary-text;
+   
 }
 
 .card--base {
@@ -13,15 +15,16 @@
     padding: 0;
     outline: none;
 
-    perspective: 1000px;
+        perspective: 1000px;
     transform: perspective(1000px);
     transform-style: preserve-3d;
+  
 }
 
 .card--flip {
     transition: 0.3s;
     transform-style: preserve-3d;
-
+   
     position: relative;
 
     margin: 5px;
@@ -35,6 +38,7 @@
     border-radius: $radius-medium;
 
     user-select: none;
+ 
 
     transition: linear all 0.2s;
     backface-visibility: hidden;
@@ -43,38 +47,49 @@
     position: absolute;
     top: 0;
     left: 0;
+   
 
     &:not(.disabled) {
         cursor: pointer;
+ 
+     
     }
 
     &.disabled {
         pointer-events: none;
+     
+     
     }
 
     &.selected {
         background-color: $communication-background;
+        color: $primary-text;
     }
 
     &.card--front {
         transform: rotateY(0deg);
+        
 
         &.flipped {
             transform: rotateY(180deg);
+            color: $primary-text;
         }
 
         &:not(.disabled) {
             &:hover {
                 background-color: $communication-tint-10;
+                color: $primary-text;
             }
         }
     }
 
     &.card--back {
         transform: rotateY(-180deg);
+         color: $primary-text;
 
         &.flipped {
             transform: rotateY(0deg);
+            color: $primary-text;
         }
     }
 }

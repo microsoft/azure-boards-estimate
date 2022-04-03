@@ -87,21 +87,24 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                         <div className="flex-grow flex-column">
                             <WorkItemDescription workItem={selectedWorkItem} />
                      
+                     <div className="card-sub-container">
                             <WorkItemEstimate
                                 cardSet={cardSet}
                                 estimate={selectedWorkItem.estimate}
                             />
 
-                            <SubTitle>Your vote</SubTitle>
+                            <SubTitle>Your vote </SubTitle>
                             <div className="card-container">
                                 {cardSet &&
                                     cardSet.cards.map(card =>
-                                        this.renderCard(
+                                     <div className="votes-container">  
+                                           { this.renderCard(
                                             card,
                                             revealed,
                                             card.identifier === selectedCardId,
                                             this.doEstimate.bind(this, card)
-                                        )
+                                        )}
+                                     </div>
                                     )}
                             </div>
 
@@ -116,7 +119,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                 <>
                                     <SubTitle>Actions</SubTitle>
                                     {canReveal && (
-                                        <div className="flex-column flex-self-start">
+                                        <div>
                                             <Button
                                                 primary
                                                 onClick={this.doReveal}
@@ -132,7 +135,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                 choose one to commit the value
                                                 to the work item:
                                             </div>
-                                            <div>
+                                            <div >
                                                 {(estimates || []).map(e => {
                                                     const card = cardSet.cards.find(
                                                         x =>
@@ -189,8 +192,11 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             />
                                         </>
                                     )}
+
                                 </>
+                            
                             )}
+                                </div>
                         </div>
                     </CardContent>
                 </CustomCard>
@@ -198,7 +204,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         );
     }
 
-    private doCommitValue = (value: string) => {
+    private doCommitValue = (value: number | null) => {
         const { commitEstimate } = this.props;
         commitEstimate(value);
     };

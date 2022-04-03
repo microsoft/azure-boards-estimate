@@ -1,8 +1,11 @@
 @import "azure-devops-ui/Core/_platformCommon.scss";
 
+.work-item-card--info{
+overflow: hidden;
+}
+
 .work-item-card {    
     min-width: 200px;
-    min-height: 50px;
     margin-bottom: 15px;
     flex-shrink: 0;
 
@@ -25,29 +28,34 @@
     &--info {
         display: flex;
         align-items: flex-start;
-        flex-grow: 1;        
+          
     }
 
     &--title {
-        overflow-wrap: break-word;
-        padding-right: 5px;
+        overflow-wrap: break-word  !important;
+        overflow: hidden;
+        padding: 0px 5px;
+       
     }
 
     &--meta {
         display: flex;
         align-items: center;
 
-        flex: 1 1 auto;
-        padding-right: 5px;
+     
     }
 
     &--id {
         font-weight: bold;
-        margin-right: 5px;
+     
     }
 
     &--estimate {
         text-align: right;
         font-weight: bold;
+       
     }
+}
+.estimate-container{
+    margin-left: auto;
 }

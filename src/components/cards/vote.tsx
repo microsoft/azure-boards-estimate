@@ -33,7 +33,7 @@ export class Vote extends React.Component<IVoteProps> {
                 />
 
         <Tooltip text={identity.displayName}>
-                    <div>
+                    <div >
                         <VssPersona
                             identityDetailsProvider={{
                                 getDisplayName: () => identity.displayName,
