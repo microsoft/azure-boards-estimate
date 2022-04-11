@@ -20,7 +20,7 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
     const [currentUrl ,setCurrentUrl] = React.useState<string>("#")
     
    React.useEffect(() => {
-        getLocationUrl()
+    getBaseURl()
      },[])
 
    
@@ -34,7 +34,7 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
 
 
         
- const getLocationUrl = async () => {
+ const getBaseURl = async () => {
     const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
     setCurrentUrl(await locationService.getServiceLocation())
 };
