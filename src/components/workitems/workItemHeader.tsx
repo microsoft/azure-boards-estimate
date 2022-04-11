@@ -18,15 +18,10 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
 
     const { workItem: { id, project, title, workItemType, icon, color, } } = props;
     const [currentUrl ,setCurrentUrl] = React.useState<string>("#")
-    const [amin , setamin] =  React.useState<any>("#")
     
-    
-  
-
-    React.useEffect(() => {
+   React.useEffect(() => {
         getLocationUrl()
-       
-    }, [])
+     },[])
 
    
     const openWi = async (ev: any) => {
@@ -42,15 +37,9 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
  const getLocationUrl = async () => {
     const locationService = await DevOps.getService<ILocationService>("ms.vss-features.location-service");
     setCurrentUrl(await locationService.getServiceLocation())
+};
 
-    return await locationService.getServiceLocation();
-  };
-
-
-
-    
-    
-   let currentCustomUrl = `${currentUrl}/${project}/_workitems/edit/${id}/`
+let currentCustomUrl = `${currentUrl}/${project}/_workitems/edit/${id}/`
    return (
       <div>
           <div className="work-item-header">
