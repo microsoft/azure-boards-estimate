@@ -135,7 +135,7 @@ class SettingsPanel extends React.Component<
                         <Spinner size={SpinnerSize.large} />
                     </div>
                 ) : (
-                    <div className="settings-panel--content  input-wd">
+                    <div className="settings-panel--content  ">
                         <p>
                             Select a field to store the estimation for each work
                             item type you are planning to estimate.
