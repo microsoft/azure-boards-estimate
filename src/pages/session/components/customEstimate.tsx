@@ -8,11 +8,16 @@ export const CustomEstimate: React.FC<{
 }> = props => {
     const [value, setValue] = React.useState<number | null>(null);
 
+    const clickhandler = (e: any)=>{
+        const estimate = e.currentTarget.value
+        setValue(estimate)
+    }
+
     return (
         <div className="flex-row">
           <input
              className="custom-values-input"
-             onChange={(e) => setValue(Number(e.target.value))}
+             onChange={clickhandler}
                type="number"
              
             />
@@ -26,3 +31,4 @@ export const CustomEstimate: React.FC<{
         </div>
     );
 };
+
