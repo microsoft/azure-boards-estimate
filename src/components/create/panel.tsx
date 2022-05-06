@@ -183,6 +183,7 @@ class CreatePanel extends React.Component<
                             onChange={this.onChangeName}
                             value={name}
                             placeholder="Session title"
+                             className="textfield-color"
                         />
                     </div>
 

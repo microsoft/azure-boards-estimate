@@ -60,7 +60,7 @@ class SettingsPanel extends React.Component<
                 );
 
                 return (
-                    <SimpleTableCell columnIndex={columnIndex}>
+                    <SimpleTableCell columnIndex={columnIndex} >
                         <Dropdown<IField>
                             {...{
                                 onSelect: this.onSelect.bind(
@@ -91,14 +91,14 @@ class SettingsPanel extends React.Component<
                                 )
                               
                             }}
-                            className="dropdown-input-field"
+                     
                           
+                className="dropdown-input-field"
                         />
                     </SimpleTableCell>
                 );
             },
             width: 200,
-        
         }
     ];
     private onSelect = (
@@ -121,6 +121,7 @@ class SettingsPanel extends React.Component<
 
         return (
             <Panel
+          
                 titleProps={{
                     text: "Settings",
                     size: TitleSize.Large
@@ -134,7 +135,7 @@ class SettingsPanel extends React.Component<
                         <Spinner size={SpinnerSize.large} />
                     </div>
                 ) : (
-                    <div className="settings-panel--content  input-wd">
+                    <div className="settings-panel--content  ">
                         <p>
                             Select a field to store the estimation for each work
                             item type you are planning to estimate.
@@ -146,11 +147,12 @@ class SettingsPanel extends React.Component<
                         </p>
 
                         <Table<IWorkItemType>
-                         
+                           
                             columns={this.columns}
                             itemProvider={
                                 new ArrayItemProvider(this.props.workItemTypes)
                             }
+                            className="table-color"
                         />
                     </div>
                 )}
