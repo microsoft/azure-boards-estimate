@@ -20,6 +20,7 @@ import { CustomEstimate } from "./customEstimate";
 import "./workItemView.scss";
 import { canPerformAdminActions } from "../selector";
 import { IUserInfo } from "../../../model/user";
+import { ItemsObserver } from "azure-devops-ui/Observer";
 
 interface IWorkItemProps {
     identity: IIdentity;
@@ -61,9 +62,17 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         } = this.props;
 
 
-       
 
-        return (
+    
+    
+
+        const checkIfIsEqual = ()=>{
+        if(revealed && estimates.every( (val, i, arr) => val.cardIdentifier === arr[0].cardIdentifier )  ){
+            return estimates[0].cardIdentifier 
+            }
+        }
+
+       return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
                 <CustomCard className="work-item-view flex-grow">
                     <Header
@@ -186,6 +195,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             )}
                                             <div>Or enter a custom value:</div>
                                             <CustomEstimate
+                                                checkIfIsEqual={checkIfIsEqual}
                                                 commitEstimate={
                                                     this.doCommitValue
                                                 }

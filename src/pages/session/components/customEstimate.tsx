@@ -2,9 +2,12 @@ import * as React from "react";
 import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
 
-export const CustomEstimate: React.FC<{
+interface Props {
     commitEstimate: (value: number | null ) => void;
-}> = props => {
+    checkIfIsEqual: any
+}
+
+export const CustomEstimate: React.FC<Props> = props => {
     const [value, setValue] = React.useState<number | null>(null);
 
     return (
@@ -12,13 +15,13 @@ export const CustomEstimate: React.FC<{
           <input
              className="custom-values-input"
              onChange={(e) => setValue(Number(e.target.value))}
-               type="number"
+             type="number"
              
             />
             <Button
                 className="custom-values-input"
                 onClick={() => {
-                    props.commitEstimate(value);
+                    props.commitEstimate( value || props.checkIfIsEqual());
                 }}
             >  Save
             </Button>
