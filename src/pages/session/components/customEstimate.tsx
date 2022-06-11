@@ -3,7 +3,7 @@ import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
 
 export const CustomEstimate: React.FC<{
-    commitEstimate: (value: string | null ) => void;
+    commitEstimate: (value: string |null ) => void;
 }> = props => {
     const [value, setValue] = React.useState<string | null>(null);
 
@@ -15,9 +15,9 @@ export const CustomEstimate: React.FC<{
     let currentVal = value   
      return  currentVal.replace(".", ",")
        }
-       
-       return value
+       return value 
     }
+  
   
 
     return (
@@ -34,7 +34,7 @@ export const CustomEstimate: React.FC<{
             <Button
                 className="custom-values-input"
                 onClick={() => {
-                    props.commitEstimate("s");
+                    props.commitEstimate(replaceChar());
                 }}
             >  Save
             </Button>
