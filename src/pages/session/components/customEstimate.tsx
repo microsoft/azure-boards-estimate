@@ -3,22 +3,29 @@ import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
 
 export const CustomEstimate: React.FC<{
-    commitEstimate: (value: number | null ) => void;
+    commitEstimate: (value: string | null) => void;
 }> = props => {
-    const [value, setValue] = React.useState<number | null>(null);
+    const [value, setValue] = React.useState<string | null>(null);
 
-    return (
+
+    const replaceChar = () => {
+        if (value && value.includes(".")) {
+            let currentVal = value
+            return currentVal.replace(".", ",")
+        }
+        return value
+    }
+
+return (
         <div className="flex-row">
-          <input
-             className="custom-values-input"
-             onChange={(e) => setValue(Number(e.target.value))}
-               type="number"
-             
-            />
+            <input
+                className="custom-values-input"
+                onChange={(e) => setValue(e.target.value)}
+                type="text" />
             <Button
                 className="custom-values-input"
                 onClick={() => {
-                    props.commitEstimate(value);
+                    props.commitEstimate(replaceChar());
                 }}
             >  Save
             </Button>
@@ -26,6 +33,7 @@ export const CustomEstimate: React.FC<{
     );
 };
 
-  
+
+
 
 
