@@ -2,7 +2,7 @@ import * as React from "react";
 import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
 
-interface CustomEstimateProp  {
+interface CustomEstimateProps  {
     commitEstimate: (value: number | null ) => void;
     checkIfIsEqual: any
 }
