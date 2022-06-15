@@ -2,12 +2,12 @@ import * as React from "react";
 import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
 
-interface Props {
+interface CustomEstimateProps  {
     commitEstimate: (value: number | null ) => void;
     checkIfIsEqual: any
 }
 
-export const CustomEstimate: React.FC<Props> = props => {
+export const CustomEstimate: React.FC<CustomEstimateProps > = props => {
     const [value, setValue] = React.useState<number | null>(null);
 
     return (
