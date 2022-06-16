@@ -23,10 +23,7 @@ export const CustomEstimate: React.FC<CustomEstimateProps> = props => {
         }
         return value
     }
-
-
-
-    return (
+return (
         <div className="flex-row">
             <input
                 className="custom-values-input"
