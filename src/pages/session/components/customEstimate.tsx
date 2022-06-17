@@ -1,10 +1,18 @@
 import * as React from "react";
 import { Button } from "azure-devops-ui/Button";
 import "./customEstimate.scss"
+import { ICard } from "../../../model/cards";
+import { Action } from "redux";
 
-export const CustomEstimate: React.FC<{
+
+
+
+interface CustomEstimateProps {
+    checkIfIsEqual: () => any;
     commitEstimate: (value: string | null) => void;
-}> = props => {
+}
+
+export const CustomEstimate: React.FC<CustomEstimateProps> = props => {
     const [value, setValue] = React.useState<string | null>(null);
 
 
@@ -15,7 +23,6 @@ export const CustomEstimate: React.FC<{
         }
         return value
     }
-
 return (
         <div className="flex-row">
             <input
@@ -25,7 +32,7 @@ return (
             <Button
                 className="custom-values-input"
                 onClick={() => {
-                    props.commitEstimate(replaceChar());
+                    props.commitEstimate(replaceChar() || props.checkIfIsEqual());
                 }}
             >  Save
             </Button>
