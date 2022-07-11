@@ -59,3 +59,22 @@ overflow: hidden;
 .estimate-container{
     margin-left: auto;
 }
+
+
+
+.card-work-item{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    
+}
+.work-item-id-icon{
+    min-width: 150px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+}
+.card{
+display: flex;
+flex-direction: column;
+}
