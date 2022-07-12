@@ -35,17 +35,22 @@ export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
             onClick={onClick}
         >
             <Card>
-                <div className="work-item-card--info">
-                    <div className="work-item-card--meta">
-                        <WorkItemTypeIcon icon={icon} color={color} />
-                        <div className="work-item-card--id">{id}</div>
+
+
+                <div>
+                    <div className="card-work-item">
+                        <div className="work-item-id-icon">
+                            <WorkItemTypeIcon icon={icon} color={color} />
+                            <div className="work-item-card--id">{id}</div>
+                        </div>
+
+                        <WorkItemEstimate cardSet={cardSet} estimate={estimate} />
                     </div>
                     <div className="work-item-card--title">{title}</div>
+
                 </div>
-                <div className="estimate-container">
-                <WorkItemEstimate cardSet={cardSet} estimate={estimate} />
-                </div>
-                
+
+
             </Card>
         </div>
     );
