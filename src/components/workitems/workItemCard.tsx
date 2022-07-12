@@ -47,7 +47,7 @@ export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
                         <WorkItemEstimate cardSet={cardSet} estimate={estimate} />
                     </div>
                     <div className="work-item-card--title">{title}</div>
-//test
+
                 </div>
 
 
