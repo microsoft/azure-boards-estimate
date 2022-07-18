@@ -74,7 +74,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
             }
         }
 
-        // canReveal
+     
 
 
         const sessionOwneReveal = (canReveal:boolean) =>{
