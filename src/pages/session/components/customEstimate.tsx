@@ -41,7 +41,7 @@ return (
                 }}
             >  Save
             </Button>
-            {warning(!props.disabled)}
+            {!props.disabled ? <div className="warning"> Only session owner can save estimate </div> : null}
         </div>
     );
 };
