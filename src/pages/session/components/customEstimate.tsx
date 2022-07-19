@@ -10,6 +10,7 @@ import { Action } from "redux";
 interface CustomEstimateProps {
     checkIfIsEqual: () => any;
     commitEstimate: (value: string | null) => void;
+    disabled: boolean
 }
 
 export const CustomEstimate: React.FC<CustomEstimateProps> = props => {
@@ -26,6 +27,7 @@ export const CustomEstimate: React.FC<CustomEstimateProps> = props => {
 return (
         <div className="flex-row">
             <input
+                disabled={!props.disabled}
                 className="custom-values-input"
                 onChange={(e) => setValue(e.target.value)}
                 type="text" />
