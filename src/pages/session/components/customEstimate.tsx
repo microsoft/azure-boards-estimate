@@ -24,6 +24,8 @@ export const CustomEstimate: React.FC<CustomEstimateProps> = props => {
         }
         return value
     }
+
+
 return (
         <div className="flex-row">
             <input
@@ -32,12 +34,14 @@ return (
                 onChange={(e) => setValue(e.target.value)}
                 type="text" />
             <Button
+                 disabled={!props.disabled}
                 className="custom-values-input"
                 onClick={() => {
                     props.commitEstimate(replaceChar() || props.checkIfIsEqual());
                 }}
             >  Save
             </Button>
+            {warning(!props.disabled)}
         </div>
     );
 };
