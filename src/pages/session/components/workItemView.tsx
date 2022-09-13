@@ -36,8 +36,7 @@ interface IWorkItemProps {
     showAverage: boolean;
     canPerformAdminActions: boolean;
     users: IUserInfo[];
-    sessionOwner:boolean 
-
+    sessionOwner: boolean;
 }
 
 const Actions = {
@@ -210,6 +209,8 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                     commitEstimate={
                                                         this.doCommitValue
                                                     }
+                                                    disabled={sessionOwner}
+
                                                 />
                                             </>
                                         )}
@@ -290,6 +291,7 @@ export default connect(
       
 
         const estimates = session.estimates[session.selectedWorkItem!.id];
+        let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
 
         let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
 
@@ -309,7 +311,7 @@ export default connect(
                 state.session.ownEstimate &&
                 state.session.ownEstimate.cardIdentifier,
             canPerformAdminActions: admin,
-            sessionOwner: sessionOwner
+            sessionOwner:sessionOwner
         };
     },
     Actions
