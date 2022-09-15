@@ -77,15 +77,19 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
 
         const sessionOwneReveal = (canReveal:boolean) =>{
-            if(sessionOwner && canReveal){
+            if(canReveal){
             return <> <SubTitle>Actions</SubTitle>
                   <div>
                         <Button
                             primary
                             onClick={this.doReveal}
+                            disabled={!sessionOwner}
                         >
                             Reveal
                         </Button>
+                        {!sessionOwner ? <div className="warning"> Only session owner can reveal estimate </div> : null}
+
+    
                     </div>
                     </> 
                  }}
