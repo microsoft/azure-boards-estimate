@@ -18,7 +18,8 @@
  -webkit-appearance: none;
 }
 .warning{
-  color:$status-error-text
+  color:$status-error-text; 
+  padding: 5px 5px;
 }
 .custom-estimate-wrapper{
   display: flex;

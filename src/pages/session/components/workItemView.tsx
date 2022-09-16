@@ -78,7 +78,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
         const sessionOwneReveal = (canReveal:boolean) =>{
             if(canReveal){
-            return <> <SubTitle>Actions</SubTitle>
+            return <> 
                   <div>
                         <Button
                             primary
@@ -98,18 +98,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
             <div className="v-scroll-auto custom-scrollbar flex-grow">
                 <CustomCard className="work-item-view flex-grow">
                     <Header
-                        commandBarItems={
-                            [
-                                canReveal &&
-                                ({
-                                    id: "action-reveal",
-                                    text: "Reveal",
-                                    important: true,
-                                    isPrimary: true,
-                                    onActivate: this.doReveal
-                                } as IHeaderCommandBarItem)
-                            ].filter(x => !!x) as IHeaderCommandBarItem[]
-                        }
+                      
                     >
                         <WorkItemHeader workItem={selectedWorkItem} />
                     </Header>
