@@ -77,15 +77,19 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
 
         const sessionOwneReveal = (canReveal:boolean) =>{
-            if(sessionOwner && canReveal){
-            return <> <SubTitle>Actions</SubTitle>
+            if(canReveal){
+            return <> 
                   <div>
                         <Button
                             primary
                             onClick={this.doReveal}
+                            disabled={!sessionOwner}
                         >
                             Reveal
                         </Button>
+                        {!sessionOwner ? <div className="warning"> Only session owner can reveal estimate </div> : null}
+
+    
                     </div>
                     </> 
                  }}
@@ -94,18 +98,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
             <div className="v-scroll-auto custom-scrollbar flex-grow">
                 <CustomCard className="work-item-view flex-grow">
                     <Header
-                        commandBarItems={
-                            [
-                                canReveal &&
-                                ({
-                                    id: "action-reveal",
-                                    text: "Reveal",
-                                    important: true,
-                                    isPrimary: true,
-                                    onActivate: this.doReveal
-                                } as IHeaderCommandBarItem)
-                            ].filter(x => !!x) as IHeaderCommandBarItem[]
-                        }
+                      
                     >
                         <WorkItemHeader workItem={selectedWorkItem} />
                     </Header>
