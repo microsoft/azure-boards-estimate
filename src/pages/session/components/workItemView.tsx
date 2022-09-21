@@ -293,8 +293,8 @@ export default connect(
         const estimates = session.estimates[session.selectedWorkItem!.id];
         let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
 
-        
-        
+        let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
+
        
         const admin = canPerformAdminActions(state);
 
