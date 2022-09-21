@@ -35,8 +35,7 @@ interface IWorkItemProps {
     canReveal: boolean;
     showAverage: boolean;
     canPerformAdminActions: boolean;
-    users: IUserInfo[];
-    sessionOwner: boolean
+    users: IUserInfo[]
 
 }
 
@@ -58,8 +57,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
             canReveal,
             revealed,
             showAverage,
-            users,
-            sessionOwner
+            users
 
         } = this.props;
 
@@ -201,8 +199,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                     commitEstimate={
                                                         this.doCommitValue
                                                     }
-                                                    disabled={sessionOwner}
-
                                                 />
                                             </>
                                         )}
@@ -282,7 +278,6 @@ export default connect(
         const { session } = state;
 
         const estimates = session.estimates[session.selectedWorkItem!.id];
-        let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
 
         const admin = canPerformAdminActions(state);
 
@@ -298,8 +293,7 @@ export default connect(
             selectedCardId:
                 state.session.ownEstimate &&
                 state.session.ownEstimate.cardIdentifier,
-            canPerformAdminActions: admin,
-            sessionOwner:sessionOwner
+            canPerformAdminActions: admin
         };
     },
     Actions
