@@ -35,8 +35,8 @@ interface IWorkItemProps {
     canReveal: boolean;
     showAverage: boolean;
     canPerformAdminActions: boolean;
-    users: IUserInfo[];
-    sessionOwner: boolean;
+    users: IUserInfo[]
+
 }
 
 const Actions = {
@@ -57,8 +57,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
             canReveal,
             revealed,
             showAverage,
-            users,
-            sessionOwner
+            users
 
         } = this.props;
 
@@ -72,27 +71,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                 return estimates[0].cardIdentifier
             }
         }
-
-     
-
-
-        const sessionOwneReveal = (canReveal:boolean) =>{
-            if(canReveal){
-            return <> 
-                  <div>
-                        <Button
-                            primary
-                            onClick={this.doReveal}
-                            disabled={!sessionOwner}
-                        >
-                            Reveal
-                        </Button>
-                        {!sessionOwner ? <div className="warning"> Only session owner can reveal estimate </div> : null}
-
-    
-                    </div>
-                    </> 
-                 }}
 
         return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
@@ -135,11 +113,19 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                     revealed={revealed}
                                 />
 
-                                {canPerformAdminActions &&  (
+                                {canPerformAdminActions && (
                                     <>
                                         <SubTitle>Actions</SubTitle>
-                                        
-                                      { sessionOwneReveal(canReveal)}
+                                        {canReveal && (
+                                            <div>
+                                                <Button
+                                                    primary
+                                                    onClick={this.doReveal}
+                                                >
+                                                    Reveal
+                                                </Button>
+                                            </div>
+                                        )}
                                         {revealed && (
                                             <>
                                                 <div>
@@ -202,8 +188,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                     commitEstimate={
                                                         this.doCommitValue
                                                     }
-                                                    disabled={sessionOwner}
-
                                                 />
                                             </>
                                         )}
@@ -281,14 +265,9 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 export default connect(
     (state: IState) => {
         const { session } = state;
-      
 
         const estimates = session.estimates[session.selectedWorkItem!.id];
-        let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
 
-        
-        
-       
         const admin = canPerformAdminActions(state);
 
         return {
@@ -303,8 +282,7 @@ export default connect(
             selectedCardId:
                 state.session.ownEstimate &&
                 state.session.ownEstimate.cardIdentifier,
-            canPerformAdminActions: admin,
-            sessionOwner:sessionOwner
+            canPerformAdminActions: admin
         };
     },
     Actions
