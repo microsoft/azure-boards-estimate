@@ -36,7 +36,8 @@ interface IWorkItemProps {
     showAverage: boolean;
     canPerformAdminActions: boolean;
     users: IUserInfo[];
-    sessionOwner: boolean;
+    sessionOwner: boolean
+
 }
 
 const Actions = {
@@ -72,23 +73,6 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                 return estimates[0].cardIdentifier
             }
         }
-
-     
-
-
-        const sessionOwneReveal = (canReveal:boolean) =>{
-            if(sessionOwner && canReveal){
-            return <> <SubTitle>Actions</SubTitle>
-                  <div>
-                        <Button
-                            primary
-                            onClick={this.doReveal}
-                        >
-                            Reveal
-                        </Button>
-                    </div>
-                    </> 
-                 }}
 
         return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
@@ -142,11 +126,19 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                     revealed={revealed}
                                 />
 
-                                {canPerformAdminActions &&  (
+                                {canPerformAdminActions && (
                                     <>
                                         <SubTitle>Actions</SubTitle>
-                                        
-                                      { sessionOwneReveal(canReveal)}
+                                        {canReveal && (
+                                            <div>
+                                                <Button
+                                                    primary
+                                                    onClick={this.doReveal}
+                                                >
+                                                    Reveal
+                                                </Button>
+                                            </div>
+                                        )}
                                         {revealed && (
                                             <>
                                                 <div>
@@ -288,14 +280,10 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 export default connect(
     (state: IState) => {
         const { session } = state;
-      
 
         const estimates = session.estimates[session.selectedWorkItem!.id];
         let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
 
-        let sessionOwner =  session.session!.createdBy === session.currentUser!.tfId ? true : false
-
-       
         const admin = canPerformAdminActions(state);
 
         return {
