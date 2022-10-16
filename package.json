@@ -44,7 +44,7 @@
     "@types/react-router-dom": "^4.2.7",
     "base64-inline-loader": "^1.1.1",
     "node-sass": "^6.0.1",
-    "tfx-cli": "0.6.3",
+    "tfx-cli": "0.12.0",
     "typescript": "^3.1.6",
     "tslint-react": "4.0.0",
     "sass-loader": "^11.1.1"
