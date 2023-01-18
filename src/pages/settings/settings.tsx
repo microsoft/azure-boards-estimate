@@ -81,7 +81,7 @@ class SettingsPanel extends React.Component<
                                               ]
                                             : undefined
                                 }),
-                                items: (this.props.fields || []).map(
+                                items: (this.props.fields && this.props.fields.concat({name: "Clear", referenceName: ""}) || []).map(
                                     f =>
                                         ({
                                             id: f.referenceName,
