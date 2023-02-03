@@ -71,6 +71,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                 return estimates[0].cardIdentifier
             }
         }
+      
 
         return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
@@ -203,7 +204,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         );
     }
 
-    private doCommitValue = (value: string | null) => {
+    private doCommitValue = (value: string | null ) => {
         const { commitEstimate } = this.props;
         commitEstimate(value);
     };
