@@ -16,23 +16,24 @@ export const CustomEstimate: React.FC<CustomEstimateProps> = props => {
     const [value, setValue] = React.useState<string | null>(null);
 
 
-    const replaceChar = () => {
-        if (value && value.includes(".")) {
-            let currentVal = value
-            return currentVal.replace(".", ",")
+const containsNumber = ()=> {
+    if(/\d/.test(props.checkIfIsEqual()) ){
+        return "number"
         }
-        return value
+        return "text"
     }
+     
 return (
         <div className="flex-row">
             <input
                 className="custom-values-input"
                 onChange={(e) => setValue(e.target.value)}
-                type="text" />
+                type={containsNumber()}
+              />
             <Button
                 className="custom-values-input"
                 onClick={() => {
-                    props.commitEstimate(replaceChar() || props.checkIfIsEqual());
+                    props.commitEstimate(value || props.checkIfIsEqual());
                 }}
             >  Save
             </Button>
