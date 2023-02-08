@@ -18,7 +18,7 @@ export class SessionList extends React.Component<ICardListProps> {
 
         return (
             <ul className="session-list">
-                {sessions.map(session => (
+                {sessions.sort((a, b) => a.session.name > b.session.name ? 1 : -1).map(session => (
                     <SessionCard
                         key={session.session.id}
                         session={session}
