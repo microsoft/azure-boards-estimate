@@ -23,7 +23,7 @@ DevOps.getService<IHostNavigationService>(
     navService.onHashChanged(navigate);
 
     // Send navigation updates to host frame
-    history.listen((x:an) => {
+    history.listen((x:any) => {
         navService.replaceHash(x.pathname);
     });
 });
@@ -52,7 +52,6 @@ class App extends React.Component {
                         </Switch>
 
                         <Route
-                         
                             path="/session/:id/:name?"
                             component={Session}
                         />
