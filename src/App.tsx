@@ -18,7 +18,7 @@ DevOps.getService<IHostNavigationService>(
     // Listen to initial navigation update from host frame
     navService.getHash().then(navigate, () => {
         /* ignore */
-    });
+    })
 
     navService.onHashChanged(navigate);
 
@@ -49,13 +49,14 @@ class App extends React.Component {
                                 component={HomePage}
                             />
                             <Route  path="/" component={HomePage} />
+                            <Route
+                        
+                        path="/session/:id/:name?"
+                        component={Session}
+                    />
                         </Switch>
 
-                        <Route
-                        
-                            path="/session/:id/:name?"
-                            component={Session}
-                        />
+                      
                     </>
                 </Router>
             </Surface>
