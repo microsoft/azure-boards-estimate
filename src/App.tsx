@@ -52,7 +52,7 @@ class App extends React.Component {
                         </Switch>
 
                         <Route
-                            exact={true}
+                             
                             path="/session/:id/:name?"
                             component={Session}
                         />
