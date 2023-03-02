@@ -3,7 +3,7 @@ import * as DevOps from "azure-devops-extension-sdk";
 import { Surface, SurfaceBackground } from "azure-devops-ui/Surface";
 import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
-import { Route, Router, Switch } from "react-router-dom";
+import { Route, Router, Switch, BrowserRouter } from "react-router-dom";
 import history from "./lib/history";
 import HomePage from "./pages/home/home";
 import Session from "./pages/session/session";
@@ -35,28 +35,30 @@ class App extends React.Component {
         return (
             <Surface background={SurfaceBackground.neutral}>
                 <Router history={history}>
-                    <>
+                    <BrowserRouter>
                         <Switch>
+                        <Route path="/" component={HomePage} />
                             <Route
-                                exact={true}
+                                
                                 path="/create/:ids?"
                                 component={HomePage}
                             />
 
                             <Route
-                                exact={true}
+                               
                                 path="/settings"
                                 component={HomePage}
                             />
-                            <Route exact={true} path="/" component={HomePage} />
-                        </Switch>
-
-                        <Route
-                             
+                        
+                            <Route
+                    
                             path="/session/:id/:name?"
                             component={Session}
                         />
-                    </>
+                        </Switch>
+
+                       
+                    </BrowserRouter>
                 </Router>
             </Surface>
         );

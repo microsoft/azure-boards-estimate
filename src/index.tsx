@@ -90,7 +90,9 @@ if (!window.location.search || !window.location.search.trim()) {
         sagaMiddleware.run(rootSessionSaga);
 
         ReactDOM.render(
+            
             <Provider store={store}>
+                
                 <App />
             </Provider>,
             document.getElementById("root") as HTMLElement
