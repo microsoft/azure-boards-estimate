@@ -38,17 +38,17 @@ class App extends React.Component {
                     <>
                         <Switch>
                             <Route
-                                exact={true}
+                           
                                 path="/create/:ids?"
                                 component={HomePage}
                             />
 
                             <Route
-                                exact={true}
+                                exact
                                 path="/settings"
                                 component={HomePage}
                             />
-                            <Route exact={true} path="/" component={HomePage} />
+                      
                         </Switch>
 
                         <Route
