@@ -1,5 +1,6 @@
 import { IHostNavigationService } from "azure-devops-extension-api";
 import * as DevOps from "azure-devops-extension-sdk";
+import * as SDK from "azure-devops-extension-sdk";
 import { Surface, SurfaceBackground } from "azure-devops-ui/Surface";
 import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
@@ -8,9 +9,11 @@ import history from "./lib/history";
 import HomePage from "./pages/home/home";
 import Session from "./pages/session/session";
 
+
 DevOps.getService<IHostNavigationService>(
     "ms.vss-features.host-navigation-service"
 ).then(navService => {
+    
     const navigate = (hash: string) => {
         history.replace(hash.replace("#", ""));
     };
@@ -24,7 +27,11 @@ DevOps.getService<IHostNavigationService>(
 
     // Send navigation updates to host frame
     history.listen(x => {
-        navService.replaceHash(x.pathname);
+   
+   const decodeUri = decodeURIComponent(x.pathname)
+   let formatURL = decodeUri.replace(/\/+/g, "/")
+   navService.replaceHash(formatURL);
+
     });
 });
 
