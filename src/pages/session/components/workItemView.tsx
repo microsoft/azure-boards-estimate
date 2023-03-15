@@ -23,265 +23,232 @@ import { IUserInfo } from "../../../model/user";
 import { ItemsObserver } from "azure-devops-ui/Observer";
 
 interface IWorkItemProps {
-    identity: IIdentity;
-    selectedWorkItem: IWorkItem;
-    cardSet: ICardSet;
+  identity: IIdentity;
+  selectedWorkItem: IWorkItem;
+  cardSet: ICardSet;
 
-    /** User's selection */
-    selectedCardId: string | null;
-    estimates: IEstimate[];
+  /** User's selection */
+  selectedCardId: string | null;
+  estimates: IEstimate[];
 
-    revealed: boolean;
-    canReveal: boolean;
-    showAverage: boolean;
-    canPerformAdminActions: boolean;
-    users: IUserInfo[]
-
+  revealed: boolean;
+  canReveal: boolean;
+  showAverage: boolean;
+  canPerformAdminActions: boolean;
+  users: IUserInfo[];
 }
 
 const Actions = {
-    estimate,
-    reveal,
-    commitEstimate
-
+  estimate,
+  reveal,
+  commitEstimate,
 };
 
 class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
-    render() {
-        const {
-            canPerformAdminActions,
-            cardSet,
-            selectedWorkItem,
-            selectedCardId,
-            estimates,
-            canReveal,
-            revealed,
-            showAverage,
-            users
+  render() {
+    const {
+      canPerformAdminActions,
+      cardSet,
+      selectedWorkItem,
+      selectedCardId,
+      estimates,
+      canReveal,
+      revealed,
+      showAverage,
+      users,
+    } = this.props;
 
-        } = this.props;
+    const checkIfIsEqual = () => {
+      if (
+        revealed &&
+        estimates &&
+        estimates.every(
+          (val, i, arr) => val.cardIdentifier === arr[0].cardIdentifier
+        )
+      ) {
+        return estimates[0].cardIdentifier;
+      }
+    };
 
+    return (
+      <div className="v-scroll-auto custom-scrollbar flex-grow">
+        <CustomCard className="work-item-view flex-grow">
+          <Header>
+            <WorkItemHeader workItem={selectedWorkItem} />
+          </Header>
 
+          <CardContent>
+            <div className="flex-grow flex-column">
+              <WorkItemDescription workItem={selectedWorkItem} />
 
+              <div className="card-sub-container">
+                <WorkItemEstimate
+                  cardSet={cardSet}
+                  estimate={selectedWorkItem.estimate}
+                />
 
+                <SubTitle>Your vote </SubTitle>
+                <div className="card-container">
+                  {cardSet &&
+                    cardSet.cards.map((card) => (
+                      <div className="votes-container">
+                        {this.renderCard(
+                          card,
+                          revealed,
+                          card.identifier === selectedCardId,
+                          this.doEstimate.bind(this, card)
+                        )}
+                      </div>
+                    ))}
+                </div>
 
+                <SubTitle>
+                  All votes {estimates ? estimates.length : 0}/{users.length}
+                </SubTitle>
+                <Votes
+                  cardSet={cardSet}
+                  estimates={estimates || []}
+                  revealed={revealed}
+                />
 
-        const checkIfIsEqual = () => {
-            if (revealed && estimates && estimates.every((val, i, arr) => val.cardIdentifier === arr[0].cardIdentifier)) {
-                return estimates[0].cardIdentifier
-            }
-        }
-      
-
-        return (
-            <div className="v-scroll-auto custom-scrollbar flex-grow">
-                <CustomCard className="work-item-view flex-grow">
-                    <Header
-                      
-                    >
-                        <WorkItemHeader workItem={selectedWorkItem} />
-                    </Header>
-
-                    <CardContent>
-                        <div className="flex-grow flex-column">
-                            <WorkItemDescription workItem={selectedWorkItem} />
-
-                            <div className="card-sub-container">
-                                <WorkItemEstimate
-                                    cardSet={cardSet}
-                                    estimate={selectedWorkItem.estimate}
-                                />
-
-                                <SubTitle>Your vote </SubTitle>
-                                <div className="card-container">
-                                    {cardSet &&
-                                        cardSet.cards.map(card =>
-                                            <div className="votes-container">
-                                                {this.renderCard(
-                                                    card,
-                                                    revealed,
-                                                    card.identifier === selectedCardId,
-                                                    this.doEstimate.bind(this, card)
-                                                )}
-                                            </div>
-                                        )}
-                                </div>
-
-                                <SubTitle>All votes   {estimates ? estimates.length : 0}/{users.length}</SubTitle>
-                                <Votes
-                                    cardSet={cardSet}
-                                    estimates={estimates || []}
-                                    revealed={revealed}
-                                />
-
-                                {canPerformAdminActions && (
-                                    <>
-                                        <SubTitle>Actions</SubTitle>
-                                        {canReveal && (
-                                            <div>
-                                                <Button
-                                                    primary
-                                                    onClick={this.doReveal}
-                                                >
-                                                    Reveal
-                                                </Button>
-                                            </div>
-                                        )}
-                                        {revealed && (
-                                            <>
-                                                <div>
-                                                    These were the cards selected,
-                                                    choose one to commit the value
-                                                    to the work item:
-                                                </div>
-                                                <div >
-                                                    {(estimates || []).map(e => {
-                                                        const card = cardSet.cards.find(
-                                                            x =>
-                                                                x.identifier ===
-                                                                e.cardIdentifier
-                                                        )!;
-                                                        return this.renderCard(
-                                                            card,
-                                                            false,
-                                                            false,
-                                                            (canPerformAdminActions &&
-                                                                this.doCommitCard.bind(
-                                                                    this,
-                                                                    card
-                                                                )) ||
-                                                            undefined
-                                                        );
-                                                    })}
-                                                </div>
-                                                {showAverage && (
-                                                    <>
-
-                                                        <SubTitle>Average</SubTitle>
-                                                        <div className="flex-column flex-self-start">
-                                                            {(estimates || []).reduce((sum, e) => {
-                                                                const card = cardSet.cards.find(
-                                                                    x =>
-                                                                        x.identifier ===
-                                                                        e.cardIdentifier
-                                                                )!; if (
-
-                                                                    Number.isFinite(card!.value)
-
-                                                                ) {
-                                                                    sum += card!.value!;
-                                                                }
-                                                                return sum;
-                                                            }, 0) / (estimates.filter(i => {
-                                                                return i.cardIdentifier !== "?"
-
-                                                            }).length || 1)}
-
-                                                        </div>
-                                                    </>
-                                                )}
-                                                <div>Or enter a custom value:</div>
-                                                <CustomEstimate
-                                                    checkIfIsEqual={checkIfIsEqual}
-                                                    commitEstimate={
-                                                        this.doCommitValue
-                                                    }
-                                                />
-                                            </>
-                                        )}
-
-                                    </>
-
-                                )}
-                            </div>
+                {canPerformAdminActions && (
+                  <>
+                    <SubTitle>Actions</SubTitle>
+                    {canReveal && (
+                      <div>
+                        <Button primary onClick={this.doReveal}>
+                          Reveal
+                        </Button>
+                      </div>
+                    )}
+                    {revealed && (
+                      <>
+                        <div>
+                          These were the cards selected, choose one to commit
+                          the value to the work item:
                         </div>
-                    </CardContent>
-                </CustomCard>
+                        <div>
+                          {(estimates || []).map((e) => {
+                            const card = cardSet.cards.find(
+                              (x) => x.identifier === e.cardIdentifier
+                            )!;
+                            return this.renderCard(
+                              card,
+                              false,
+                              false,
+                              (canPerformAdminActions &&
+                                this.doCommitCard.bind(this, card)) ||
+                                undefined
+                            );
+                          })}
+                        </div>
+                        {showAverage && (
+                          <>
+                            <SubTitle>Average</SubTitle>
+                            <div className="flex-column flex-self-start">
+                              {(estimates || []).reduce((sum, e) => {
+                                const card = cardSet.cards.find(
+                                  (x) => x.identifier === e.cardIdentifier
+                                )!;
+                                if (Number.isFinite(card!.value)) {
+                                  sum += card!.value!;
+                                }
+                                return sum;
+                              }, 0) /
+                                (estimates.filter((i) => {
+                                  return i.cardIdentifier !== "?";
+                                }).length || 1)}
+                            </div>
+                          </>
+                        )}
+                        <div>Or enter a custom value:</div>
+                        <CustomEstimate
+                          checkIfIsEqual={checkIfIsEqual}
+                          commitEstimate={this.doCommitValue}
+                        />
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-        );
+          </CardContent>
+        </CustomCard>
+      </div>
+    );
+  }
+
+  private doCommitValue = (value: string | null) => {
+    const { commitEstimate } = this.props;
+    commitEstimate(value);
+  };
+
+  private renderCard = (
+    card: ICard,
+    disabled?: boolean,
+    selected?: boolean,
+    onClick?: () => void
+  ): JSX.Element => {
+    return (
+      <Card
+        key={card.identifier}
+        front={{
+          label: card.identifier,
+        }}
+        flipped={false}
+        onClick={onClick}
+        disabled={disabled}
+        selected={selected}
+      />
+    );
+  };
+
+  private doReveal = () => {
+    this.props.reveal();
+  };
+
+  private doEstimate = (card: ICard): void => {
+    const { estimate, identity, selectedWorkItem, selectedCardId } = this.props;
+
+    if (card.identifier === selectedCardId) {
+      // Cancel vote
+      estimate({
+        identity,
+        workItemId: selectedWorkItem.id,
+        cardIdentifier: null,
+      });
+    } else {
+      estimate({
+        identity,
+        workItemId: selectedWorkItem.id,
+        cardIdentifier: card.identifier,
+      });
     }
+  };
 
-    private doCommitValue = (value: string | null ) => {
-        const { commitEstimate } = this.props;
-        commitEstimate(value);
-    };
-
-    private renderCard = (
-        card: ICard,
-        disabled?: boolean,
-        selected?: boolean,
-        onClick?: () => void
-    ): JSX.Element => {
-        return (
-            <Card
-                key={card.identifier}
-                front={{
-                    label: card.identifier
-                }}
-                flipped={false}
-                onClick={onClick}
-                disabled={disabled}
-                selected={selected}
-            />
-        );
-    };
-
-    private doReveal = () => {
-        this.props.reveal();
-    };
-
-    private doEstimate = (card: ICard): void => {
-        const {
-            estimate,
-            identity,
-            selectedWorkItem,
-            selectedCardId
-        } = this.props;
-
-        if (card.identifier === selectedCardId) {
-            // Cancel vote
-            estimate({
-                identity,
-                workItemId: selectedWorkItem.id,
-                cardIdentifier: null
-            });
-        } else {
-            estimate({
-                identity,
-                workItemId: selectedWorkItem.id,
-                cardIdentifier: card.identifier
-            });
-        }
-    };
-
-    private doCommitCard = (card: ICard): void => {
-        const { commitEstimate } = this.props;
-        commitEstimate(card.value);
-    };
+  private doCommitCard = (card: ICard): void => {
+    const { commitEstimate } = this.props;
+    commitEstimate(card.value);
+  };
 }
 
-export default connect(
-    (state: IState) => {
-        const { session } = state;
+export default connect((state: IState) => {
+  const { session } = state;
 
-        const estimates = session.estimates[session.selectedWorkItem!.id];
+  const estimates = session.estimates[session.selectedWorkItem!.id];
 
-        const admin = canPerformAdminActions(state);
+  const admin = canPerformAdminActions(state);
 
-        return {
-            identity: state.init.currentIdentity!,
-            cardSet: session.cardSet!,
-            selectedWorkItem: session.selectedWorkItem!,
-            estimates,
-            revealed: session.revealed,
-            showAverage: session.cardSet!.type === CardSetType.Numeric,
-            canReveal:
-                admin && !session.revealed && estimates && estimates.length > 0,
-            selectedCardId:
-                state.session.ownEstimate &&
-                state.session.ownEstimate.cardIdentifier,
-            canPerformAdminActions: admin
-        };
-    },
-    Actions
-)(WorkItemView);
+  return {
+    identity: state.init.currentIdentity!,
+    cardSet: session.cardSet!,
+    selectedWorkItem: session.selectedWorkItem!,
+    estimates,
+    revealed: session.revealed,
+    showAverage: session.cardSet!.type === CardSetType.Numeric,
+    canReveal: admin && !session.revealed && estimates && estimates.length > 0,
+    selectedCardId:
+      state.session.ownEstimate && state.session.ownEstimate.cardIdentifier,
+    canPerformAdminActions: admin,
+  };
+}, Actions)(WorkItemView);
