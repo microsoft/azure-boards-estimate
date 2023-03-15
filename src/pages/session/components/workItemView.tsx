@@ -166,13 +166,10 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                                         e.cardIdentifier
                                                                 )!; if (
 
-                                                                    card!.value !=
-                                                                    null
+                                                                    Number.isFinite(card!.value)
+
                                                                 ) {
-                                                                    sum += parseInt(
-                                                                        card!.value!.toString() ||
-                                                                        "0"
-                                                                    );
+                                                                    sum += card!.value!;
                                                                 }
                                                                 return sum;
                                                             }, 0) / (estimates.filter(i => {
