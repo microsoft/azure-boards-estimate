@@ -27,10 +27,8 @@ DevOps.getService<IHostNavigationService>(
 
     // Send navigation updates to host frame
     history.listen(x => {
-   
-   const decodeUri = decodeURIComponent(x.pathname)
-   let formatURL = decodeUri.replace(/\/+/g, "/")
-   navService.replaceHash(formatURL);
+  
+   navService.replaceHash(x.pathname);
 
     });
 });
