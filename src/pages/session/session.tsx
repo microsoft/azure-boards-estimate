@@ -1,12 +1,5 @@
-import {
-    CustomHeader,
-    HeaderTitle,
-    HeaderTitleArea
-} from "azure-devops-ui/Header";
-import {
-    HeaderCommandBar,
-    IHeaderCommandBarItem
-} from "azure-devops-ui/HeaderCommandBar";
+import { CustomHeader, HeaderTitle, HeaderTitleArea } from "azure-devops-ui/Header";
+import { HeaderCommandBar, IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import { Page } from "azure-devops-ui/Page";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { VssPersona } from "azure-devops-ui/VssPersona";
@@ -23,15 +16,9 @@ import { IWorkItem } from "../../model/workitem";
 import { IState } from "../../reducer";
 import { IPageProps } from "../props";
 import WorkItemView from "./components/workItemView";
-import { getActiveUsers, canPerformAdminActions } from "./selector";
+import { canPerformAdminActions, getActiveUsers } from "./selector";
 import "./session.scss";
-import {
-    endSession,
-    leaveSession,
-    loadedSession,
-    loadSession,
-    selectWorkItem
-} from "./sessionActions";
+import { endSession, leaveSession, loadedSession, loadSession, selectWorkItem } from "./sessionActions";
 
 interface ISessionParams {
     id: string;
@@ -89,7 +76,7 @@ class Session extends React.Component<
             activeUsers
         } = this.props;
 
-      if (status.loading || !session) {
+        if (status.loading || !session) {
             return (
                 <div className="absolute-fill flex-column flex-grow flex-center justify-center">
                     <Spinner size={SpinnerSize.large} />
@@ -147,7 +134,7 @@ class Session extends React.Component<
                                         this.props.endSession();
                                     }
                                 }) ||
-                                    undefined
+                                undefined
                             ].filter(x => !!x) as IHeaderCommandBarItem[]
                         }
                     />
@@ -155,8 +142,6 @@ class Session extends React.Component<
 
                 <div className="page-content page-content-top flex-row session-content">
                     <div className="work-item-list v-scroll-auto flex-column custom-scrollbar flex-noshrink">
-
-                 
                         {workItems.map(workItem => (
                             <WorkItemCard
                                 key={workItem.id}
@@ -175,17 +160,17 @@ class Session extends React.Component<
                                     undefined
                                 }
                             />
-                    
+
                         ))}
-                        </div>
-                        {!!selectedWorkItem && <WorkItemView  users={activeUsers}/>}
-                        {!selectedWorkItem && (
+                    </div>
+                    {!!selectedWorkItem && <WorkItemView users={activeUsers} />}
+                    {!selectedWorkItem && (
                         <div className="flex-grow flex-column flex-center justify-center">
                             <i>Select a work item on the left to get started</i>
                         </div>
-                    )} 
+                    )}
                 </div>
-            
+
             </Page>
         );
     }

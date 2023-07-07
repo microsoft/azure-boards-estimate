@@ -1,19 +1,8 @@
-import {
-    IGlobalMessagesService,
-    IProjectPageService
-} from "azure-devops-extension-api";
+import { IGlobalMessagesService, IProjectPageService } from "azure-devops-extension-api";
 import { ProjectInfo } from "azure-devops-extension-api/Core";
-import { getService, IUserContext } from "azure-devops-extension-sdk";
+import { getService } from "azure-devops-extension-sdk";
 import { SagaIterator, Task } from "redux-saga";
-import {
-    call,
-    cancel,
-    fork,
-    put,
-    select,
-    take,
-    takeLatest
-} from "redux-saga/effects";
+import { call, cancel, fork, put, select, take, takeLatest } from "redux-saga/effects";
 import history from "../../lib/history";
 import { ICardSet } from "../../model/cards";
 import { IIdentity } from "../../model/identity";
@@ -146,10 +135,11 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>) {
         const workItemService = Services.getService<IWorkItemService>(
             WorkItemServiceId
         );
-        const workItems: IWorkItem[] = yield call(
+        let workItems: IWorkItem[] = yield call(
             [workItemService, workItemService.getWorkItems],
             workItemIds
         );
+        workItems = correctOrderAndPopulateNestingLevel(workItems);
 
         yield put(updateStatus("Connecting to server..."));
 
@@ -281,7 +271,8 @@ function* sessionEstimationSaga(): SagaIterator {
                     ? workItems[idx + 1].id
                     : workItems[0].id;
             yield put(selectWorkItem(nextWorkItemId));
-        } catch (e) {}
+        } catch (e) {
+        }
     }
 }
 
@@ -308,4 +299,49 @@ function* notificationSaga(): SagaIterator {
             message: "Estimate saved"
         });
     }
+}
+
+function correctOrderAndPopulateNestingLevel(workItems: IWorkItem[]): IWorkItem[] {
+    const workItemsById = new Map<number, IWorkItem>();
+
+    workItems.forEach(it => workItemsById.set(it.id, it));
+
+    const roots = [...workItems];
+
+    for (let i = workItems.length - 1; i >= 0; i--) {
+        const workItem = workItems[i];
+
+        if (workItem.parent == null) {
+            continue;
+        }
+
+        if (!workItemsById.has(workItem.parent)) {
+            workItem.parent = undefined;
+            continue;
+        }
+
+        const parent = workItemsById.get(workItem.parent)!;
+        if (parent.children === undefined) parent.children = [];
+        parent.children.push(workItem);
+        roots.splice(i, 1);
+    }
+
+    const finalWorkItems: IWorkItem[] = [];
+
+    for (const root of roots) {
+        visit(root, 0);
+    }
+
+    function visit(el: IWorkItem, nestingLevel: number) {
+        el.nestingLevel = nestingLevel;
+        finalWorkItems.push(el);
+
+        if (el.children === undefined) return;
+
+        for (const child of el.children!) {
+            visit(child, nestingLevel + 1);
+        }
+    }
+
+    return finalWorkItems;
 }

@@ -1,22 +1,12 @@
 import { getClient } from "azure-devops-extension-api";
 import { CoreRestClient } from "azure-devops-extension-api/Core";
 import { WorkRestClient } from "azure-devops-extension-api/Work";
-import {
-    WorkItemBatchGetRequest,
-    WorkItemTrackingRestClient
-} from "azure-devops-extension-api/WorkItemTracking";
-import {
-    Page,
-    WorkItemTrackingProcessRestClient
-} from "azure-devops-extension-api/WorkItemTrackingProcess";
+import { WorkItemBatchGetRequest, WorkItemTrackingRestClient } from "azure-devops-extension-api/WorkItemTracking";
+import { Page, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess";
 import { IWorkItem } from "../model/workitem";
 import { IField, IWorkItemType } from "../model/workItemType";
 import { IService, Services } from "./services";
-import {
-    SessionServiceId,
-    ISessionService,
-    FieldConfiguration
-} from "./sessions";
+import { FieldConfiguration, ISessionService, SessionServiceId } from "./sessions";
 
 export interface IWorkItemService extends IService {
     getWorkItems(workItemIds: number[]): Promise<IWorkItem[]>;
@@ -116,6 +106,7 @@ export class WorkItemService implements IWorkItemService {
         }
         return output;
     }
+
     async getWorkItems(workItemIds: number[]): Promise<IWorkItem[]> {
         if (!workItemIds || workItemIds.length === 0) {
             return [];
@@ -140,12 +131,13 @@ export class WorkItemService implements IWorkItemService {
                         "System.WorkItemType",
                         "System.TeamProject",
                         "Microsoft.VSTS.Common.AcceptanceCriteria",
+                        "System.Parent"
                     ],
                     $expand: 0 /* None */,
                     errorPolicy: 2 /* Omit */
                 } as WorkItemBatchGetRequest
             );
-       workItems.push(...allWorkItems);
+            workItems.push(...allWorkItems);
         }
 
         const mappedWorkItems: IWorkItem[] = workItems.map(wi => {
@@ -155,10 +147,10 @@ export class WorkItemService implements IWorkItemService {
                 title: wi.fields["System.Title"],
                 workItemType: wi.fields["System.WorkItemType"],
                 AcceptanceCriteria: wi.fields["Microsoft.VSTS.Common.AcceptanceCriteria"],
-                description: ""
+                description: "",
+                parent: wi.fields["System.Parent"]
             };
         });
-
         // The rest of the method is getting the work item type definitions for the work items and then identifying which HTML fields
         // to use for the description. If most of the work items are in a single project this should be fast, if not it could be
         // really really slow, but this should not be the mainline scenario.
@@ -231,9 +223,7 @@ export class WorkItemService implements IWorkItemService {
                                 async workItemTypeName => {
                                     const workItemType = await processClient.getProcessWorkItemType(
                                         processTypeId,
-                                        witNameToRefNameMapping[
-                                            workItemTypeName
-                                        ],
+                                        witNameToRefNameMapping[workItemTypeName],
                                         4 /* GetWorkItemTypeExpand.Layout */
                                     );
 
@@ -248,9 +238,7 @@ export class WorkItemService implements IWorkItemService {
                                             color: workItemType.color,
                                             descriptionFieldRefName,
                                             estimationFieldRefName:
-                                                witEstimationFieldRefNameMapping[
-                                                    workItemType.name
-                                                ]
+                                                witEstimationFieldRefNameMapping[workItemType.name]
                                         }
                                     );
                                 }
@@ -264,7 +252,7 @@ export class WorkItemService implements IWorkItemService {
                                 color: workItemType.color,
                                 descriptionFieldRefName: "System.Description", // Default to description
                                 estimationFieldRefName:
-                                    workItemType.estimationFieldRefName
+                                workItemType.estimationFieldRefName
                             });
                         });
                     }
@@ -313,16 +301,12 @@ export class WorkItemService implements IWorkItemService {
 
                 if (workItemTypeInfo.descriptionFieldRefName) {
                     workItem.description =
-                        workItemFieldData.fields[
-                            workItemTypeInfo.descriptionFieldRefName
-                        ];
+                        workItemFieldData.fields[workItemTypeInfo.descriptionFieldRefName];
                 }
 
                 if (workItemTypeInfo.estimationFieldRefName) {
                     workItem.estimate =
-                        workItemFieldData.fields[
-                            workItemTypeInfo.estimationFieldRefName
-                        ];
+                        workItemFieldData.fields[workItemTypeInfo.estimationFieldRefName];
                     workItem.estimationFieldRefName =
                         workItemTypeInfo.estimationFieldRefName;
                 }
