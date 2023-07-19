@@ -1,0 +1,84 @@
+{
+    "manifestVersion": 1,
+    "id": "bello-tasks-estimation",
+    "version": "0.1.4",
+    "name": "BelloEstimate Pert",
+    "description": "Planning Poker in Azure Boards.",
+    "publisher": "b9eccb91-3159-481c-846f-5d2cfa5ccbc1",
+    "scopes": ["vso.project", "vso.work", "vso.work_write"],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "demands": ["api-version/5.1"],
+    "galleryFlags": [],
+    "tags": ["Planning Poker", "Estimate"],
+    "icons": {
+        "default": "marketplace/icon-light.png",
+        "branding": "marketplace/icon-light.png"
+    },
+    "content": {
+        "details": {
+            "path": "marketplace/overview.md"
+        },
+        "license": {
+            "path": "marketplace/license.md"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mlsrbek/azure-boards-estimate"
+    },
+    "links": {
+        "support": {
+            "url": "https://github.com/mlsrbek/azure-boards-estimate/#support"
+        }
+    },
+    "branding": {
+        "color": "rgb(220, 235, 252)",
+        "theme": "light"
+    },
+    "categories": ["Azure Boards"],
+    "files": [
+        {
+            "path": "marketplace",
+            "addressable": true
+        },
+        {
+            "path": "build",
+            "addressable": true
+        }
+    ],
+    "contributions": [
+        {
+            "id": "bello-tasks-estimation",
+            "type": "ms.vss-web.hub",
+            "targets": ["ms.vss-work-web.work-hub-group"],
+            "properties": {
+                "name": "Estimate",
+                "order": 100,
+                "uri": "build/index.html",
+                "icon": {
+                    "light": "marketplace/icon-light.png",
+                    "dark": "marketplace/icon-dark.png"
+                }
+            }
+        },
+        {
+            "id": "bello-tasks-estimation-action",
+            "type": "ms.vss-web.action",
+            "targets": [
+                "ms.vss-work-web.backlog-item-menu",
+                "ms.vss-work-web.query-result-work-item-menu"
+            ],
+            "properties": {
+                "text": "Estimate work item(s)",
+                "title": "Start estimation session",
+                "group": "actions",
+                "uri": "build/index.html?context",
+                "registeredObjectId": "bello-tasks-estimation-context-menu"
+            }
+        }
+    ]
+}

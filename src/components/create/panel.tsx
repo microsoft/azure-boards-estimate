@@ -214,13 +214,13 @@ class CreatePanel extends React.Component<
 
                     <div className="create-panel--group">
                         <label className="create-panel--group-label">
-                            Cards
+                            Cards teste
                         </label>
-                        <CardSetPicker
+                       {/*<CardSetPicker
                             cardSets={cardSets}
                             selectedCardSetId={cardSet || ""}
                             onChange={this.onChangeCardSet}
-                        />
+                        />*/}
                     </div>
 
                     <div className="create-panel--group">
