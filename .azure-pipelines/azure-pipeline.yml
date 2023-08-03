@@ -87,3 +87,4 @@ stages:
       publicExtensionName: $(publicExtensionName)
       extensionVisibility: 'public'
       updateTaskVersion: true
+
