@@ -75,6 +75,8 @@ export class SessionCard extends React.Component<ICardProps> {
         const restExtension = async ()=>{
             resetExt()
         await deleteAllSessions()
+        location.reload();
+
         }
 
         return (
