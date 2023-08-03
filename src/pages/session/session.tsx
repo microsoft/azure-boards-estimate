@@ -109,7 +109,7 @@ class Session extends React.Component<
                         <HeaderTitle>{session.name}</HeaderTitle>
                     </HeaderTitleArea>
 
-                    {/* <div className="session--active-users flex-row flex-justify-end flex-center flex-self-stretch">
+                    <div className="session--active-users flex-row flex-justify-end flex-center flex-self-stretch">
                         {activeUsers.map(u => (
                             <Tooltip key={u.tfId} text={u.name}>
                                 <div>
@@ -124,7 +124,7 @@ class Session extends React.Component<
                                 </div>
                             </Tooltip>
                         ))}
-                    </div> */}
+                    </div>
 
                     <HeaderCommandBar
                         items={
