@@ -69,6 +69,8 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
             deleteSession
         } = this.props;
 
+
+    
         return (
             <Page className="flex-grow">
                 <Header

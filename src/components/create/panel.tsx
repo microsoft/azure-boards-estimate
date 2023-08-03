@@ -326,10 +326,8 @@ class CreatePanel extends React.Component<
 
     private onChangeName = (ev: React.ChangeEvent, value: string) => {
         const { onSetName } = this.props;
-        const pattern = /^[a-zA-Z0-9 ]*$/;
-      if (pattern.test(value)) {
-            onSetName(value);
-        }
+      onSetName(value);
+        
     };
     private onChangeMode = (option: IChoiceGroupOption) => {
         const { onSetMode } = this.props;
