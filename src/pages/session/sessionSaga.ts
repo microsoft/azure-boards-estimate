@@ -338,6 +338,8 @@ function correctOrderAndPopulateNestingLevel(workItems: IWorkItem[]): IWorkItem[
 
         if (el.children === undefined) return;
 
+        el.children.sort((a, b) => a.id - b.id);
+
         for (const child of el.children!) {
             visit(child, nestingLevel + 1);
         }
