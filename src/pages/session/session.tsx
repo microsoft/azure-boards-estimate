@@ -13,11 +13,11 @@ import { VssPersona } from "azure-devops-ui/VssPersona";
 import { Spinner, SpinnerSize } from "office-ui-fabric-react";
 import * as React from "react";
 import { connect } from "react-redux";
-import { WorkItemCard } from "../../components/workitems/workItemCard";
+import { IWorkItemCardProps, WorkItemCard } from "../../components/workitems/workItemCard";
 import { ICardSet } from "../../model/cards";
 import { ISessionEstimates } from "../../model/estimate";
 import { IIdentity } from "../../model/identity";
-import { ISession } from "../../model/session";
+import { ISession, SessionMode } from "../../model/session";
 import { IUserInfo } from "../../model/user";
 import { IWorkItem } from "../../model/workitem";
 import { IState } from "../../reducer";
@@ -51,6 +51,7 @@ interface ISessionProps extends IPageProps<ISessionParams> {
     activeUsers: IUserInfo[];
 
     canPerformAdminActions: boolean;
+    mode: any;
 }
 
 const Actions = {
@@ -86,8 +87,8 @@ class Session extends React.Component<
             workItems,
             selectedWorkItem,
             leaveSession,
-            activeUsers
-        } = this.props;
+            activeUsers ,
+            } = this.props;
 
       if (status.loading || !session) {
             return (
@@ -98,6 +99,14 @@ class Session extends React.Component<
             );
         }
 
+
+        const sessionModeCheck = (workitem :number, selectedWi :any)=>{
+            if(session.mode === SessionMode.Online && canPerformAdminActions ){
+                return selectedWi(workitem);
+            }else {
+                return selectedWi(workitem);
+            }
+        }
 
         return (
             <Page
@@ -166,14 +175,7 @@ class Session extends React.Component<
                                     selectedWorkItem.id === workItem.id
                                 }
                                 workItem={workItem}
-                                onClick={
-                                    (canPerformAdminActions &&
-                                        (() =>
-                                            this.props.selectWorkItem(
-                                                workItem.id
-                                            ))) ||
-                                    undefined
-                                }
+                                onClick={ ()=> sessionModeCheck(workItem.id, this.props.selectWorkItem)}
                             />
                     
                         ))}
