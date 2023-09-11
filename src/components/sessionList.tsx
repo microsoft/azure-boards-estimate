@@ -3,7 +3,6 @@ import * as React from "react";
 import { ISessionDisplay } from "../model/session";
 import { SessionCard } from "./sessionCard";
 import "./sessionList.scss";
-import session from "../pages/session/session";
 
 export interface ICardListProps {
     sessions: ISessionDisplay[];

@@ -9,8 +9,6 @@ import { MoreButton } from "azure-devops-ui/Menu";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { Button } from "azure-devops-ui/Button";
-import { deleteAllSessions } from "../pages/session/DeleteAllSessions";
 
 const CardTitle: React.StatelessComponent = props => (
     <h2 className="session-card--title flex-grow" {...props} />
@@ -43,8 +41,6 @@ export interface ICardProps {
 
 export class SessionCard extends React.Component<ICardProps> {
     private isEndSessionDialogOpen = new ObservableValue<boolean>(false);
-    private isRestDialogOpen = new ObservableValue<boolean>(false);
-
 
     render(): JSX.Element {
         const {
@@ -60,23 +56,9 @@ export class SessionCard extends React.Component<ICardProps> {
             this.isEndSessionDialogOpen.value = false;
         };
 
-        const resetExt = () => {
-            this.isRestDialogOpen.value = false;
-        };
-
-   
         const onDismissAndEndSession = () => {
-            
             onDismiss();
             onEndSession(id);
-        }
-
-
-        const restExtension = async ()=>{
-            resetExt()
-        await deleteAllSessions()
-        location.reload();
-
         }
 
         return (
@@ -91,7 +73,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                 {name}
                             </Link>
                         </CardTitle>
-                
+
                         {!hideContextMenu && (
                             <div>
                                 <MoreButton
@@ -108,15 +90,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                                     onActivate: () => {
                                                         this.isEndSessionDialogOpen.value = true;
                                                     }
-                                                },
-                                                {
-                                                    id: "session-rest",
-                                                    text: "Reset",
-                                                    onActivate: () => {
-                                                        this.isRestDialogOpen.value = true;
-                                                    }
                                                 }
-                                               
                                             ]
                                         }
                                     }}
@@ -142,31 +116,6 @@ export class SessionCard extends React.Component<ICardProps> {
                                             >
                                                 Are you sure that you want to end this Estimate session?
                                                 This will end the session for every participant.
-                                            </Dialog>
-                                        ) : null;
-                                    }}
-                                </Observer>
-
-                                <Observer isRestDialogOpen={this.isRestDialogOpen}>
-                                    {(props: { isRestDialogOpen: boolean }) => {
-                                        return props.isRestDialogOpen ? (
-                                            <Dialog
-                                                titleProps={{ text: "Confirm" }}
-                                                footerButtonProps={[
-                                                    {
-                                                        text: "Cancel",
-                                                        onClick: resetExt,
-                                                        primary: true
-                                                    },
-                                                    {
-                                                        text: "Reset",
-                                                        onClick: restExtension
-                                                    }
-                                                ]}
-                                                onDismiss={resetExt}
-                                            >
-                                                Are you sure that you want reset Estimate?
-                                                This will end all session for every participant.
                                             </Dialog>
                                         ) : null;
                                     }}

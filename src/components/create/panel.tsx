@@ -184,7 +184,6 @@ class CreatePanel extends React.Component<
                             value={name}
                             placeholder="Session title"
                              className="textfield-color"
-                             
                         />
                     </div>
 
@@ -326,9 +325,9 @@ class CreatePanel extends React.Component<
 
     private onChangeName = (ev: React.ChangeEvent, value: string) => {
         const { onSetName } = this.props;
-      onSetName(value);
-        
+        onSetName(value);
     };
+
     private onChangeMode = (option: IChoiceGroupOption) => {
         const { onSetMode } = this.props;
         onSetMode(parseInt(option.key, 10) as SessionMode);
