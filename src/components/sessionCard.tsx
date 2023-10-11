@@ -36,8 +36,9 @@ export interface ICardProps {
     history: History;
     session: ISessionDisplay;
     hideContextMenu?: boolean;
-
     onEndSession: (id: string) => void;
+    sessions: ISessionDisplay[];
+
 }
 
 export class SessionCard extends React.Component<ICardProps> {
@@ -48,14 +49,21 @@ export class SessionCard extends React.Component<ICardProps> {
     render(): JSX.Element {
         const {
             hideContextMenu,
+          
             session: {
                 session: { id, mode, name, source, sourceData },
                 sessionInfo
+            
             },
-            onEndSession
+            onEndSession,
+            sessions
+ 
         } = this.props;
 
-        const onDismiss = () => {
+
+        const currentSession = sessions && sessions.filter(i=> { return i.session.id === id})
+       
+       const onDismiss = () => {
             this.isEndSessionDialogOpen.value = false;
         };
 
@@ -71,10 +79,12 @@ export class SessionCard extends React.Component<ICardProps> {
 
 
         const restExtension = async ()=>{
+            if(currentSession[0]!.session!.onlyCreatorCanSwitch)
             resetExt()
-        await deleteSession(id)
-        location.reload();
-     }
+            await deleteSession(id)
+            location.reload();
+        }
+
 
         return (
             <div className="session-card">
@@ -119,6 +129,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                     }}
                                 />
 
+
                                 <Observer isEndSessionDialogOpen={this.isEndSessionDialogOpen}>
                                     {(props: { isEndSessionDialogOpen: boolean }) => {
                                         return props.isEndSessionDialogOpen ? (
@@ -162,8 +173,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                Are you sure that you want reset Estimate?
-                                                This will end all session for every participant.
+                                                Are you sure that you want to reset the Estimate? This will end the current session for every participant.
                                             </Dialog>
                                         ) : null;
                                     }}
