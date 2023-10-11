@@ -3,18 +3,16 @@
 import { ISession } from "../../model/session";
 import { SessionService } from "../../services/sessions";
 
-export const deleteAllSessions = async ()=>{
-     // Create an instance of the SessionService class
-     const sessionService = new SessionService();
 
-     // Get all sessions
-     const sessions: ISession[] = await sessionService.getSessions();
- 
-     // Remove each session
-     for (const session of sessions) {
-         await sessionService.removeSession(session.id);
-     }
- 
-
-
-}
+export const deleteSession = async (id: any) => {
+    // Create an instance of the SessionService class
+    const sessionService = new SessionService();
+  
+    // Get the session with the specified id
+    const session:  ISession | null = await sessionService.getSession(id);
+  
+    // If the session exists, remove it
+    if (session) {
+      await sessionService.removeSession(id);
+    }
+  };

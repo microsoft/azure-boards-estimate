@@ -99,7 +99,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                     renderAdditionalContent={this.renderTabBarCommands}
                     disableSticky={true}
                 >
-                    <Tab id="sessions" name="Sessions" />
+                    <Tab id="sessions" name="Sessionss" />
                 </TabBar>
 
                 <div className="page-content page-content-top">

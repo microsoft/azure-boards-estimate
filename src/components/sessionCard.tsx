@@ -9,8 +9,7 @@ import { MoreButton } from "azure-devops-ui/Menu";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { Button } from "azure-devops-ui/Button";
-import { deleteAllSessions } from "../pages/session/DeleteAllSessions";
+import { deleteSession } from "../pages/session/DeleteAllSessions";
 
 const CardTitle: React.StatelessComponent = props => (
     <h2 className="session-card--title flex-grow" {...props} />
@@ -66,18 +65,16 @@ export class SessionCard extends React.Component<ICardProps> {
 
    
         const onDismissAndEndSession = () => {
-            
-            onDismiss();
+             onDismiss();
             onEndSession(id);
         }
 
 
         const restExtension = async ()=>{
             resetExt()
-        await deleteAllSessions()
+        await deleteSession(id)
         location.reload();
-
-        }
+     }
 
         return (
             <div className="session-card">
