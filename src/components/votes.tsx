@@ -24,7 +24,7 @@ export class Votes extends React.Component<IVotesProps> {
 
       
     return (
-            <div className="flex-row">
+            <div className="flex-row" style={{display: "flex", flexDirection: "row", flexWrap:"wrap"}}>
                 {votes.map(vote => (
                     <Vote
                         key={vote.identity.id}
