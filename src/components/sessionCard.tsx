@@ -57,7 +57,7 @@ export class SessionCard extends React.Component<ICardProps> {
             
             },
             onEndSession,
-            
+            sessions
  
         } = this.props;
 
@@ -172,7 +172,7 @@ export class SessionCard extends React.Component<ICardProps> {
 
                                                     {
                                                         text: "Reset",
-                                                        onClick: ()=>restExtension()
+                                                        onClick: restExtension
                                                     }
                                                 ]}
                                                 onDismiss={resetExt}
