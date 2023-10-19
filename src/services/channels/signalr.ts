@@ -70,12 +70,13 @@ export class SignalRChannel implements IChannel {
             )
             .configureLogging(signalR.LogLevel.Information)
             .build();
-
+      
         // Hook up handler for all messages the server sends
-        this.connection.on("broadcast", this.onReceive);
+        this.connection.on("broadcast", this.onReceive); 
 
         // Start connection
         await this.connection.start().catch(err => {
+        
             // tslint:disable-next-line:no-console
             console.error(err.toString());
         });
@@ -86,7 +87,7 @@ export class SignalRChannel implements IChannel {
             name: identity.displayName,
             imageUrl: identity.imageUrl
         });
-
+      
         // Wait for snapshot
     }
 
@@ -103,6 +104,7 @@ export class SignalRChannel implements IChannel {
     }
 
     private onReceive = (action: Action, payload: any) => {
+        
         switch (action) {
             case Action.Estimate: {
                 // Received estimate from another player

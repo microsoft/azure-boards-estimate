@@ -32,13 +32,14 @@ interface IHomePageProps extends IPageProps<IHomePageParams> {
     sessions: ISessionDisplay[];
     legacySessions: ISessionDisplay[];
     error: string | null;
+
 }
 
 const Actions = {
     onInit: loadSessions,
     filter,
     clearError,
-    deleteSession
+    deleteSession,
 };
 
 class HomePage extends React.Component<IHomePageProps & typeof Actions> {
@@ -69,6 +70,10 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
             deleteSession
         } = this.props;
 
+
+        const a = sessions.map(i=>{  return i.session})
+
+      
 
     
         return (
@@ -119,6 +124,8 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                                 history={history}
                                 sessions={sessions}
                                 onEndSession={deleteSession}
+                          
+                                
                             />
                         </Card>
                     )}
