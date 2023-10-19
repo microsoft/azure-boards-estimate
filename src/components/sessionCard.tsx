@@ -77,15 +77,10 @@ export class SessionCard extends React.Component<ICardProps> {
             onEndSession(id);
         }
 
-
-
-
         const restExtension = async ()=>{
            resetExt()
            await deleteSession(id)
            location.reload();
-            
-          
         }
 
 
