@@ -79,10 +79,12 @@ export class SessionCard extends React.Component<ICardProps> {
 
 
         const restExtension = async ()=>{
-            if(currentSession[0]!.session!.onlyCreatorCanSwitch)
-            resetExt()
-            await deleteSession(id)
-            location.reload();
+            if(currentSession[0] && currentSession[0].session.onlyCreatorCanSwitch){
+                resetExt()
+                await deleteSession(id)
+                location.reload();
+            }
+          
         }
 
 
@@ -178,12 +180,8 @@ export class SessionCard extends React.Component<ICardProps> {
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                {
-                                                    currentSession[0]!.session!.onlyCreatorCanSwitch ?
-                                                    "Are you sure that you want to reset the Estimate? This will end the current session for every participant."
-                                                    :
-                                                    "Only the creator can reset the session."
-                                                }
+                                                {currentSession[0].session.onlyCreatorCanSwitch ? "Are you sure that you want to reset the Estimate? This will end the current session for every participant": "Only creator can reset the session"}
+
                                             </Dialog>
                                         ) : null;
                                     }}
