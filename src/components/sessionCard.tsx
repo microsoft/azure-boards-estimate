@@ -86,6 +86,10 @@ export class SessionCard extends React.Component<ICardProps> {
         }
 
 
+
+      
+
+
         return (
             <div className="session-card">
                 <div className="session-card--content">
@@ -166,6 +170,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                                         onClick: resetExt,
                                                         primary: true
                                                     },
+
                                                     {
                                                         text: "Reset",
                                                         onClick: restExtension
@@ -173,7 +178,12 @@ export class SessionCard extends React.Component<ICardProps> {
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                Are you sure that you want to reset the Estimate? This will end the current session for every participant.
+                                                {
+                                                    currentSession[0]!.session!.onlyCreatorCanSwitch ?
+                                                    "Are you sure that you want to reset the Estimate? This will end the current session for every participant."
+                                                    :
+                                                    "Only the creator can reset the session."
+                                                }
                                             </Dialog>
                                         ) : null;
                                     }}
