@@ -22,9 +22,12 @@ export class Votes extends React.Component<IVotesProps> {
             a.identity.displayName.localeCompare(b.identity.displayName)
         );
 
+
+       
+       
       
     return (
-            <div className="flex-row">
+            <div className="flex-row voteContainer">
                 {votes.map(vote => (
                     <Vote
                         key={vote.identity.id}

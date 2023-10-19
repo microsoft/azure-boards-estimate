@@ -9,14 +9,16 @@ export interface ICardListProps {
     sessions: ISessionDisplay[];
     history: History;
     hideContextMenu?: boolean;
-
     onEndSession: (id: string) => void;
+
 }
 
 export class SessionList extends React.Component<ICardListProps> {
     render(): JSX.Element {
-        const { hideContextMenu, history, onEndSession, sessions } = this.props;
+        const { hideContextMenu, history, onEndSession, sessions  } = this.props;
+      
 
+      
         return (
             <ul className="session-list">
                 {sessions.sort((a, b) => a.session.name > b.session.name ? 1 : -1).map(session => (
@@ -26,6 +28,9 @@ export class SessionList extends React.Component<ICardListProps> {
                         hideContextMenu={hideContextMenu}
                         history={history}
                         onEndSession={onEndSession}
+                        sessions={sessions}
+                       
+                   
                     />
                 ))}
             </ul>
