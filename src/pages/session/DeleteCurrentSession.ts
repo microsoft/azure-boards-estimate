@@ -4,7 +4,7 @@ import { ISession } from "../../model/session";
 import { SessionService } from "../../services/sessions";
 
 
-export const deleteSession = async (id: any) => {
+export const deleteCurrentSession = async (id: any) => {
     // Create an instance of the SessionService class
     const sessionService = new SessionService();
   
