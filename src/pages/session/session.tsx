@@ -99,9 +99,11 @@ class Session extends React.Component<
             );
         }
 
+        console.log(session)
 
         const sessionModeCheck = (workitem :number, selectedWi :any)=>{
-            if(session.mode === SessionMode.Online && canPerformAdminActions ){
+            if(session.mode === SessionMode.Online && session.onlyCreatorCanSwitch
+                ){
                 return selectedWi(workitem);
             }else {
                 return selectedWi(workitem);
