@@ -42,11 +42,11 @@ const CardInfo: React.StatelessComponent<{
 
 export interface ICardProps {
     history: History;
-    session: any;
+    session: ISessionDisplay;
     hideContextMenu?: boolean;
     onEndSession: (id: string) => void;
-    sessions: any[];
-    canPerformAdminActions: boolean;
+    sessions: ISessionDisplay[];
+    canPerformAdminActions?: boolean;
 }
 
 export class SessionCard extends React.Component<ICardProps> {
@@ -65,6 +65,9 @@ export class SessionCard extends React.Component<ICardProps> {
             sessions,
             canPerformAdminActions
         } = this.props;
+
+
+   
 
         const onDismiss = () => {
             this.isEndSessionDialogOpen.value = false;
