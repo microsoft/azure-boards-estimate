@@ -1,7 +1,7 @@
 import { History } from "history";
 import * as React from "react";
 import { makeUrlSafe } from "../lib/urlSafe";
-import { ISessionDisplay, ISessionInfo } from "../model/session";
+import { ISession, ISessionDisplay, ISessionInfo } from "../model/session";
 import { CardIcon } from "./cardIcon";
 import "./sessionCard.scss";
 import { Link } from "azure-devops-ui/Link";
@@ -10,7 +10,14 @@ import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { deleteCurrentSession } from "../pages/session/DeleteCurrentSession";
-import { reset } from "../pages/create/createActions";
+
+import { select as selectSaga } from "redux-saga/effects";
+import {
+    canPerformAdminActions,
+    getActiveUsers
+} from "../pages/session/selector";
+import { IState } from "../reducer";
+import { connect } from "react-redux";
 
 const CardTitle: React.StatelessComponent = props => (
     <h2 className="session-card--title flex-grow" {...props} />
@@ -35,61 +42,51 @@ const CardInfo: React.StatelessComponent<{
 
 export interface ICardProps {
     history: History;
-    session: ISessionDisplay;
+    session: any;
     hideContextMenu?: boolean;
     onEndSession: (id: string) => void;
-    sessions: ISessionDisplay[];
-
+    sessions: any[];
+    canPerformAdminActions: boolean;
 }
 
 export class SessionCard extends React.Component<ICardProps> {
     private isEndSessionDialogOpen = new ObservableValue<boolean>(false);
     private isRestDialogOpen = new ObservableValue<boolean>(false);
 
-
     render(): JSX.Element {
         const {
             hideContextMenu,
-          
+
             session: {
                 session: { id, mode, name, source, sourceData },
                 sessionInfo
-            
             },
             onEndSession,
-            sessions
- 
+            sessions,
+            canPerformAdminActions
         } = this.props;
 
-
- 
-       
-       const onDismiss = () => {
+        const onDismiss = () => {
             this.isEndSessionDialogOpen.value = false;
         };
 
         const resetExt = () => {
             this.isRestDialogOpen.value = false;
         };
-
-   
         const onDismissAndEndSession = () => {
-             onDismiss();
+            onDismiss();
             onEndSession(id);
-        }
+        };
 
- 
-
-        console.log(sessions)
-
-        const restExtension = async ()=>{
-         if(sessions && sessions[0].session.onlyCreatorCanSwitch ){
-                resetExt()
-                await deleteCurrentSession(id)
+        const restExtension = async () => {
+            if (canPerformAdminActions) {
+                resetExt();
+                await deleteCurrentSession(id);
                 location.reload();
-            }}
+            }
+        };
 
-            return (
+        return (
             <div className="session-card">
                 <div className="session-card--content">
                     <div className="flex-row">
@@ -101,15 +98,15 @@ export class SessionCard extends React.Component<ICardProps> {
                                 {name}
                             </Link>
                         </CardTitle>
-                
+
                         {!hideContextMenu && (
                             <div>
                                 <MoreButton
                                     className="session-card--menu"
                                     contextualMenuProps={{
                                         menuProps: {
-                                            onActivate: (menuItem ,ev: any) =>
-                                            ev.stopPropagation(),
+                                            onActivate: (menuItem, ev: any) =>
+                                                ev.stopPropagation(),
                                             id: "card-more",
                                             items: [
                                                 {
@@ -126,15 +123,19 @@ export class SessionCard extends React.Component<ICardProps> {
                                                         this.isRestDialogOpen.value = true;
                                                     }
                                                 }
-                                               
                                             ]
                                         }
                                     }}
                                 />
 
-
-                                <Observer isEndSessionDialogOpen={this.isEndSessionDialogOpen}>
-                                    {(props: { isEndSessionDialogOpen: boolean }) => {
+                                <Observer
+                                    isEndSessionDialogOpen={
+                                        this.isEndSessionDialogOpen
+                                    }
+                                >
+                                    {(props: {
+                                        isEndSessionDialogOpen: boolean;
+                                    }) => {
                                         return props.isEndSessionDialogOpen ? (
                                             <Dialog
                                                 titleProps={{ text: "Confirm" }}
@@ -151,14 +152,18 @@ export class SessionCard extends React.Component<ICardProps> {
                                                 ]}
                                                 onDismiss={onDismiss}
                                             >
-                                                Are you sure that you want to end this Estimate session?
-                                                This will end the session for every participant.
+                                                Are you sure that you want to
+                                                end this Estimate session? This
+                                                will end the session for every
+                                                participant.
                                             </Dialog>
                                         ) : null;
                                     }}
                                 </Observer>
 
-                                <Observer isRestDialogOpen={this.isRestDialogOpen}>
+                                <Observer
+                                    isRestDialogOpen={this.isRestDialogOpen}
+                                >
                                     {(props: { isRestDialogOpen: boolean }) => {
                                         return props.isRestDialogOpen ? (
                                             <Dialog
@@ -172,13 +177,16 @@ export class SessionCard extends React.Component<ICardProps> {
 
                                                     {
                                                         text: "Reset",
-                                                        onClick:()=> restExtension()
+                                                        onClick: () =>
+                                                            restExtension()
                                                     }
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                {sessions[0].session.onlyCreatorCanSwitch ?"Are you sure that you want to reset the Estimate? This will end the current session for every participant" : "Only creator can reset the Estimate session"}
-
+                                                {sessions[0].session
+                                                    .onlyCreatorCanSwitch
+                                                    ? "Are you sure that you want to reset the Estimate? This will end the current session for every participant"
+                                                    : "Only creator can reset the Estimate session"}
                                             </Dialog>
                                         ) : null;
                                     }}
@@ -208,3 +216,12 @@ export class SessionCard extends React.Component<ICardProps> {
         e.preventDefault();
     };
 }
+
+export default connect(
+    (state: IState) => {
+        return {
+            canPerformAdminActions: canPerformAdminActions(state)
+        };
+    },
+    null
+)(SessionCard);

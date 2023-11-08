@@ -71,7 +71,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
         } = this.props;
 
 
-        const a = sessions.map(i=>{  return i.session})
+       
 
       
 
