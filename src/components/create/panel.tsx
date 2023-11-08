@@ -231,7 +231,7 @@ class CreatePanel extends React.Component<
                         <Toggle
                             checked={onlyCreatorCanSwitch}
                             onChange={this.onSecurityToggle}
-                            text="Only creator can change work items and commit"
+                            text="Only creator can change work items and commit and rest"
                         />
                     </div>
                 </div>
