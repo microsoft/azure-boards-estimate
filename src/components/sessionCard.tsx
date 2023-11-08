@@ -10,6 +10,7 @@ import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { deleteCurrentSession } from "../pages/session/DeleteCurrentSession";
+import { reset } from "../pages/create/createActions";
 
 const CardTitle: React.StatelessComponent = props => (
     <h2 className="session-card--title flex-grow" {...props} />
@@ -79,9 +80,10 @@ export class SessionCard extends React.Component<ICardProps> {
 
  
 
+        console.log(sessions)
 
         const restExtension = async ()=>{
-            if(sessions[0].session.onlyCreatorCanSwitch ){
+         if(sessions && sessions[0].session.onlyCreatorCanSwitch ){
                 resetExt()
                 await deleteCurrentSession(id)
                 location.reload();
@@ -170,12 +172,12 @@ export class SessionCard extends React.Component<ICardProps> {
 
                                                     {
                                                         text: "Reset",
-                                                        onClick: restExtension
+                                                        onClick:()=> restExtension()
                                                     }
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                {sessions[0].session.onlyCreatorCanSwitch ? "Are you sure that you want to reset the Estimate? This will end the current session for every participant" : "Only creator can reset the Estimate session"}
+                                                {sessions[0].session.onlyCreatorCanSwitch ?  "Only creator can reset the Estimate session": "Are you sure that you want to reset the Estimate? This will end the current session for every participant"}
 
                                             </Dialog>
                                         ) : null;
