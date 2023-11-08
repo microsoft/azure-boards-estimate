@@ -11,10 +11,10 @@ import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { deleteCurrentSession } from "../pages/session/DeleteCurrentSession";
 
-import { select as selectSaga } from "redux-saga/effects";
+
 import {
     canPerformAdminActions,
-    getActiveUsers
+    
 } from "../pages/session/selector";
 import { IState } from "../reducer";
 import { connect } from "react-redux";
