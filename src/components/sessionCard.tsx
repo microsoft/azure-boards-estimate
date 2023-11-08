@@ -177,7 +177,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                {sessions[0].session.onlyCreatorCanSwitch ?  "Only creator can reset the Estimate session": "Are you sure that you want to reset the Estimate? This will end the current session for every participant"}
+                                                {sessions[0].session.onlyCreatorCanSwitch ?"Are you sure that you want to reset the Estimate? This will end the current session for every participant" : "Only creator can reset the Estimate session"}
 
                                             </Dialog>
                                         ) : null;
