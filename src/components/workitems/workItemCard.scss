@@ -1,15 +1,38 @@
-@import "azure-devops-ui/Core/_platformCommon.scss";
+ @import "azure-devops-ui/Core/_platformCommon.scss";
 
-.work-item-card--info{
-overflow: hidden;
-}
-
-.work-item-card {    
-    min-width: 200px;
+.card-wrapper {
+    min-width: 250px;
+    display:flex;
+    flex-direction: column;
     margin-bottom: 15px;
-    flex-shrink: 0;
+  
+    }
+    
 
-    &.clickable {
+    .card-work-item{
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 230px;
+        padding: 5px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+}
+    
+    .work-item-id-icon{
+        display:flex;
+        flex-direction: row;
+     
+    }
+
+
+  
+    .work-item-card {    
+           
+            margin-bottom: 15px;
+            flex-shrink: 0;
+
+     &.clickable {
         cursor: pointer;
     }
 
@@ -28,15 +51,12 @@ overflow: hidden;
     &--info {
         display: flex;
         align-items: flex-start;
+        font-weight: bold;
           
     }
 
-    &--title {
-        overflow-wrap: break-word  !important;
-        overflow: hidden;
-        padding: 0px 5px;
-       
-    }
+   
+
 
     &--meta {
         display: flex;
@@ -51,30 +71,19 @@ overflow: hidden;
     }
 
     &--estimate {
-        text-align: right;
-        font-weight: bold;
+     
+ font-weight: bold;
        
     }
-}
-.estimate-container{
-    margin-left: auto;
-}
 
-
-
-.card-work-item{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
     
-}
-.work-item-id-icon{
-    min-width: 150px;
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: row;
-}
-.card{
-display: flex;
-flex-direction: column;
-}
+    }
+
+
+    .work-item-card--title{
+        display: flex;
+        width:  100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding-top: 12px;
+    }
