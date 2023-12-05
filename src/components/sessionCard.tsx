@@ -46,7 +46,8 @@ export interface ICardProps {
     hideContextMenu?: boolean;
     onEndSession: (id: string) => void;
     sessions: ISessionDisplay[];
-    canPerformAdminActions?: boolean;
+    canPerformAdminActions: boolean;
+
 }
 
 export class SessionCard extends React.Component<ICardProps> {
@@ -63,11 +64,11 @@ export class SessionCard extends React.Component<ICardProps> {
             },
             onEndSession,
             sessions,
-            canPerformAdminActions
+        
         } = this.props;
 
 
-   
+
 
         const onDismiss = () => {
             this.isEndSessionDialogOpen.value = false;
@@ -81,8 +82,10 @@ export class SessionCard extends React.Component<ICardProps> {
             onEndSession(id);
         };
 
+
+        
         const restExtension = async () => {
-            if (canPerformAdminActions) {
+            if ( this.props.canPerformAdminActions) {
                 resetExt();
                 await deleteCurrentSession(id);
                 location.reload();
@@ -186,7 +189,8 @@ export class SessionCard extends React.Component<ICardProps> {
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                {canPerformAdminActions
+                                                { this.props.canPerformAdminActions
+
                                                     ? "Are you sure that you want to reset the Estimate? This will end the current session for every participant"
                                                     : "Only creator can reset the Estimate session"}
                                             </Dialog>
