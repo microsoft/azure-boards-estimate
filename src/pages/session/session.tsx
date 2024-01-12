@@ -32,6 +32,7 @@ import {
     loadSession,
     selectWorkItem
 } from "./sessionActions";
+import { deleteCurrentSession } from "./DeleteCurrentSession";
 
 interface ISessionParams {
     id: string;
@@ -110,6 +111,15 @@ class Session extends React.Component<
             }
         }
 
+
+        const deleteSEssion = async () =>{
+            if(session.onlyCreatorCanSwitch) {
+                await deleteCurrentSession(session.id);
+            
+            }
+          
+        }
+
         return (
             <Page
                 className="absolute-fill"
@@ -152,10 +162,20 @@ class Session extends React.Component<
                                 (!session.isLegacy && {
                                     id: "action-end",
                                     important: false,
-                                    text: "End session",
+                                    text: "End session titi",
                                     iconProps: { iconName: "Delete" },
                                     onActivate: () => {
                                         this.props.endSession();
+                                    }
+                                }),
+                                (!session.isLegacy && {
+                                    id: "action-close",
+                                    important: false,
+                                    text: "Reset session",
+                                    iconProps: { iconName: "Close" },
+                                    onActivate: () => {
+                                     deleteSEssion();
+                                     
                                     }
                                 }) ||
                                     undefined

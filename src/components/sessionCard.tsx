@@ -124,13 +124,13 @@ export class SessionCard extends React.Component<ICardProps> {
                                                         this.isEndSessionDialogOpen.value = true;
                                                     }
                                                 },
-                                                {
-                                                    id: "session-rest",
-                                                    text: "Reset",
-                                                    onActivate: () => {
-                                                        this.isRestDialogOpen.value = true;
-                                                    }
-                                                }
+                                                // {
+                                                //     id: "session-rest",
+                                                //     text: "Reset",
+                                                //     onActivate: () => {
+                                                //         this.isRestDialogOpen.value = true;
+                                                //     }
+                                                // }
                                             ]
                                         }
                                     }}
