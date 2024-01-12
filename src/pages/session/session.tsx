@@ -113,7 +113,7 @@ class Session extends React.Component<
 
 
         const deleteSEssion = async () =>{
-            if(session.onlyCreatorCanSwitch) {
+            if(canPerformAdminActions) {
                 await deleteCurrentSession(session.id);
             
             }
