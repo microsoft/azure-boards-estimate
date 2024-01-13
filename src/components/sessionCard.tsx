@@ -9,7 +9,7 @@ import { MoreButton } from "azure-devops-ui/Menu";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { deleteCurrentSession } from "../pages/session/DeleteCurrentSession";
+
 
 
 import {
@@ -86,13 +86,7 @@ export class SessionCard extends React.Component<ICardProps> {
 
 
         
-        const restExtension = async () => {
-            if (sessions[0].session.onlyCreatorCanSwitch) {
-                resetExt();
-                await deleteCurrentSession(id);
-                location.reload();
-            }
-        };
+       
 
         return (
             <div className="session-card">
@@ -124,13 +118,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                                         this.isEndSessionDialogOpen.value = true;
                                                     }
                                                 },
-                                                // {
-                                                //     id: "session-rest",
-                                                //     text: "Reset",
-                                                //     onActivate: () => {
-                                                //         this.isRestDialogOpen.value = true;
-                                                //     }
-                                                // }
+                                                
                                             ]
                                         }
                                     }}
@@ -183,18 +171,11 @@ export class SessionCard extends React.Component<ICardProps> {
                                                         primary: true
                                                     },
 
-                                                    {
-                                                        text: "Reset",
-                                                        onClick: () =>
-                                                            restExtension()
-                                                    }
+                                                    
                                                 ]}
                                                 onDismiss={resetExt}
                                             >
-                                                { sessions[0].session.onlyCreatorCanSwitch
-
-                                                    ? "Are you sure that you want to reset the Estimate? This will end the current session for every participant"
-                                                    : "Only creator can reset the Estimate session"}
+                                   
                                             </Dialog>
                                         ) : null;
                                     }}
