@@ -33,6 +33,9 @@ import {
     selectWorkItem
 } from "./sessionActions";
 import { deleteCurrentSession } from "./DeleteCurrentSession";
+import { Dialog } from "azure-devops-ui/Dialog";
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { Observer } from "azure-devops-ui/Observer";
 
 interface ISessionParams {
     id: string;
@@ -67,6 +70,7 @@ class Session extends React.Component<
     ISessionProps & typeof Actions,
     { flipped: boolean }
 > {
+    private isEndSessionDialogOpen = new ObservableValue<boolean>(false);
     constructor(props: any) {
         super(props);
 
@@ -115,16 +119,49 @@ class Session extends React.Component<
         const deleteSEssion = async () =>{
             if(canPerformAdminActions) {
                 await deleteCurrentSession(session.id);
+                
             
             }
           
         }
+        const onDismiss = () => {
+            this.isEndSessionDialogOpen.value = false;
+        };
+
+        const onDismissAndEndSession = () => {
+            onDismiss();
+            this.props.endSession();
+        };
 
         return (
             <Page
                 className="absolute-fill"
                 orientation={0 /* Orientation.Vertical */}
             >
+                 <Observer
+                                    isEndSessionDialogOpen={
+                                        this.isEndSessionDialogOpen
+                                    }
+                                >
+                 <Dialog
+                                                titleProps={{ text: "Confirm" }}
+                                                footerButtonProps={[
+                                                    {
+                                                        text: "Cancel",
+                                                        onClick: onDismiss,
+                                                        primary: true
+                                                    },
+                                                    {
+                                                        text: "End Session",
+                                                        onClick: onDismissAndEndSession
+                                                    }
+                                                ]}
+                                                onDismiss={onDismiss}
+                                            >
+                                                {this.isEndSessionDialogOpen.value   ? "Are you sure that you want to reset the Estimate? This will end the current session for every participant"
+                                                    : "Only creator can reset the Estimate session"}
+                                            </Dialog>
+                                            </Observer>
                 <CustomHeader className="bolt-header-with-commandbar">
                     <HeaderTitleArea>
                         <HeaderTitle>{session.name}</HeaderTitle>
