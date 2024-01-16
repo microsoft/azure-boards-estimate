@@ -110,6 +110,8 @@ class Session extends React.Component<
             }
         }
 
+
+
         return (
             <Page
                 className="absolute-fill"
@@ -157,7 +159,17 @@ class Session extends React.Component<
                                     onActivate: () => {
                                         this.props.endSession();
                                     }
-                                }) ||
+                                }) , 
+                                (!session.isLegacy && {
+                                    id: "action-end",
+                                    important: false,
+                                    text: "Reset",
+                                    iconProps: { iconName: "Delete" },
+                                    onActivate: () => {
+                                        this.props.endSession();
+                                    }
+                                })
+                                ||
                                     undefined
                             ].filter(x => !!x) as IHeaderCommandBarItem[]
                         }

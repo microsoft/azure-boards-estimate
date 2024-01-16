@@ -79,19 +79,15 @@ export class SessionCard extends React.Component<ICardProps> {
 
 
         const restExtension = async ()=>{
-          
+          sessions.filter(async item =>{
+            if(item.session.id === id && item.session.onlyCreatorCanSwitch){
                 resetExt()
                 await deleteCurrentSession(id)
                 location.reload();
-        
-          
+            }
+          })
         }
-
-
-
       
-
-
         return (
             <div className="session-card">
                 <div className="session-card--content">
