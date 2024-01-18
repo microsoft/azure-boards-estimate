@@ -181,7 +181,15 @@ class Session extends React.Component<
                                     selectedWorkItem.id === workItem.id
                                 }
                                 workItem={workItem}
-                                onClick={ ()=> sessionModeCheck(workItem.id, this.props.selectWorkItem)}
+                                onClick={
+                                    (canPerformAdminActions &&
+                                        (() =>
+                                            this.props.selectWorkItem(
+                                                workItem.id
+                                            ))) ||
+                                    undefined
+                                }
+
                             />
                     
                         ))}
