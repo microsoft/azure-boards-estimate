@@ -99,18 +99,14 @@ class Session extends React.Component<
             );
         }
 
-       
 
         const sessionModeCheck = (workitem :number, selectedWi :any)=>{
-            if(session.mode === SessionMode.Online && session.onlyCreatorCanSwitch
-                ){
+            if(session.mode === SessionMode.Online && canPerformAdminActions ){
                 return selectedWi(workitem);
             }else {
                 return selectedWi(workitem);
             }
         }
-
-
 
         return (
             <Page
@@ -159,9 +155,7 @@ class Session extends React.Component<
                                     onActivate: () => {
                                         this.props.endSession();
                                     }
-                                }) 
-                               
-                                ||
+                                }) ||
                                     undefined
                             ].filter(x => !!x) as IHeaderCommandBarItem[]
                         }
@@ -181,15 +175,7 @@ class Session extends React.Component<
                                     selectedWorkItem.id === workItem.id
                                 }
                                 workItem={workItem}
-                                onClick={
-                                    (canPerformAdminActions &&
-                                        (() =>
-                                            this.props.selectWorkItem(
-                                                workItem.id
-                                            ))) ||
-                                    undefined
-                                }
-
+                                onClick={ ()=> sessionModeCheck(workItem.id, this.props.selectWorkItem)}
                             />
                     
                         ))}
