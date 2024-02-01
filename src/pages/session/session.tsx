@@ -102,7 +102,7 @@ class Session extends React.Component<
 
 
 
-        console.log("sess", session)
+      
      
 
         const sessionModeCheck = (workitem: number, selectedWi: any) => {
