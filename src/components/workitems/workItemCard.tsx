@@ -20,7 +20,7 @@ export interface IWorkItemCardProps {
 export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
     const {
         cardSet,
-        workItem: { id, title, icon, color, estimate },
+        workItem: { id, title, icon, color, estimate, nestingLevel },
         selected,
         onClick
     } = props;
@@ -32,6 +32,7 @@ export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
                 onClick && "clickable",
                 selected && "selected"
             )}
+            style={{ marginLeft: `${nestingLevel == null ? 0 : nestingLevel * 15}px` }}
             onClick={onClick}
         >
             <Card>
