@@ -71,6 +71,8 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                 return estimates[0].cardIdentifier
             }
         }
+
+
       
 
         return (
@@ -157,28 +159,21 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                 {showAverage && (
                                                     <>
 
-                                                        <SubTitle>Average</SubTitle>
+                                                        <SubTitle>Average Titi</SubTitle>
                                                         <div className="flex-column flex-self-start">
                                                             {(estimates || []).reduce((sum, e) => {
                                                                 const card = cardSet.cards.find(
                                                                     x =>
                                                                         x.identifier ===
                                                                         e.cardIdentifier
-                                                                )!; if (
-
-                                                                    card!.value !=
-                                                                    null
-                                                                ) {
-                                                                    sum += parseInt(
-                                                                        card!.value!.toString() ||
-                                                                        "0"
-                                                                    );
+                                                                )!; if ( card!.value != null) {
+                                                                    sum += parseFloat(card!.value!.toString());
                                                                 }
                                                                 return sum;
                                                             }, 0) / (estimates.filter(i => {
                                                                 return i.cardIdentifier !== "?"
 
-                                                            }).length || 1)}
+                                                            }).length )}
 
                                                         </div>
                                                     </>
