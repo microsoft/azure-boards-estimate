@@ -171,12 +171,9 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                                 </div>
                                                 {showAverage && (
                                                     <>
-                                                  
-
-                                                        <SubTitle>Average</SubTitle>
+                                                      <SubTitle>Average</SubTitle>
                                                         <div className="flex-column flex-self-start">
                                                        { average}
-
                                                         </div>
                                                     </>
                                                 )}
