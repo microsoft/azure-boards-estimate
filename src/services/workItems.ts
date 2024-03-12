@@ -140,6 +140,10 @@ export class WorkItemService implements IWorkItemService {
                         "System.WorkItemType",
                         "System.TeamProject",
                         "Microsoft.VSTS.Common.AcceptanceCriteria",
+                        "System.AssignedTo",
+                        "System.IterationPath",
+                        "System.Tags",
+                        "System.AreaPath"
                     ],
                     $expand: 0 /* None */,
                     errorPolicy: 2 /* Omit */
@@ -155,7 +159,10 @@ export class WorkItemService implements IWorkItemService {
                 title: wi.fields["System.Title"],
                 workItemType: wi.fields["System.WorkItemType"],
                 AcceptanceCriteria: wi.fields["Microsoft.VSTS.Common.AcceptanceCriteria"],
-                description: ""
+                description: "",
+                AreaPath: wi.fields["System.AreaPath"],
+                AssignedTo: wi.fields["System.AssignedTo"],
+                Tags: wi.fields["System.Tags"]
             };
         });
 
@@ -285,7 +292,6 @@ export class WorkItemService implements IWorkItemService {
                 }
             }
         }
-
 
         // Get work item data
         let workItemsFieldData = [];

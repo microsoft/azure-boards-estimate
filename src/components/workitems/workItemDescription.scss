@@ -14,7 +14,6 @@
     }
 }
 
-
 .work-item-description-bottom{
     border-radius: 6px;
     background-color: $neutral-4;
@@ -22,4 +21,31 @@
     min-height: 60px;
     margin: 1%;
     color : $primary-text;
+}
+
+.tag-pill {
+    border-radius: 20px;
+    background-color: var(--palette-black-alpha-6, rgba(0, 0, 0, 0.06));
+    padding: 5px;
+    margin: 0.5%;
+    font-size: 0.8em;
+}
+
+.details-row {
+    display: flex;
+}
+
+.details-column {
+    flex: 50%;
+    padding: 10px;
+}
+
+.persona-spacing { 
+    margin-left: 1%;
+    margin-right: 0.5%;
+    margin-top:-0.3%
+}
+
+.displayname-spacing { 
+    margin-top: 0.4%;
 }

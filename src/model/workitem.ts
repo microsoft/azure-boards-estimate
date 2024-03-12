@@ -10,6 +10,8 @@ export interface IWorkItem {
 
     icon?: string;
     color?: string;
-    AcceptanceCriteria?: any,
-
+    AcceptanceCriteria?: any;
+    AreaPath?: any;
+    Tags?: any;
+    AssignedTo?: any;
 }
