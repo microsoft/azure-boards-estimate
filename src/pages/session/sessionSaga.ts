@@ -4,7 +4,7 @@ import {
 } from "azure-devops-extension-api";
 import { ProjectInfo } from "azure-devops-extension-api/Core";
 import { getService, IUserContext } from "azure-devops-extension-sdk";
-import { SagaIterator, Task } from "redux-saga";
+import { SagaIterator, Task, delay } from "redux-saga";
 import {
     call,
     cancel,
@@ -12,7 +12,8 @@ import {
     put,
     select,
     take,
-    takeLatest
+    takeLatest,
+    race
 } from "redux-saga/effects";
 import history from "../../lib/history";
 import { ICardSet } from "../../model/cards";
@@ -40,6 +41,8 @@ import {
     selectWorkItem,
     updateStatus
 } from "./sessionActions";
+
+
 
 export function* rootSessionSaga() {
     yield takeLatest(loadSession.type, sessionSaga);
@@ -155,8 +158,39 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>) {
 
         // Start communication channel
         const channelTask: Task = yield fork(channelSaga, session);
+    
+        
+    console.log("channelTask", )
+
+let channelSuccess = false;
+
+for (let i = 0; i < 2 && !channelSuccess; i++) {
+    try {
+        yield put(updateStatus("Connecting to server..."));
+
+        // Start communication channel
+        const { channel, timeout } = yield race({
+            channel: fork(channelSaga, session),
+            timeout: delay(10000)
+        });
+
+        let channelTask: Task = channel;
 
         // Wait for connection
+        yield take(connected.type);
+
+        yield put(updateStatus("Connected."));
+        channelSuccess = true;
+    } catch (error) {
+        console.error('Error in channelSaga:', error);
+    }
+}
+
+if (!channelSuccess) {
+    // Show the user a message that the connection failed
+    yield put(updateStatus("Failed to connect to server after multiple attempts."));
+}
+      // Wait for connection
         yield take(connected.type);
 
         yield put(updateStatus("Connected."));
