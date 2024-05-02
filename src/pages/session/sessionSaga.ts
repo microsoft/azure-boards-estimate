@@ -154,13 +154,12 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>) {
             workItemIds
         );
 
-        yield put(updateStatus("Connecting to server..."));
 
         // Start communication channel
         const channelTask: Task = yield fork(channelSaga, session);
     
         
-    console.log("channelTask", )
+    
 
 let channelSuccess = false;
 
