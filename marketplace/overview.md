@@ -1,92 +1,43 @@
 # Estimate
 
-Play Planning Poker in Azure DevOps. Select work from an iteration, query, or your backlog, estimate the effort of those items with your team, and immediately update the work items.
+Enhance your sprint planning sessions with the Planning Poker for Azure DevOps extension. This powerful tool allows you to streamline the estimation process by enabling your team to collaboratively estimate the effort of work items directly within Azure DevOps. Select work items from your iteration, query, or backlog, conduct effective estimation sessions with your team, and seamlessly update the work items in real-time. Improve accuracy and team alignment on effort estimates, ensuring better planning and execution of your projects.
 
-## Support
+# Documentation
 
-See [Support](https://github.com/microsoft/azure-boards-estimate/#support) in our GitHub repository for information about how to report issues and get help.
+To start a new Planning Poker session in Azure DevOps, follow these steps:
 
-## Updates
+1. Start a New Session:
 
-**TBD** - 2.4.0
-- Cannot select shared query [#59](https://github.com/microsoft/azure-boards-estimate/issues/59)
-- Work items which exceeds the limit of 200 [#45](https://github.com/microsoft/azure-boards-estimate/issues/45)
-- Developer vote "?" counted as 0 in average calculation [#28](https://github.com/microsoft/azure-boards-estimate/issues/28)
-- Only show top 1000 teams/boards in drop down for new Estimate [#18](https://github.com/microsoft/azure-boards-estimate/issues/18)
+- From Backlog: Select work items and open the context menu to initiate the session.
+- From a Query: Create a query and start the session from the context menu, or save it to the shared queries and use the Estimate hub to select the query.
+- From an Iteration: Use the Estimate hub and select an iteration to begin.
+2. Share the Link:
 
-**7/30/2021** - 2.3.0
-- Moved extension to new home for future development.
+- Share the generated session link with your team members to allow them to join the session.
+3. Team Members Join:
 
-**8/28/2019** - 2.2.0
-- Allow restricting selecting work items/commiting values to the creator of the session [#43](https://github.com/cschleiden/azure-boards-estimate/issues/43)
+- Ensure all team members have joined the session.
+4. Pick a Card:
 
-**7/3/2019** - 2.1.0
-- Public release of **Estimate 2**
+- Each team member picks a card to provide their estimate.
+5. Reveal Estimates:
 
-**2/1/2019** - 2.0.0
-- First beta release of the new Estimate version
+- Once everyone has picked a card, click Reveal to show everyone's estimates.
+5. Commit the Final Estimate:
 
-**11/3/2016** - 1.0.19 
-- Fixes backend connection problems.
+- Select and commit the final estimate for the work item.
+6. Move to the Next Work Item:
 
-**4/5/2016** - 1.0.13
-- Improved support for projects created from an [inherited process](https://msdn.microsoft.com/en-us/library/vs/alm/work/process/manage-process).
+- Continue to the next work item. Estimates are automatically saved to the work items.
+7. End the Session:
 
-**4/2/2016** - 1.0.11
-- Bugfixes for projects created from CMMI template
+- After completing the estimation for all items, you can end the session.
 
-**3/27/2016** - 1.0.8
+# Support
 
-- Performance optimizations
-- Non-numeric card selections are now indicated as a warning when being revealed:
-    ![Warning](marketplace/images/updates/warning.gif)
-- Improved support for Internet Explorer 11 when revealing cards
+## How to file issues and get help
+
+This project uses [GitHub Issues](https://github.com/microsoft/azure-boards-estimate/issues) to track bugs and feature requests. Please search the existing issues before filing new issues to avoid duplicates. For new issues, file your bug or feature request as a new Issue. 
 
 
-## Estimate work items from your backlog...
-
-Select any number of items on your backlog and start a new session from the context menu.
-
-![Backlog](marketplace/images/backlog-context.png)
-
-## ...or in an iteration
-
-Estimate all work items in an iteration.
-
-![Iteration](marketplace/images/start-iteration.png)
-
-## Work with your team in real-time
-
-See immediately who has joined the session, who has selected a card, who has picked which estimate.
-
-![Team Members](marketplace/images/team-members.png)
-
-## Update your work items as you go
-
-Each estimation is saved to your work items as soon as you have estimated
-
-![Work Items](marketplace/images/work-items.png)
-
-# Quick steps to get started
-
-## Starting a new session
-
-1.  Start a new session:  
-    - From backlog by selecting workitems and opening the context menu
-    -  Create a Query and start start the session from the context menu or save it to the shared queries and use the *Estimate* hub and select the query
-    -  Use the *Estimate* hub and select an iteration
-2.  Share the generated link with your team members, so that they are able to join
-3.  Once all members have joined, everyone picks a card
-4.  After everyone has picked a card, click `Reveal` to reveal everyone's estimate
-5.  Select and commit the final estimate
-6.  Move on to the next work item. Estimates are automatically saved to the work items.
-
-After you are done, you can end the session.
-
-## Joining an existing session
-
-There are two ways to join an existing session, use a direct link, or pick an existing session from the *Estimate* hub
-![Existing Sessions](marketplace/images/join-existing.png)
-
-
-> Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any commitments made as to their longevity.
+ Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any commitments made as to their longevity.
