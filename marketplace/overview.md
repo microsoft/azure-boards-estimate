@@ -33,6 +33,14 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 
 - After completing the estimation for all items, you can end the session.
 
+![Create Session](marketplace/images/CreateSession.png)
+![Backlog View](marketplace/images/backlogView.png)
+![Estimate Session](marketplace/images/mySession.png)
+![End Session](marketplace/images/EndSession.png)
+![Vote](marketplace/images/vote.png)
+![reveal](marketplace/images/reveal.png)
+
+
 # Support
 
 ## How to file issues and get help
