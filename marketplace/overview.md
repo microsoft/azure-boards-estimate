@@ -9,7 +9,10 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 1. Start a New Session:
 
 - From Backlog: Select work items and open the context menu to initiate the session.
+<img src="marketplace/images/backlogView.pn" alt="Backlog View" width="800"/>
 - From a Query: Create a query and start the session from the context menu, or save it to the shared queries and use the Estimate hub to select the query.
+
+<img src="marketplace/images/CreateSession.png" alt="Create Session" width="800"/>
 - From an Iteration: Use the Estimate hub and select an iteration to begin.
 2. Share the Link:
 
@@ -17,12 +20,16 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 3. Team Members Join:
 
 - Ensure all team members have joined the session.
+<img src="marketplace/images/mySession.png" alt="Estimate Session" width="800"/>
 4. Pick a Card:
 
 - Each team member picks a card to provide their estimate.
+<img src="marketplace/images/vote.png" alt="Vote" width="800"/>
 5. Reveal Estimates:
 
 - Once everyone has picked a card, click Reveal to show everyone's estimates.
+<img src="marketplace/images/reveal.png" alt="reveal" width="800"/>
+
 5. Commit the Final Estimate:
 
 - Select and commit the final estimate for the work item.
@@ -32,14 +39,7 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 7. End the Session:
 
 - After completing the estimation for all items, you can end the session.
-
-![Create Session](marketplace/images/CreateSession.png)
-![Backlog View](marketplace/images/backlogView.png)
-![Estimate Session](marketplace/images/mySession.png)
-![End Session](marketplace/images/EndSession.png)
-![Vote](marketplace/images/vote.png)
-![reveal](marketplace/images/reveal.png)
-
+<img src="marketplace/images/EndSession.png" alt="EndSession.png" width="800"/>
 
 # Support
 
@@ -47,5 +47,7 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 
 This project uses [GitHub Issues](https://github.com/microsoft/azure-boards-estimate/issues) to track bugs and feature requests. Please search the existing issues before filing new issues to avoid duplicates. For new issues, file your bug or feature request as a new Issue. 
 
+## Microsoft Support Policy
+Support for this project is limited to the resources listed above
 
- Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any commitments made as to their longevity.
+
