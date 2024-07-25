@@ -5,6 +5,7 @@ Enhance your sprint planning sessions with the Planning Poker for Azure DevOps e
 # Documentation
 
 To start a new Planning Poker session in Azure DevOps, follow these steps:
+
 1. Select a field
 Select a field to store the estimation for each work item.
 ![settings](marketplace/images/settings
