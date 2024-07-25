@@ -13,23 +13,35 @@ For detailed instructions on using the Planning Poker for Azure DevOps extension
 
 ### Developing and Testing
 
-<span style="color: green">To test your work, first [follow these steps to set up a DevOps marketplace publisher account](https://docs.microsoft.com/en-us/azure/devops/extend/publish/overview?view=azure-devops) (if you already have an account move on).
+```bash 
+npm install   # Install node dependencies
+Run `npm run start     # Compile the source code
+npm run build      # build the extension 
+```
 
-1. Run `npm run package-dev` and upload the package as a private extension to your  Azure DevOps publisher account
-> Note: You may need to add a directory called `build` to the project root when running the script. The output of the `package-dev` script is there.
- - Be sure to update the `manifest.json` to use your publisher's ID before running the script.
-2. Install the private extension on your Azure DevOps oragnization and test your changes.
 
 # Support
 
 ## How to file issues and get help
 
 This project uses [GitHub Issues](https://github.com/microsoft/azure-boards-estimate/issues) to track bugs and feature requests. Please search the existing issues before filing new issues to avoid duplicates. For new issues, file your bug or feature request as a new Issue. 
+## Microsoft Support Policy
+Support for this project is limited to the resources listed above.
 
 
-## Contributing
 
-We welcome contributions to improve the the Planning Poker for Azure DevOps extension. If you would like to contribute, please fork the repository and create a pull request with your changes. Your contributions help enhance the functionality and usability of the extension for the entire community.
+# Contributing
 
-## Microsoft DevLabs
-Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any commitments made as to their longevity.
+We welcome contributions to improve the extension. If you would like to contribute, please fork the repository and create a pull request with your changes. Your 
+contributions help enhance the functionality and usability of the extension for the entire community.
+
+**Note:** do not publish the extension as a public extension under a different publisher as this will create a clone of the extension and it will be unclear to the 
+community which one to use. If you feel you don't want to contribute to this repository then publish a private version for your use-case.
+
+## About Microsoft DevLabs
+Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this 
+category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any 
+commitments made as to their longevity.
+
+Check out https://learn.microsoft.com/en-us/azure/devops/extend/get-started to learn how to develop Azure DevOps extensions
+

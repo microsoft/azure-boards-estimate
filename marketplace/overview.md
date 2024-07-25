@@ -5,41 +5,49 @@ Enhance your sprint planning sessions with the Planning Poker for Azure DevOps e
 # Documentation
 
 To start a new Planning Poker session in Azure DevOps, follow these steps:
+1. Select a field
+Select a field to store the estimation for each work item.
+![settings](marketplace/images/settings
+.png)
 
-1. Start a New Session:
+2. Start a New Session:
 
 - From Backlog: Select work items and open the context menu to initiate the session.
-<img src="marketplace/images/backlogView.pn" alt="Backlog View" width="800"/>
-- From a Query: Create a query and start the session from the context menu, or save it to the shared queries and use the Estimate hub to select the query.
+![backlogView](marketplace/images/backlogView.png)
 
-<img src="marketplace/images/CreateSession.png" alt="Create Session" width="800"/>
+- From a Query: Create a query and start the session from the context menu, or save it to the shared queries and use the Estimate hub to select the query.
+![CreateSession](marketplace/images/CreateSession.png)
+
 - From an Iteration: Use the Estimate hub and select an iteration to begin.
-2. Share the Link:
+3. Share the Link:
 
 - Share the generated session link with your team members to allow them to join the session.
-3. Team Members Join:
+4. Team Members Join:
 
 - Ensure all team members have joined the session.
-<img src="marketplace/images/mySession.png" alt="Estimate Session" width="800"/>
-4. Pick a Card:
+![mySession](marketplace/images/mySession.png)
+5. Pick a Card:
 
 - Each team member picks a card to provide their estimate.
-<img src="marketplace/images/vote.png" alt="Vote" width="800"/>
-5. Reveal Estimates:
+![vote](marketplace/images/vote.png)
+
+6. Reveal Estimates:
 
 - Once everyone has picked a card, click Reveal to show everyone's estimates.
-<img src="marketplace/images/reveal.png" alt="reveal" width="800"/>
+![reveal](marketplace/images/reveal.png)
 
-5. Commit the Final Estimate:
+
+7. Commit the Final Estimate:
 
 - Select and commit the final estimate for the work item.
-6. Move to the Next Work Item:
+8. Move to the Next Work Item:
 
 - Continue to the next work item. Estimates are automatically saved to the work items.
-7. End the Session:
+9. End the Session:
 
 - After completing the estimation for all items, you can end the session.
-<img src="marketplace/images/EndSession.png" alt="EndSession.png" width="800"/>
+![EndSesiion](marketplace/images/EndSession.png)
+
 
 # Support
 
