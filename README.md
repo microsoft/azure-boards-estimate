@@ -12,7 +12,7 @@ For detailed instructions on using the Planning Poker for Azure DevOps extension
 Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this 
 category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any 
 commitments made as to their longevity.
-Check out https://learn.microsoft.com/en-us/azure/devops/extend/get-started to learn how to develop Azure DevOps extensions
+
 
 # Support
 
@@ -32,12 +32,6 @@ contributions help enhance the functionality and usability of the extension for 
 
 **Note:** do not publish the extension as a public extension under a different publisher as this will create a clone of the extension and it will be unclear to the 
 community which one to use. If you feel you don't want to contribute to this repository then publish a private version for your use-case.
-
-> About Microsoft DevLabs
-Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this 
-category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any 
-commitments made as to their longevity.
-
 Check out https://learn.microsoft.com/en-us/azure/devops/extend/get-started to learn how to develop Azure DevOps extensions
 
 ### Developing and Testing
