@@ -13,7 +13,6 @@ Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that 
 category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any 
 commitments made as to their longevity.
 
-
 # Support
 
 ## How to file issues and get help
