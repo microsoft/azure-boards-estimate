@@ -8,16 +8,17 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 
 1. Select a field
 Select a field to store the estimation for each work item.
-![settings](marketplace/images/settings
-.png)
+![settings](marketplace/images/settings.png)
 
 2. Start a New Session:
+- - From an Iteration: Use the Estimate hub and select an iteration to begin
+![CreateSession](marketplace/images/CreateSession.png)
 
 - From Backlog: Select work items and open the context menu to initiate the session.
 ![backlogView](marketplace/images/backlogView.png)
 
 - From a Query: Create a query and start the session from the context menu, or save it to the shared queries and use the Estimate hub to select the query.
-![CreateSession](marketplace/images/CreateSession.png)
+![estimateQuery](marketplace/images/estimateQuery.png)
 
 - From an Iteration: Use the Estimate hub and select an iteration to begin.
 3. Share the Link:
