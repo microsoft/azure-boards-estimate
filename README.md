@@ -7,12 +7,6 @@ Enhance your sprint planning sessions with the Planning Poker for Azure DevOps e
 
 For detailed instructions on using the Planning Poker for Azure DevOps extension, please refer to the official documentation. You can access the comprehensive guide by clicking [Market place](https://marketplace.visualstudio.com/items?itemName=ms-devlabs.estimate). This resource provides step-by-step information to help you effectively utilize the estimation features within your Azure DevOps environment.
 
-## About Microsoft DevLabs
-
-Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this 
-category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any 
-commitments made as to their longevity.
-
 # Support
 
 ## How to file issues and get help
@@ -22,7 +16,6 @@ This project uses [GitHub Issues](https://github.com/microsoft/azure-boards-esti
 ## Microsoft Support Policy
 
 Support for this project is limited to the resources listed above.
-
 
 # Contributing
 
@@ -35,10 +28,21 @@ Check out https://learn.microsoft.com/en-us/azure/devops/extend/get-started to l
 
 ### Developing and Testing
 
-```bash 
-npm install   # Install node dependencies
-npm run start     # Compile the source code
-npm run build      # build the extension 
+```bash
+# Install node dependencies
+npm install
+
+# Compile the source code
+npm run start
+
+# Build the extension
+npm run build
+```
+## About Microsoft DevLabs
+
+Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this 
+category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any 
+commitments made as to their longevity.
 ```
 
 
