@@ -44,5 +44,3 @@ This project uses [GitHub Issues](https://github.com/microsoft/azure-boards-esti
 ## Microsoft Support Policy
 
 Support for this project is limited to the resources listed above
-
-
