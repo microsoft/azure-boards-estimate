@@ -41,4 +41,6 @@ npm run build
 ```
 ## About Microsoft DevLabs
 
-Microsoft DevLabs is an outlet for experimental projects from Microsoft, showcasing some of the latest ideas around developer tools. Solutions in this category are designed for broad usage, and users are encouraged to use and provide feedback on them. However, these extensions are not supported, and no commitments are made regarding their longevity.
+Microsoft DevLabs is an outlet for experiments from Microsoft, experiments that represent some of the latest ideas around developer tools. Solutions in this
+category are designed for broad usage, and you are encouraged to use and provide feedback on them; however, these extensions are not supported nor are any
+commitments made as to their longevity.
