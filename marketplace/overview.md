@@ -8,7 +8,7 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 
 1. Select a field
 - Select a field to store the estimation for each work item.
-![settings](marketplace/images/images/settings.png)
+![settings](marketplace/images/settings.png)
 2. Start a New Session:
 -  Create a new session
 ![CreateSession](marketplace/images/CreateSession.png)
@@ -23,17 +23,17 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 ![mySession](marketplace/images/mySession.png)
 5. Pick a Card:
 - Each team member picks a card to provide their estimate.
-![vote](marketplace/images//vote.png)
+![vote](marketplace/images/vote.png)
 6. Reveal Estimates:
 - Once everyone has picked a card, click Reveal to show everyone's estimates.
-![reveal](../marketplace/images/revealEstimate.png)
+![reveal](marketplace/images/reveal.png)
 7. Commit the Final Estimate:
 - Select and commit the final estimate for the work item.
 8. Move to the Next Work Item:
 - Continue to the next work item. Estimates are automatically saved to the work items.
 9. End the Session:
 - After completing the estimation for all items, you can end the session.
-![EndSesiion](../marketplace/images/EndSession.png)
+![EndSesiion](marketplace/images/EndSession.png)
 
 # Support
 
