@@ -8,11 +8,7 @@ To start a new Planning Poker session in Azure DevOps, follow these steps:
 
 1. Select a field
 - Select a field to store the estimation for each work item.
-<<<<<<< HEAD
-![settings](marketplace/images/images/settings.png)
-=======
 ![settings](marketplace/images/settings.png)
->>>>>>> main
 2. Start a New Session:
 -  Create a new session
 ![CreateSession](marketplace/images/CreateSession.png)
