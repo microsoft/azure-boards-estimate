@@ -5,7 +5,7 @@ Enhance your sprint planning sessions with the Planning Poker for Azure DevOps e
 
 # Documentation 
 
-For detailed instructions on using the Planning Poker for Azure DevOps extension, please refer to the official documentation. You can access the comprehensive guide by clicking [Market place](https://marketplace.visualstudio.com/items?itemName=ms-devlabs.estimate). This resource provides step-by-step information to help you effectively utilize the estimation features within your Azure DevOps environment.
+For detailed instructions on using the Planning Poker for Azure DevOps extension, please refer to the official documentation. You can access the comprehensive guide by clicking [Marketplace](https://marketplace.visualstudio.com/items?itemName=ms-devlabs.estimate). This resource provides step-by-step information to help you effectively utilize the estimation features within your Azure DevOps environment.
 
 # Support
 
