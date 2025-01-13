@@ -64,26 +64,22 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
 
 
 
-
-
         const checkIfIsEqual = () => {
             if (revealed && estimates && estimates.every((val, i, arr) => val.cardIdentifier === arr[0].cardIdentifier)) {
-                return estimates[0].cardIdentifier
+              return estimates[0].cardIdentifier;
             }
-        }
-
-
-        const invalidIdentifiers = ["?", "∞", "☕"];
-        const validEstimates = (estimates || []).filter(e => !invalidIdentifiers.includes(e.cardIdentifier));
-
-
-       const sum = validEstimates.reduce((sum, e) => {
-         const card = cardSet.cards.find(x => x.identifier === e.cardIdentifier);
-          if (card && card.value !== null) {
-       sum += Number(card.value);
-         }
-              return sum;
-        }, 0);
+          };
+          
+          const invalidIdentifiers = ["?", "∞", "☕"];
+          const validEstimates = (estimates || []).filter(e => e.cardIdentifier && !invalidIdentifiers.includes(e.cardIdentifier));
+          
+          const sum = validEstimates.reduce((sum, e) => {
+            const card = cardSet.cards.find(x => x.identifier === e.cardIdentifier);
+            if (card && card.value !== null) {
+              sum += Number(card.value);
+            }
+            return sum;
+          }, 0);
 
       const average = sum / (validEstimates.length || 1 );
 
