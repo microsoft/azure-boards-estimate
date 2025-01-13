@@ -73,7 +73,9 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         }
 
 
-       const validEstimates =  (estimates|| []).filter(e => e.cardIdentifier !== "?");
+        const invalidIdentifiers = ["?", "∞", "☕"];
+        const validEstimates = (estimates || []).filter(e => !invalidIdentifiers.includes(e.cardIdentifier));
+
 
        const sum = validEstimates.reduce((sum, e) => {
          const card = cardSet.cards.find(x => x.identifier === e.cardIdentifier);
