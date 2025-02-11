@@ -366,6 +366,18 @@ export const defaultCardSets: ICardSet[] = [
         value: 16,
       },
       {
+        identifier: "32",
+        value: 32,
+      },
+      {
+        identifier: "64",
+        value: 64,
+      },
+      {
+        identifier: "128",
+        value: 128,
+      },
+      {
         identifier: "☕",
         value: null,
       },
