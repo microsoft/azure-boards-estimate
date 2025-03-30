@@ -11,5 +11,7 @@ export interface IWorkItem {
     icon?: string;
     color?: string;
     AcceptanceCriteria?: any,
-
+    parent?: number,
+    children?: IWorkItem[],
+    nestingLevel?: number,
 }
