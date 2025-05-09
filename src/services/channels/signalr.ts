@@ -60,7 +60,7 @@ export class SignalRChannel implements IChannel {
         const identityService = Services.getService<IIdentityService>(
             IdentityServiceId
         );
-        const identity = await identityService.getCurrentIdentity();
+        const identity = identityService.getCurrentIdentity();
 
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(
@@ -72,23 +72,54 @@ export class SignalRChannel implements IChannel {
             .build();
       
         // Hook up handler for all messages the server sends
-        this.connection.on("broadcast", this.onReceive); 
+        this.connection.on("broadcast", this.onReceive);
 
-        // Start connection
-        await this.connection.start().catch(err => {
+        const maxRetries = 5;
+        const retryDelay = 5000; // milliseconds
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                await this.connection.start();
+                console.log("SignalR connection established.");
+
+                await this.join({
+                    tfId: identity.id,
+                    name: identity.displayName,
+                    imageUrl: identity.imageUrl
+                });
+
+                return; // Exit the loop if connection is successful
+            }
+            catch (error) {
+                console.error(`Attempt ${attempt} failed: ${error}`);
+                if (attempt < maxRetries) {
+                    console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+                    await new Promise(resolve => setTimeout(resolve, retryDelay));
+                } 
+                else {
+                    console.error("Max retries reached. Could not establish SignalR connection.");
+                    throw error; // Rethrow the error after max attempts
+                }
+                
+            }
+        }
+
+
+        // // Start connection
+        // await this.connection.start().catch(err => {
         
-            // tslint:disable-next-line:no-console
-            console.error(err.toString());
-        });
+        //     // tslint:disable-next-line:no-console
+        //     console.error(err.toString());
+        // });
 
-        // Say hello to other clients
-        await this.join({
-            tfId: identity.id,
-            name: identity.displayName,
-            imageUrl: identity.imageUrl
-        });
+        // // Say hello to other clients
+        // await this.join({
+        //     tfId: identity.id,
+        //     name: identity.displayName,
+        //     imageUrl: identity.imageUrl
+        // });
       
-        // Wait for snapshot
+        // // Wait for snapshot
     }
 
     async end(): Promise<void> {
