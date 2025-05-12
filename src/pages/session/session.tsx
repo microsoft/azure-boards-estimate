@@ -94,7 +94,7 @@ class Session extends React.Component<
             return (
                 <div className="absolute-fill flex-column flex-grow flex-center justify-center">
                     <Spinner size={SpinnerSize.large} />
-                    <div>{status.message}</div>
+                    <div style={{ textAlign: "center"}} dangerouslySetInnerHTML={{ __html: status.message}}></div>
                 </div>
             );
         }

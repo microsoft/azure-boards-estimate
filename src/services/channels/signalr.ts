@@ -20,6 +20,9 @@ enum Action {
 }
 
 export class SignalRChannel implements IChannel {
+
+    onStatus?: (status: string) => void;
+
     estimate = defineOperation<IEstimate>(async estimate => {
         await this.sendToOtherClients(Action.Estimate, estimate);
     });
@@ -80,7 +83,7 @@ export class SignalRChannel implements IChannel {
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 await this.connection.start();
-                console.log("SignalR connection established.");
+                
 
                 await this.join({
                     tfId: identity.id,
@@ -93,11 +96,16 @@ export class SignalRChannel implements IChannel {
             catch (error) {
                 console.error(`Attempt ${attempt} failed: ${error}`);
                 if (attempt < maxRetries) {
-                    console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+                    if (this.onStatus) {
+                        this.onStatus(`Connection attempt ${attempt} failed. Retrying in ${retryDelay / 1000} seconds...`);
+                    }
                     await new Promise(resolve => setTimeout(resolve, retryDelay));
                 } 
                 else {
-                    console.error("Max retries reached. Could not establish SignalR connection.");
+                    const failMsg = `Max retries reached. Could not establish connection.
+                                    If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.
+                                    If the endpoint (<a href="https://msdevlabs-estimate-backend.azurewebsites.net/" target="_blank">https://msdevlabs-estimate-backend.azurewebsites.net/</a>) is not reachable from a browser, it might be blocked by a firewall or network policy.`;
+                    if (this.onStatus) this.onStatus(failMsg);
                     throw error; // Rethrow the error after max attempts
                 }
                 

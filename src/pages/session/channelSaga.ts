@@ -6,7 +6,8 @@ import {
     put,
     select,
     take,
-    takeEvery
+    takeEvery,
+    fork
 } from "redux-saga/effects";
 import { Action } from "typescript-fsa";
 import { ISession } from "../../model/session";
@@ -25,11 +26,20 @@ import {
     snapshotReceived,
     userJoined,
     userLeft,
-    workItemSelected
+    workItemSelected,
+    updateStatus
 } from "./sessionActions";
 
 export function* channelSaga(session: ISession): SagaIterator {
     const channel: IChannel = yield call(getChannel, session.id, session.mode);
+
+    const statusChannel: Channel<string> = eventChannel(status => {
+        channel.onStatus = status;
+        return () => {};
+    });
+
+    yield fork(statusHandlerSaga, statusChannel);
+
     yield call([channel, channel.start], session.id);
 
     yield put(connected());
@@ -141,4 +151,11 @@ export function subscribe(channel: IChannel) {
         // tslint:disable-next-line:no-empty
         return () => {};
     });
+}
+
+function* statusHandlerSaga(statusChannel: Channel<string>) {
+    while (true) {
+        const status: string = yield take(statusChannel);
+        yield put(updateStatus(status));
+    }
 }
