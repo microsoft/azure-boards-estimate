@@ -18,6 +18,7 @@ export const loadedSession = factory<{
 }>("loaded");
 
 export const updateStatus = factory<string>("updateStatus");
+export const updateStatusError = factory<string>("updateStatusError");
 
 export const errorSession = factory<string>("error");
 export const leaveSession = factory<void>("leave");

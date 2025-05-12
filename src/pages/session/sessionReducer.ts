@@ -10,7 +10,12 @@ import * as Actions from "./sessionActions";
 export const initialState = {
     status: {
         loading: false,
-        message: ""
+        message: "",
+    },
+    errorStatus: {
+        loading: false,
+        message: "",
+        type: ""
     },
     session: null as ISession | null,
     cardSet: null as ICardSet | null,
@@ -196,6 +201,13 @@ export default <TPayload>(
             Actions.updateStatus,
             (state, message) => {
                 state.status.message = message;
+            }
+        ),
+        [Actions.updateStatusError.type]: reducerAction(
+            Actions.updateStatusError,
+            (state, message) => {
+                state.errorStatus.message = message;
+                state.errorStatus.type = "error";
             }
         ),
         [Actions.snapshotReceived.type]: reducerAction(

@@ -8,6 +8,9 @@ import {
     IHeaderCommandBarItem
 } from "azure-devops-ui/HeaderCommandBar";
 import { Page } from "azure-devops-ui/Page";
+import { Dialog } from "azure-devops-ui/Dialog";
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { Observer } from "azure-devops-ui/Observer";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { VssPersona } from "azure-devops-ui/VssPersona";
 import { Spinner, SpinnerSize } from "office-ui-fabric-react";
@@ -43,6 +46,11 @@ interface ISessionProps extends IPageProps<ISessionParams> {
         loading: boolean;
         message: string;
     };
+    errorStatus: {
+        loading: boolean;
+        message: string;
+        type: string;
+    };
     session: ISession;
     workItems: IWorkItem[];
     estimates: ISessionEstimates;
@@ -74,8 +82,20 @@ class Session extends React.Component<
         };
     }
 
+
+    private isDialogOpen = new ObservableValue<boolean>(false);
+
     componentDidMount() {
         this.props.loadSession(this.props.match.params.id);
+        if(this.props.errorStatus.type === "error") {
+            this.isDialogOpen.value = true;
+        }
+    }
+
+    componentDidUpdate(prevProps: ISessionProps) {
+        if (this.props.errorStatus.type === "error" && prevProps.errorStatus.type !== "error") {
+            this.isDialogOpen.value = true;
+        }
     }
 
     render(): JSX.Element {
@@ -84,26 +104,55 @@ class Session extends React.Component<
             cardSet,
             session,
             status,
+            errorStatus,
             workItems,
             selectedWorkItem,
             leaveSession,
             activeUsers ,
             } = this.props;
 
-      if (status.loading || !session) {
+
+        const onDismiss = () => {
+            this.isDialogOpen.value = false;
+            this.props.errorStatus.type = "";
+        }
+
+        if (errorStatus.type !== "error" && (status.loading || !session)) {
             return (
                 <div className="absolute-fill flex-column flex-grow flex-center justify-center">
                     <Spinner size={SpinnerSize.large} />
-                    <div style={{ textAlign: "center"}} dangerouslySetInnerHTML={{ __html: status.message}}></div>
+                    <div>{status.message}</div>
                 </div>
             );
         }
-
-
-
-
-      
-     
+        if (errorStatus.type === "error") {
+            return (
+                <div>
+                    <Observer isDialogOpen={this.isDialogOpen}>
+                        {(props: { isDialogOpen: boolean }) => {
+                            return props.isDialogOpen ? (
+                                <Dialog
+                                    titleProps={{ text: "Error establishing a connection" }}
+                                    footerButtonProps={[
+                                        {
+                                            text: "Back to home",
+                                            primary: true,
+                                            onClick: () => {
+                                                this.props.history.push("/");
+                                                window.location.reload();
+                                            }
+                                        }
+                                    ]}
+                                    onDismiss={onDismiss}
+                                >
+                                    <div dangerouslySetInnerHTML={{ __html: errorStatus.message}}/>
+                                </Dialog>
+                            ) : null;
+                        }}
+                    </Observer>
+                </div>
+            );
+        }
 
         const sessionModeCheck = (workitem: number, selectedWi: any) => {
             if ((session.mode === SessionMode.Online && canPerformAdminActions) || session.mode === SessionMode.Offline) {
@@ -205,6 +254,7 @@ export default connect(
         return {
             identity: state.init.currentIdentity,
             status: state.session.status,
+            errorStatus: state.session.errorStatus,
             session: state.session.session,
             cardSet: state.session.cardSet,
             workItems: state.session.workItems,

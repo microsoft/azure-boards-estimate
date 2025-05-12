@@ -80,7 +80,7 @@ export class SignalRChannel implements IChannel {
         const maxRetries = 5;
         const retryDelay = 5000; // milliseconds
 
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
                 await this.connection.start();
                 
@@ -94,17 +94,16 @@ export class SignalRChannel implements IChannel {
                 return; // Exit the loop if connection is successful
             }
             catch (error) {
-                console.error(`Attempt ${attempt} failed: ${error}`);
                 if (attempt < maxRetries) {
                     if (this.onStatus) {
-                        this.onStatus(`Connection attempt ${attempt} failed. Retrying in ${retryDelay / 1000} seconds...`);
+                        this.onStatus(`Connection attempt failed. Retrying ${attempt + 1}/${maxRetries} in ${retryDelay / 1000} seconds...`);
                     }
                     await new Promise(resolve => setTimeout(resolve, retryDelay));
                 } 
                 else {
-                    const failMsg = `Max retries reached. Could not establish connection.
-                                    If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.
-                                    If the endpoint (<a href="https://msdevlabs-estimate-backend.azurewebsites.net/" target="_blank">https://msdevlabs-estimate-backend.azurewebsites.net/</a>) is not reachable from a browser, it might be blocked by a firewall or network policy.`;
+                    const failMsg = `Max amount of retries reached. Could not establish connection.<br><br>
+                                    If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.<br><br>
+                                    If the endpoint <a href="https://msdevlabs-estimate-backend.azurewebsites.net" target="_blank">https://msdevlabs-estimate-backend.azurewebsites.net/</a> is not reachable from a browser, it might be blocked by a firewall or network policy.`;
                     if (this.onStatus) this.onStatus(failMsg);
                     throw error; // Rethrow the error after max attempts
                 }

@@ -27,7 +27,7 @@ import {
     userJoined,
     userLeft,
     workItemSelected,
-    updateStatus
+    updateStatusError
 } from "./sessionActions";
 
 export function* channelSaga(session: ISession): SagaIterator {
@@ -156,6 +156,6 @@ export function subscribe(channel: IChannel) {
 function* statusHandlerSaga(statusChannel: Channel<string>) {
     while (true) {
         const status: string = yield take(statusChannel);
-        yield put(updateStatus(status));
+        yield put(updateStatusError(status));
     }
 }
