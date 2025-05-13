@@ -21,7 +21,7 @@ enum Action {
 
 export class SignalRChannel implements IChannel {
 
-    onStatus?: (status: string) => void;
+    onStatus?: (status: { message: string, type?: string}) => void;
 
     estimate = defineOperation<IEstimate>(async estimate => {
         await this.sendToOtherClients(Action.Estimate, estimate);
@@ -96,37 +96,19 @@ export class SignalRChannel implements IChannel {
             catch (error) {
                 if (attempt < maxRetries) {
                     if (this.onStatus) {
-                        this.onStatus(`Connection attempt failed. Retrying ${attempt + 1}/${maxRetries} in ${retryDelay / 1000} seconds...`);
+                        this.onStatus({message:`Connection attempt failed. Retrying ${attempt + 1}/${maxRetries} in ${retryDelay / 1000} seconds...`, type: "retry"});
                     }
                     await new Promise(resolve => setTimeout(resolve, retryDelay));
                 } 
                 else {
-                    const failMsg = `Max amount of retries reached. Could not establish connection.<br><br>
-                                    If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.<br><br>
-                                    If the endpoint <a href="https://msdevlabs-estimate-backend.azurewebsites.net" target="_blank">https://msdevlabs-estimate-backend.azurewebsites.net/</a> is not reachable from a browser, it might be blocked by a firewall or network policy.`;
-                    if (this.onStatus) this.onStatus(failMsg);
+                    const failMsg = `If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.<br><br>
+                                     If the endpoint <a href="https://msdevlabs-estimate-backend.azurewebsites.net" target="_blank">https://msdevlabs-estimate-backend.azurewebsites.net/</a> is not reachable from a browser, it might be blocked by a firewall or network policy.`;
+                    if (this.onStatus) this.onStatus({message: failMsg, type: "error"});
                     throw error; // Rethrow the error after max attempts
                 }
                 
             }
         }
-
-
-        // // Start connection
-        // await this.connection.start().catch(err => {
-        
-        //     // tslint:disable-next-line:no-console
-        //     console.error(err.toString());
-        // });
-
-        // // Say hello to other clients
-        // await this.join({
-        //     tfId: identity.id,
-        //     name: identity.displayName,
-        //     imageUrl: identity.imageUrl
-        // });
-      
-        // // Wait for snapshot
     }
 
     async end(): Promise<void> {

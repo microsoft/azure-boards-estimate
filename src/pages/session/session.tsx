@@ -117,11 +117,20 @@ class Session extends React.Component<
             this.props.errorStatus.type = "";
         }
 
-        if (errorStatus.type !== "error" && (status.loading || !session)) {
+        if (errorStatus.type !== "error" && errorStatus.type !== "retry" && (status.loading || !session)) {
             return (
                 <div className="absolute-fill flex-column flex-grow flex-center justify-center">
                     <Spinner size={SpinnerSize.large} />
                     <div>{status.message}</div>
+                </div>
+            );
+        }
+        if (errorStatus.type === "retry") {
+            return (
+                <div className="absolute-fill flex-column flex-grow flex-center justify-center">
+                    <Spinner size={SpinnerSize.large} />
+                    <div>{status.message}</div>
+                    <div>{errorStatus.message}</div>
                 </div>
             );
         }
@@ -143,6 +152,8 @@ class Session extends React.Component<
                                             }
                                         }
                                     ]}
+                                    lightDismiss={false}
+                                    modal={true}
                                     onDismiss={onDismiss}
                                 >
                                     <div dangerouslySetInnerHTML={{ __html: errorStatus.message}}/>

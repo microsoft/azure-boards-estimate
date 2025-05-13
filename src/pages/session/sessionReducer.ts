@@ -205,9 +205,9 @@ export default <TPayload>(
         ),
         [Actions.updateStatusError.type]: reducerAction(
             Actions.updateStatusError,
-            (state, message) => {
-                state.errorStatus.message = message;
-                state.errorStatus.type = "error";
+            (state, status) => {
+                state.errorStatus.message = status.message;
+                state.errorStatus.type = status.type || "";
             }
         ),
         [Actions.snapshotReceived.type]: reducerAction(
