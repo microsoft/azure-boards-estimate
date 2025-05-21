@@ -90,6 +90,10 @@ export class SignalRChannel implements IChannel {
                     name: identity.displayName,
                     imageUrl: identity.imageUrl
                 });
+                
+                if (this.onStatus) {
+                    this.onStatus({message: "", type: ""});
+                }
 
                 return; // Exit the loop if connection is successful
             }
@@ -98,6 +102,7 @@ export class SignalRChannel implements IChannel {
                     if (this.onStatus) {
                         this.onStatus({message:`Connection attempt failed. Retrying ${attempt + 1}/${maxRetries} in ${retryDelay / 1000} seconds...`, type: "retry"});
                     }
+
                     await new Promise(resolve => setTimeout(resolve, retryDelay));
                 } 
                 else {
