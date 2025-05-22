@@ -111,4 +111,6 @@ export interface IChannel {
      * End the connection
      */
     end(): Promise<void>;
+
+    onStatus?(status: { message: string, type?: string }): void;
 }
