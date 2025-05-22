@@ -63,7 +63,7 @@ export class SignalRChannel implements IChannel {
         const identityService = Services.getService<IIdentityService>(
             IdentityServiceId
         );
-        const identity = identityService.getCurrentIdentity();
+        const identity = await identityService.getCurrentIdentity();
 
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(
