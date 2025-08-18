@@ -1,4 +1,4 @@
-import { IProjectPageService } from "azure-devops-extension-api";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
 import { ProjectInfo } from "azure-devops-extension-api/Core";
 import { getService } from "azure-devops-extension-sdk";
 import { SagaIterator } from "redux-saga";
@@ -20,7 +20,7 @@ export function* rootSettingsSaga(): SagaIterator {
 }
 
 function* initSaga(): SagaIterator {
-    const projectService: IProjectPageService = yield call(
+    const projectService: AzureDevOpsAPI.IProjectPageService = yield call(
         getService,
         "ms.vss-tfs-web.tfs-page-data-service"
     );
@@ -56,7 +56,7 @@ export function* setFieldSaga(
 ): SagaIterator {
     const workItemType = action.payload;
 
-    const projectService: IProjectPageService = yield call(
+    const projectService: AzureDevOpsAPI.IProjectPageService = yield call(
         getService,
         "ms.vss-tfs-web.tfs-page-data-service"
     );

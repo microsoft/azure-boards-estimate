@@ -1,14 +1,10 @@
-import { getClient } from "azure-devops-extension-api";
-import { CoreRestClient } from "azure-devops-extension-api/Core";
-import { WorkRestClient } from "azure-devops-extension-api/Work";
-import {
-    WorkItemBatchGetRequest,
-    WorkItemTrackingRestClient
-} from "azure-devops-extension-api/WorkItemTracking";
-import {
-    Page,
-    WorkItemTrackingProcessRestClient
-} from "azure-devops-extension-api/WorkItemTrackingProcess";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
+import * as CoreClient from "azure-devops-extension-api/Core/CoreClient";
+import * as WorkClient from "azure-devops-extension-api/Work/WorkClient";
+import * as WorkItemTrackingClient from "azure-devops-extension-api/WorkItemTracking/WorkItemTrackingClient";
+import * as WorkItemTrackingModule from "azure-devops-extension-api/WorkItemTracking/WorkItemTracking";
+import * as WorkItemTrackingProcessClient from "azure-devops-extension-api/WorkItemTrackingProcess/WorkItemTrackingProcessClient";
+import * as WorkItemTrackingProcessModule from "azure-devops-extension-api/WorkItemTrackingProcess/WorkItemTrackingProcess";
 import { IWorkItem } from "../model/workitem";
 import { IField, IWorkItemType } from "../model/workItemType";
 import { IService, Services } from "./services";
@@ -43,7 +39,7 @@ interface IWorkItemTypeInfo {
 
 export class WorkItemService implements IWorkItemService {
     async getFields(projectId: string): Promise<IField[]> {
-        const client = getClient(WorkItemTrackingRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient);
         const fields = await client.getFields(projectId);
 
         const mappedFields: IField[] = fields.map(f => ({
@@ -57,13 +53,13 @@ export class WorkItemService implements IWorkItemService {
 
     async getWorkItemTypes(projectId: string): Promise<IWorkItemType[]> {
         // Get type fields
-        const workClient = getClient(WorkRestClient);
+        const workClient = AzureDevOpsAPI.getClient(WorkClient.WorkRestClient);
         const processConfig = await workClient.getProcessConfiguration(
             projectId
         );
         const effortField = processConfig.typeFields["Effort"]!;
 
-        const client = getClient(WorkItemTrackingRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient);
         const workItemTypes = await client.getWorkItemTypes(projectId);
 
         // Merge with config
@@ -122,7 +118,7 @@ export class WorkItemService implements IWorkItemService {
         }
 
         // Get all work items
-        const workItemTrackingClient = getClient(WorkItemTrackingRestClient);
+        const workItemTrackingClient = AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient);
         const workItems = [];
         let wiBatches = [];
         if (workItemIds.length > 200) {
@@ -143,7 +139,7 @@ export class WorkItemService implements IWorkItemService {
                     ],
                     $expand: 0 /* None */,
                     errorPolicy: 2 /* Omit */
-                } as WorkItemBatchGetRequest
+                } as WorkItemTrackingModule.WorkItemBatchGetRequest
             );
        workItems.push(...allWorkItems);
         }
@@ -182,8 +178,8 @@ export class WorkItemService implements IWorkItemService {
             }
         }
 
-        const coreClient = getClient(CoreRestClient);
-        const processClient = getClient(WorkItemTrackingProcessRestClient);
+        const coreClient = AzureDevOpsAPI.getClient(CoreClient.CoreRestClient);
+        const processClient = AzureDevOpsAPI.getClient(WorkItemTrackingProcessClient.WorkItemTrackingProcessRestClient);
 
         await Promise.all(
             Array.from(projectById.entries()).map(
@@ -296,7 +292,7 @@ export class WorkItemService implements IWorkItemService {
                     fields: Array.from(fields.values()),
                     $expand: 0 /* WorkItemExpand.None */,
                     errorPolicy: 2 /* WorkItemErrorPolicy.Omit */
-                } as WorkItemBatchGetRequest
+                } as WorkItemTrackingModule.WorkItemBatchGetRequest
             );
 
             workItemsFieldData.push(...allWorkItemsFieldData);
@@ -344,7 +340,7 @@ export class WorkItemService implements IWorkItemService {
         estimationFieldRefName: string,
         estimate?: string | number | undefined
     ): Promise<void> {
-        const client = getClient(WorkItemTrackingRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient);
 
         await client.updateWorkItem(
             [
@@ -358,7 +354,7 @@ export class WorkItemService implements IWorkItemService {
         );
     }
 
-    private _getDescription(pages: Page[]): string {
+    private _getDescription(pages: WorkItemTrackingProcessModule.Page[]): string {
         for (const page of pages) {
             for (const section of page.sections) {
                 for (const group of section.groups) {

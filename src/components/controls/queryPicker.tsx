@@ -1,9 +1,9 @@
 import { IRenderFunction } from "@uifabric/utilities/lib";
-import { getClient, IProjectPageService } from "azure-devops-extension-api";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
 import {
-    QueryHierarchyItem,
-    WorkItemTrackingRestClient
+    QueryHierarchyItem
 } from "azure-devops-extension-api/WorkItemTracking";
+import * as WorkItemTrackingClient from "azure-devops-extension-api/WorkItemTracking/WorkItemTrackingClient";
 import * as DevOps from "azure-devops-extension-sdk";
 import { Dropdown, IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
 import {
@@ -61,13 +61,13 @@ export class QueryPicker extends React.Component<
     async componentDidMount() {
         const { defaultSelectedQueryId } = this.props;
 
-        const projectService: IProjectPageService = await DevOps.getService<
-            IProjectPageService
+        const projectService: AzureDevOpsAPI.IProjectPageService = await DevOps.getService<
+            AzureDevOpsAPI.IProjectPageService
         >("ms.vss-tfs-web.tfs-page-data-service");
         const project = await projectService.getProject();
 
-        const queryItems = await getClient(
-            WorkItemTrackingRestClient
+        const queryItems = await AzureDevOpsAPI.getClient(
+            WorkItemTrackingClient.WorkItemTrackingRestClient
         ).getQueries(project!.id, 4, 0);
 
         // Only take Shared Queries
@@ -85,11 +85,11 @@ export class QueryPicker extends React.Component<
     }
 
     private async setInitial(id: string): Promise<void> {
-        const client = getClient(WorkItemTrackingRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient);
 
         // If selected query id is given, build up tree
-        const projectService: IProjectPageService = await DevOps.getService<
-            IProjectPageService
+        const projectService: AzureDevOpsAPI.IProjectPageService = await DevOps.getService<
+            AzureDevOpsAPI.IProjectPageService
         >("ms.vss-tfs-web.tfs-page-data-service");
         const project = await projectService.getProject();
         const queryItem = await client.getQuery(project!.id, id, 4, 0);
@@ -324,12 +324,12 @@ export class QueryPicker extends React.Component<
         queryTreeItem.isExpanded = !queryTreeItem.isExpanded;
 
         if (!queryTreeItem.childrenFetched) {
-            const projectService: IProjectPageService = await DevOps.getService<
-                IProjectPageService
+            const projectService: AzureDevOpsAPI.IProjectPageService = await DevOps.getService<
+                AzureDevOpsAPI.IProjectPageService
             >("ms.vss-tfs-web.tfs-page-data-service");
             const project = await projectService.getProject();
 
-            getClient(WorkItemTrackingRestClient)
+            AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient)
                 .getQuery(project!.id, option.key as string, 4, 1)
                 .then(queryItem => {
                     // Add in items

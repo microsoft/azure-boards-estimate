@@ -1,8 +1,8 @@
-import { getClient } from "azure-devops-extension-api";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
 import {
-    WorkItemIcon,
-    WorkItemTrackingRestClient
+    WorkItemIcon
 } from "azure-devops-extension-api/WorkItemTracking";
+import * as WorkItemTrackingClient from "azure-devops-extension-api/WorkItemTracking/WorkItemTrackingClient";
 
 import * as React from "react";
 import "./typeIcon.scss";
@@ -29,7 +29,7 @@ export class WorkItemTypeIcon extends React.Component<
             return;
         }
 
-        const client = getClient(WorkItemTrackingRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkItemTrackingClient.WorkItemTrackingRestClient);
         const allIcons = await client.getWorkItemIcons();
         const iconJson = allIcons.find(i => i.id == icon);
 

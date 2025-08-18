@@ -1,6 +1,7 @@
-import { CoreRestClient, TeamContext } from "azure-devops-extension-api/Core";
-import { WorkRestClient } from "azure-devops-extension-api/Work";
-import { getClient, IProjectPageService } from "azure-devops-extension-api";
+import { TeamContext } from "azure-devops-extension-api/Core";
+import * as CoreClient from "azure-devops-extension-api/Core/CoreClient";
+import * as WorkClient from "azure-devops-extension-api/Work/WorkClient";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
 import * as DevOps from "azure-devops-extension-sdk";
 import { IService } from "./services";
 
@@ -30,7 +31,7 @@ export const TeamServiceId = "TeamService";
 
 export class TeamService implements ITeamService {
     public async getAllTeams(projectId: string): Promise<ITeam[]> {
-        const client = getClient(CoreRestClient);
+        const client = AzureDevOpsAPI.getClient(CoreClient.CoreRestClient);
          let LIMIT = true;
         let skip = 0
         const gettingAllTeams = async () =>{
@@ -54,15 +55,15 @@ export class TeamService implements ITeamService {
 
 
   public async getIterationsForTeam(teamId: string): Promise<IIteration[]> {
-        const projectService: IProjectPageService = await DevOps.getService<
-            IProjectPageService
+        const projectService: AzureDevOpsAPI.IProjectPageService = await DevOps.getService<
+            AzureDevOpsAPI.IProjectPageService
         >("ms.vss-tfs-web.tfs-page-data-service");
         const project = await projectService.getProject();
         if (!project) {
             throw new Error("Project is required");
         }
 
-        const client = getClient(WorkRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkClient.WorkRestClient);
         const teamIterations = await client.getTeamIterations({
             projectId: project.id,
             teamId

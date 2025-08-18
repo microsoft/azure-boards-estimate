@@ -1,5 +1,5 @@
-import { getClient } from "azure-devops-extension-api";
-import { WorkRestClient } from "azure-devops-extension-api/Work";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
+import * as WorkClient from "azure-devops-extension-api/Work/WorkClient";
 import { IService } from "./services";
 import { IIteration } from "./teams";
 
@@ -23,7 +23,7 @@ export class SprintService implements ISprintService {
         projectId: string,
         iterations: [string, string][]
     ): Promise<IIteration[]> {
-        const client = getClient(WorkRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkClient.WorkRestClient);
 
         const result = await Promise.all(
             iterations.map(([teamId, iterationId]) =>
@@ -64,7 +64,7 @@ export class SprintService implements ISprintService {
         };
 
         // Get ownership for team
-        const client = getClient(WorkRestClient);
+        const client = AzureDevOpsAPI.getClient(WorkClient.WorkRestClient);
         const iterationWorkItems = await client.getIterationWorkItems(
             teamContext,
             iterationId

@@ -3,11 +3,7 @@
 //
 import { addPolyFills } from "./polyfills";
 
-import {
-    IHostNavigationService,
-    ILocationService,
-    IProjectPageService
-} from "azure-devops-extension-api";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
 import * as DevOps from "azure-devops-extension-sdk";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -41,13 +37,13 @@ DevOps.register("estimate-context-menu", () => {
             }
 
             const projectPageService = await DevOps.getService<
-                IProjectPageService
+                AzureDevOpsAPI.IProjectPageService
             >("ms.vss-tfs-web.tfs-page-data-service");
             const projectInfo = await projectPageService.getProject();
 
             if (workItemIds && projectInfo) {
                 const locationService = await DevOps.getService<
-                    ILocationService
+                    AzureDevOpsAPI.ILocationService
                 >("ms.vss-features.location-service");
                 const url = await locationService.routeUrl(
                     "ms.vss-web.fallback-route-new-platform",
@@ -59,7 +55,7 @@ DevOps.register("estimate-context-menu", () => {
                     }
                 );
 
-                const nav = await DevOps.getService<IHostNavigationService>(
+                const nav = await DevOps.getService<AzureDevOpsAPI.IHostNavigationService>(
                     "ms.vss-features.host-navigation-service"
                 );
                 nav.navigate(`${url}#/create/${workItemIds.join(",")}`);

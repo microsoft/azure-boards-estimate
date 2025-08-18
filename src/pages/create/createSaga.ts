@@ -1,4 +1,4 @@
-import { IProjectPageService } from "azure-devops-extension-api";
+import * as AzureDevOpsAPI from "azure-devops-extension-api";
 import { ProjectInfo } from "azure-devops-extension-api/Core";
 import { getService } from "azure-devops-extension-sdk";
 import { all, call, put, select, take } from "redux-saga/effects";
@@ -26,7 +26,7 @@ export function* initSaga() {
 
 /** Load teams */
 export function* loadTeams() {
-    const projectService: IProjectPageService = yield call(
+    const projectService: AzureDevOpsAPI.IProjectPageService = yield call(
         getService,
         "ms.vss-tfs-web.tfs-page-data-service"
     );
