@@ -71,7 +71,7 @@ export function* createSessionSaga() {
     while (true) {
         yield take(Actions.create.type);
 
-        let session: ISession = yield select<IState>(x => x.create.session);
+        let session: ISession = yield select((state: IState) => state.create.session);
 
         // Generate new id
         session = {

@@ -4,7 +4,7 @@ import { IIdentity } from "./model/identity";
 import { IdentityServiceId, IIdentityService } from "./services/identity";
 import { Services } from "./services/services";
 
-export function* initSaga() {
+export function* initSaga(): any {
     const identityService = Services.getService<IIdentityService>(
         IdentityServiceId
     );

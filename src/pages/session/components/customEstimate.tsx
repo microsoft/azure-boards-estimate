@@ -32,11 +32,11 @@ return (
               />
             <Button
                 className="custom-values-input"
+                text="Save"
                 onClick={() => {
                     props.commitEstimate(value || props.checkIfIsEqual());
                 }}
-            >  Save
-            </Button>
+            />
         </div>
     );
 };

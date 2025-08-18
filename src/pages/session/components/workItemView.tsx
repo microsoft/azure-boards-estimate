@@ -89,11 +89,7 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         return (
             <div className="v-scroll-auto custom-scrollbar flex-grow">
                 <CustomCard className="work-item-view flex-grow">
-                    <Header
-                      
-                    >
-                        <WorkItemHeader workItem={selectedWorkItem} />
-                    </Header>
+                    <WorkItemHeader workItem={selectedWorkItem} />
 
                     <CardContent>
                         <div className="flex-grow flex-column">
@@ -134,10 +130,9 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             <div>
                                                 <Button
                                                     primary
+                                                    text="Reveal"
                                                     onClick={this.doReveal}
-                                                >
-                                                    Reveal
-                                                </Button>
+                                                />
                                             </div>
                                         )}
                                         {revealed && (

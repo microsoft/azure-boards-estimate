@@ -71,7 +71,7 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>) {
         if (!session) {
             // Check if it's a legacy session
             session = yield call(
-                [sessionService, sessionService.getLegacySessions],
+                sessionService.getLegacySessions.bind(sessionService),
                 action.payload
             );
         }
@@ -226,24 +226,24 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>) {
  */
 function* sessionEstimationSaga(): SagaIterator {
     while (true) {
-        const action: ReturnType<typeof commitEstimate> = yield take(
+        const action: ReturnType<typeof commitEstimate> = (yield take(
             commitEstimate
-        );
+        )) as any;
         const value = action.payload;
 
-        const workItem: IWorkItem = yield select<IState>(
-            s => s.session.selectedWorkItem
-        );
+        const workItem: IWorkItem = (yield select(
+            (s: IState) => s.session.selectedWorkItem
+        )) as unknown as IWorkItem;
         if (!workItem || !value) {
             continue;
         }
 
         if (!workItem.estimationFieldRefName) {
             // No estimation field ref name given, we cannot save, show error message and abort
-            const globalMessagesSvc: IGlobalMessagesService = yield call(
+            const globalMessagesSvc: IGlobalMessagesService = (yield call(
                 getService,
                 "ms.vss-tfs-web.tfs-global-messages-service"
-            );
+            )) as unknown as IGlobalMessagesService;
             globalMessagesSvc.addToast({
                 duration: 5000,
                 message: `Cannot save estimate, no field is configured for work items of type ${workItem.workItemType}`,
@@ -272,9 +272,9 @@ function* sessionEstimationSaga(): SagaIterator {
             );
 
             // Move to next work item, if it exists or to first one
-            const workItems: IWorkItem[] = yield select<IState>(
-                s => s.session.workItems
-            );
+            const workItems: IWorkItem[] = (yield select(
+                (s: IState) => s.session.workItems
+            )) as unknown as IWorkItem[];
             const idx = workItems.findIndex(x => x.id === workItem.id);
             const nextWorkItemId =
                 idx + 1 < workItems.length
@@ -287,13 +287,13 @@ function* sessionEstimationSaga(): SagaIterator {
 
 function* notificationSaga(): SagaIterator {
     while (true) {
-        const action: ReturnType<typeof estimateUpdated> = yield take(
+        const action: ReturnType<typeof estimateUpdated> = (yield take(
             estimateUpdated
-        );
+        )) as any;
 
-        const workItem: IWorkItem = yield select<IState>(
-            s => s.session.selectedWorkItem
-        );
+        const workItem: IWorkItem = (yield select(
+            (s: IState) => s.session.selectedWorkItem
+        )) as unknown as IWorkItem;
         if (workItem && workItem.id !== action.payload.workItemId) {
             // Only show message if the current work item is the one the estimate was updated for
             continue;

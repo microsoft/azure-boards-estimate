@@ -12,7 +12,7 @@ export interface IVotesProps {
 }
 
 export class Votes extends React.Component<IVotesProps> {
-    render(): JSX.Element {
+    override render(): JSX.Element {
         const { estimates, cardSet, revealed } = this.props;
 
 

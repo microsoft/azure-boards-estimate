@@ -10,15 +10,15 @@ import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 
-const CardTitle: React.StatelessComponent = props => (
+const CardTitle: React.FC<{ children: React.ReactNode }> = props => (
     <h2 className="session-card--title flex-grow" {...props} />
 );
 
-const CardMode: React.StatelessComponent = props => (
+const CardMode: React.FC<{ children: React.ReactNode }> = props => (
     <div className="session-card--mode">{props.children}</div>
 );
 
-const CardInfo: React.StatelessComponent<{
+const CardInfo: React.FC<{
     sessionInfo: ISessionInfo[];
 }> = props => (
     <div className="session-card--info">
@@ -73,12 +73,12 @@ export class SessionCard extends React.Component<ICardProps> {
                 <div className="session-card--content">
                     <div className="flex-row">
                         <CardTitle>
-                            <Link
-                                href={`/session/${id}/${makeUrlSafe(name)}`}
+                            <button
+                                style={{ border: 'none', background: 'none', color: 'inherit', cursor: 'pointer', textDecoration: 'underline' }}
                                 onClick={this.navigate}
                             >
                                 {name}
-                            </Link>
+                            </button>
                         </CardTitle>
 
                         {!hideContextMenu && (
@@ -112,26 +112,23 @@ export class SessionCard extends React.Component<ICardProps> {
                                         isEndSessionDialogOpen: boolean;
                                     }) => {
                                         return props.isEndSessionDialogOpen ? (
-                                            <Dialog
-                                                titleProps={{ text: "Confirm" }}
-                                                footerButtonProps={[
-                                                    {
-                                                        text: "Cancel",
-                                                        onClick: onDismiss,
-                                                        primary: true
-                                                    },
-                                                    {
-                                                        text: "End Session",
-                                                        onClick: onDismissAndEndSession
-                                                    }
-                                                ]}
-                                                onDismiss={onDismiss}
+                                            <div
+                                                style={{
+                                                    position: 'fixed',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    transform: 'translate(-50%, -50%)',
+                                                    background: 'white',
+                                                    border: '1px solid #ccc',
+                                                    padding: '20px',
+                                                    zIndex: 1000
+                                                }}
                                             >
-                                                Are you sure that you want to
-                                                end this Estimate session? This
-                                                will end the session for every
-                                                participant.
-                                            </Dialog>
+                                                <h3>Confirm</h3>
+                                                <p>Are you sure that you want to end this Estimate session? This will end the session for every participant.</p>
+                                                <button onClick={onDismiss}>Cancel</button>
+                                                <button onClick={onDismissAndEndSession}>End Session</button>
+                                            </div>
                                         ) : null;
                                     }}
                                 </Observer>

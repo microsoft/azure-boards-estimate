@@ -46,7 +46,7 @@ const renderOptionWithTooltip: IRenderFunction<IChoiceGroupOption> = (
     option: any,
     defaultRender: any
 ) => {
-    return <Tooltip text={option!.title}>{defaultRender!(option)}</Tooltip>;
+    return <div title={option!.title}>{defaultRender!(option)}</div>;
 };
 
 const modeOptions: IChoiceGroupOption[] = [
@@ -160,23 +160,7 @@ class CreatePanel extends React.Component<
         } = this.props;
 
         return (
-            <Panel
-                titleProps={{
-                    text: "Create new session",
-                    size: TitleSize.Large
-                }}
-                onDismiss={onDismiss}
-                blurDismiss={false}
-                footerButtonProps={[
-                    { onClick: this.dismiss, text: "Cancel" },
-                    {
-                        onClick: this.onCreate,
-                        text: "Create",
-                        disabled: !isValid,
-                        primary: true
-                    }
-                ]}
-            >
+            <div>
                 <div className="create-panel--content">
                     <div className="create-panel--group">
                         <TextField
@@ -235,7 +219,7 @@ class CreatePanel extends React.Component<
                         />
                     </div>
                 </div>
-            </Panel>
+            </div>
         );
     }
 

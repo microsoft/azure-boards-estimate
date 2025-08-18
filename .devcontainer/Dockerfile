@@ -1,16 +1,16 @@
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.233.0/containers/typescript-node/.devcontainer/base.Dockerfile
+# Use Node.js 22 with Alpine Linux (most secure option)
+FROM node:22-alpine
 
-# [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 18, 16, 14, 18-bullseye, 16-bullseye, 14-bullseye, 18-buster, 16-buster, 14-buster
-ARG VARIANT="18-bullseye"
-FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
+# Install additional tools using Alpine's package manager (apk)
+RUN apk update && apk add --no-cache \
+       git \
+       curl \
+       wget \
+       ca-certificates \
+    && npm install -g tfx-cli
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+# Set the default user to node (non-root)
+USER node
 
-# [Optional] Uncomment if you want to install an additional version of node using nvm
-# ARG EXTRA_NODE_VERSION=10
-# RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
-
-# [Optional] Uncomment if you want to install more global node packages
-# RUN su node -c "npm install -g <your-package-list -here>"
+# Set working directory
+WORKDIR /workspace

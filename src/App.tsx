@@ -4,10 +4,28 @@ import * as SDK from "azure-devops-extension-sdk";
 import { Surface, SurfaceBackground } from "azure-devops-ui/Surface";
 import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
-import { Route, Router, Switch } from "react-router-dom";
+import { Route, HashRouter as Router, Routes, useNavigate, useParams } from "react-router-dom";
 import history from "./lib/history";
 import HomePage from "./pages/home/home";
 import Session from "./pages/session/session";
+
+// Wrapper component to provide router props to HomePage
+const HomePageWrapper: React.FC = () => {
+    const navigate = useNavigate();
+    const params = useParams();
+    const mockHistory = { push: (path: string) => navigate(path) };
+    const mockMatch = { params };
+    
+    return <HomePage navigate={navigate} params={params} history={mockHistory} match={mockMatch} />;
+};
+
+// Wrapper component to provide router props to Session  
+const SessionWrapper: React.FC = () => {
+    const navigate = useNavigate();
+    const params = useParams();
+    
+    return <Session />;
+};
 
 
 DevOps.getService<IHostNavigationService>(
@@ -28,7 +46,7 @@ DevOps.getService<IHostNavigationService>(
     // Send navigation updates to host frame
     history.listen(x => {
   
-   navService.replaceHash(x.pathname);
+   navService.replaceHash(x.location.pathname);
 
     });
 });
@@ -39,29 +57,22 @@ class App extends React.Component {
     public render() {
         return (
             <Surface background={SurfaceBackground.neutral}>
-                <Router history={history}>
-                    <>
-                        <Switch>
-                            <Route
-                                exact={true}
-                                path="/create/:ids?"
-                                component={HomePage}
-                            />
-
-                            <Route
-                                exact={true}
-                                path="/settings"
-                                component={HomePage}
-                            />
-                            <Route exact={true} path="/" component={HomePage} />
-                        </Switch>
-
+                <Router>
+                    <Routes>
                         <Route
-                            exact={true}
-                            path="/session/:id/:name?"
-                            component={Session}
+                            path="/create/:ids?"
+                            element={<HomePageWrapper />}
                         />
-                    </>
+                        <Route
+                            path="/settings"
+                            element={<HomePageWrapper />}
+                        />
+                        <Route path="/" element={<HomePageWrapper />} />
+                        <Route
+                            path="/session/:id/:name?"
+                            element={<SessionWrapper />}
+                        />
+                    </Routes>
                 </Router>
             </Surface>
         );

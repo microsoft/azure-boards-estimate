@@ -74,12 +74,7 @@ export class Card extends React.Component<ICardComponentProps> {
             selected
         } = this.props;
 
-        let BaseElement: string;
-        if (onClick) {
-            BaseElement = "button";
-        } else {
-            BaseElement = "div";
-        }
+        const BaseElement = onClick ? "button" : "div";
 
         const cardClassNames = css(
             flipped && "flipped",

@@ -31,9 +31,9 @@ import {
 } from "./sessionActions";
 
 export function* channelSaga(session: ISession): SagaIterator {
-    const channel: IChannel = yield call(getChannel, session.id, session.mode);
+    const channel: IChannel = (yield call(getChannel, session.id, session.mode)) as unknown as IChannel;
 
-    const statusChannel: Channel<{message: string, type?: string}> = eventChannel(emit => {
+    const statusChannel = eventChannel<{message: string, type?: string}>(emit => {
         channel.onStatus = (status: { message: string; type?: string }) => {
             emit(status);
         };
@@ -155,7 +155,7 @@ export function subscribe(channel: IChannel) {
     });
 }
 
-function* statusHandlerSaga(statusChannel: Channel<{ message: string, type?: string }>) {
+function* statusHandlerSaga(statusChannel: any) {
     while (true) {
         const status: {message: string, type?: string} = yield take(statusChannel);
         yield put(updateStatusError(status));

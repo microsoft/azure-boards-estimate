@@ -2,9 +2,8 @@ import "./workItemDescription.scss";
 import * as React from "react";
 import { IWorkItem } from "../../model/workitem";
 import { SubTitle } from "../subtitle";
-import { withRouter } from "react-router-dom";
 
-export const WorkItemDescription: React.StatelessComponent<{
+export const WorkItemDescription: React.FC<{
     workItem: IWorkItem;
 }> = props => (
 

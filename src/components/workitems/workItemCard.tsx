@@ -17,7 +17,7 @@ export interface IWorkItemCardProps {
     onClick?: () => void;
 }
 
-export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
+export const WorkItemCard: React.FC<IWorkItemCardProps> = (props) => {
     const {
         cardSet,
         workItem: { id, title, icon, color, estimate },

@@ -120,16 +120,8 @@ class SettingsPanel extends React.Component<
         const { loading } = this.props;
 
         return (
-            <Panel
-          
-                titleProps={{
-                    text: "Settings",
-                    size: TitleSize.Large
-                }}
-                onDismiss={this.onDismiss}
-                blurDismiss={false}
-                contentClassName="custom-scrollbar"
-            >
+            <div className="custom-scrollbar">
+                <h2>Settings</h2>
                 {loading ? (
                     <div className="flex-column flex-grow justify-center">
                         <Spinner size={SpinnerSize.large} />
@@ -156,7 +148,7 @@ class SettingsPanel extends React.Component<
                         />
                     </div>
                 )}
-            </Panel>
+            </div>
         );
     }
 

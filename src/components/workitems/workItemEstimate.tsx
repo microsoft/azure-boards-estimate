@@ -3,7 +3,7 @@ import { ICardSet } from "../../model/cards";
 import "./workItemEstimate.scss";
 import { css } from "../../lib/css";
 
-export const WorkItemEstimate: React.StatelessComponent<{
+export const WorkItemEstimate: React.FC<{
     className?: string;
     cardSet: ICardSet;
     estimate?: number | string;

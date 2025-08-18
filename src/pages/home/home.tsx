@@ -32,7 +32,8 @@ interface IHomePageProps extends IPageProps<IHomePageParams> {
     sessions: ISessionDisplay[];
     legacySessions: ISessionDisplay[];
     error: string | null;
-
+    history: any;
+    match: any;
 }
 
 const Actions = {
@@ -77,7 +78,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
 
     
         return (
-            <Page className="flex-grow">
+            <div className="flex-grow">
                 <Header
                     title="Estimate"
                     commandBarItems={[
@@ -98,24 +99,35 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                         }
                     ]}
                 />
-                <TabBar
-                    selectedTabId={"sessions"}
-                    onSelectedTabChanged={this.onSelectedTabChanged}
-                    renderAdditionalContent={this.renderTabBarCommands}
-                    disableSticky={true}
-                >
-                    <Tab id="sessions" name="Sessions" />
-                </TabBar>
+                <div>
+                    <div>Sessions</div>
+                </div>
 
                 <div className="page-content page-content-top">
                     {error && (
-                        <MessageCard
-                            className="fatal-error"
-                            severity={MessageCardSeverity.Error}
-                            onDismiss={clearError}
+                        <div
+                            style={{
+                                background: '#fdf2f2',
+                                border: '1px solid #e74c3c',
+                                padding: '10px',
+                                margin: '10px 0',
+                                borderRadius: '4px'
+                            }}
                         >
-                            {error}
-                        </MessageCard>
+                            <span style={{ color: '#e74c3c' }}>{error}</span>
+                            <button
+                                onClick={() => clearError()}
+                                style={{
+                                    float: 'right',
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '16px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                ×
+                            </button>
+                        </div>
                     )}
 
                     {sessions && sessions.length > 0 && (
@@ -152,7 +164,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                             (this.props.match.params.ids &&
                                 this.props.match.params.ids
                                     .split(",")
-                                    .map<number>(x => parseInt(x, 10))) ||
+                                    .map((x: string) => parseInt(x, 10))) ||
                             undefined
                         }
                     />
@@ -161,7 +173,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                 {match.path.indexOf("/settings") !== -1 && (
                     <SettingsPanel onDismiss={this.closeSettings} />
                 )}
-            </Page>
+            </div>
         );
     }
 

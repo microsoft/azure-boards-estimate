@@ -9,7 +9,7 @@ export interface IHeaderProps {
 }
 
 export class Header extends React.Component<IHeaderProps> {
-    render(): JSX.Element {
+    override render(): JSX.Element {
         const { title, buttons } = this.props;
 
         return (

@@ -140,24 +140,31 @@ class Session extends React.Component<
                     <Observer isDialogOpen={this.isDialogOpen}>
                         {(props: { isDialogOpen: boolean }) => {
                             return props.isDialogOpen ? (
-                                <Dialog
-                                    titleProps={{ text: "Error establishing a connection" }}
-                                    footerButtonProps={[
-                                        {
-                                            text: "Back to home",
-                                            primary: true,
-                                            onClick: () => {
-                                                this.props.history.push("/");
-                                                window.location.reload();
-                                            }
-                                        }
-                                    ]}
-                                    lightDismiss={false}
-                                    modal={true}
-                                    onDismiss={onDismiss}
+                                <div
+                                    style={{
+                                        position: 'fixed',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        background: 'white',
+                                        border: '1px solid #ccc',
+                                        padding: '20px',
+                                        zIndex: 1000,
+                                        minWidth: '300px'
+                                    }}
                                 >
+                                    <h3>Error establishing a connection</h3>
                                     <div dangerouslySetInnerHTML={{ __html: errorStatus.message}}/>
-                                </Dialog>
+                                    <button
+                                        onClick={() => {
+                                            this.props.history.push("/");
+                                            window.location.reload();
+                                        }}
+                                        style={{ marginTop: '20px', background: '#0078d4', color: 'white', border: 'none', padding: '10px' }}
+                                    >
+                                        Back to home
+                                    </button>
+                                </div>
                             ) : null;
                         }}
                     </Observer>
@@ -166,7 +173,7 @@ class Session extends React.Component<
         }
 
         const sessionModeCheck = (workitem: number, selectedWi: any) => {
-            if ((session.mode === SessionMode.Online && canPerformAdminActions) || session.mode === SessionMode.Offline) {
+            if ((session && session.mode === SessionMode.Online && canPerformAdminActions) || (session && session.mode === SessionMode.Offline)) {
                 return selectedWi(workitem);
             } else {
                 return null;
@@ -176,18 +183,15 @@ class Session extends React.Component<
 
 
         return (
-            <Page
-                className="absolute-fill"
-                orientation={0 /* Orientation.Vertical */}
-            >
-                <CustomHeader className="bolt-header-with-commandbar">
-                    <HeaderTitleArea>
-                        <HeaderTitle>{session.name}</HeaderTitle>
-                    </HeaderTitleArea>
+            <div className="absolute-fill">
+                <div className="bolt-header-with-commandbar">
+                    <div>
+                        <h2>{session.name}</h2>
+                    </div>
 
                     <div className="session--active-users flex-row flex-justify-end flex-center flex-self-stretch">
                         {activeUsers.map(u => (
-                            <Tooltip key={u.tfId} text={u.name}>
+                            <div key={u.tfId} title={u.name}>
                                 <div>
                                     <VssPersona
                                         identityDetailsProvider={{
@@ -198,7 +202,7 @@ class Session extends React.Component<
                                         size="small"
                                     />
                                 </div>
-                            </Tooltip>
+                            </div>
                         ))}
                     </div>
 
@@ -227,7 +231,7 @@ class Session extends React.Component<
                             ].filter(x => !!x) as IHeaderCommandBarItem[]
                         }
                     />
-                </CustomHeader>
+                </div>
 
                 <div className="page-content page-content-top flex-row session-content">
                     <div className="work-item-list v-scroll-auto flex-column custom-scrollbar flex-noshrink">
@@ -255,7 +259,7 @@ class Session extends React.Component<
                     )} 
                 </div>
             
-            </Page>
+            </div>
         );
     }
 }
@@ -276,4 +280,4 @@ export default connect(
         };
     },
     Actions
-)(Session);
+)(Session as any);
