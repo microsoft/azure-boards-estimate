@@ -22,3 +22,14 @@ yarn-error.log*
 
 *.vsix
 /.vs
+
+# Modernization artifacts (ignore these files)
+.eslintrc.modern.json
+MODERNIZATION_PLAN.md
+package-modern.json
+package-node22.json
+scripts/modernize.*
+tsconfig.modern.json
+tsconfig.node.json
+vite.config.modern.ts
+index.html

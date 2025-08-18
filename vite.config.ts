@@ -11,13 +11,28 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
     }),
+    // Custom plugin to handle Azure DevOps modules in development
+    {
+      name: 'azure-devops-external',
+      resolveId(id) {
+        if (id.includes('azure-devops-extension-api') || 
+            id.includes('azure-devops-extension-sdk') || 
+            id.includes('azure-devops-ui')) {
+          return { id, external: true };
+        }
+      }
+    }
   ],
   build: {
     outDir: 'build',
     sourcemap: true,
     rollupOptions: {
-      input: resolve(__dirname, 'public/index.html'),
-      external: ['azure-devops-ui'],
+      input: resolve(__dirname, 'index.html'),
+      external: (id) => {
+        return id.includes('azure-devops-ui') || 
+               id.includes('azure-devops-extension-api') || 
+               id.includes('azure-devops-extension-sdk');
+      },
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
@@ -34,12 +49,18 @@ export default defineConfig({
           }
         },
         globals: {
-          'azure-devops-ui': 'AzureDevOpsUI'
+          'azure-devops-ui': 'AzureDevOpsUI',
+          'azure-devops-extension-api': 'DevOpsExtensionAPI',
+          'azure-devops-extension-sdk': 'DevOpsExtensionSDK'
         }
       },
     },
     target: 'es2020',
     minify: 'esbuild',
+  },
+  optimizeDeps: {
+    exclude: ['azure-devops-ui', 'azure-devops-extension-api', 'azure-devops-extension-sdk'],
+    include: []
   },
   server: {
     port: 3000,
