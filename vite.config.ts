@@ -27,7 +27,7 @@ export default defineConfig({
     outDir: 'build',
     sourcemap: true,
     rollupOptions: {
-      input: resolve(__dirname, 'index.html'),
+      input: resolve(__dirname, 'public/index.html'),
       external: (id) => {
         return id.includes('azure-devops-ui') || 
                id.includes('azure-devops-extension-api') || 
