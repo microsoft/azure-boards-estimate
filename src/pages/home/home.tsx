@@ -157,7 +157,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                     )}
                 </div>
 
-                {match && match.path && match.path.indexOf("/create") !== -1 && (
+                {match.path.indexOf("/create") !== -1 && (
                     <CreatePanel
                         onDismiss={this.closeCreate}
                         workItemIds={
@@ -170,7 +170,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                     />
                 )}
 
-                {match && match.path && match.path.indexOf("/settings") !== -1 && (
+                {match.path.indexOf("/settings") !== -1 && (
                     <SettingsPanel onDismiss={this.closeSettings} />
                 )}
             </div>
@@ -199,12 +199,16 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
     };
 
     private create = () => {
+        console.log("Create button clicked");
         const { history } = this.props;
+        console.log("History object:", history);
         history.push("/create");
     };
 
     private openSettings = () => {
+        console.log("Settings button clicked");
         const { history } = this.props;
+        console.log("History object:", history);
         history.push("/settings");
     };
 

@@ -26,22 +26,40 @@ export function* initSaga() {
 
 /** Load teams */
 export function* loadTeams() {
-    const projectService: AzureDevOpsAPI.IProjectPageService = yield call(
-        getService,
-        "ms.vss-tfs-web.tfs-page-data-service"
-    );
-    const projectInfo: ProjectInfo = yield call([
-        projectService,
-        projectService.getProject
-    ]);
+    console.log('createSaga: loadTeams - Starting');
+    
+    try {
+        const projectService: AzureDevOpsAPI.IProjectPageService = yield call(
+            getService,
+            "ms.vss-tfs-web.tfs-page-data-service"
+        );
+        console.log('createSaga: loadTeams - Got project service');
+        
+        const projectInfo: ProjectInfo = yield call([
+            projectService,
+            projectService.getProject
+        ]);
+        console.log('createSaga: loadTeams - Got project info:', projectInfo);
 
-    // TODO: Get source from state?
-    const teamService = Services.getService<ITeamService>(TeamServiceId);
-    const teams = yield call(
-        [teamService, teamService.getAllTeams],
-        projectInfo.id
-    );
-    yield put(Actions.setTeams(teams));
+        // TODO: Get source from state?
+        const teamService = Services.getService<ITeamService>(TeamServiceId);
+        console.log('createSaga: loadTeams - Got team service, fetching teams for project:', projectInfo?.id);
+        
+        if (!projectInfo || !projectInfo.id) {
+            throw new Error('No project information available');
+        }
+        
+        const teams = yield call(
+            [teamService, teamService.getAllTeams],
+            projectInfo.id
+        );
+        console.log('createSaga: loadTeams - Teams fetched successfully:', teams);
+        yield put(Actions.setTeams(teams));
+    } catch (error) {
+        console.error('createSaga: loadTeams - Failed to fetch teams:', error);
+        // Set empty teams array so UI doesn't stay in loading state
+        yield put(Actions.setTeams([]));
+    }
 }
 
 /**  */
@@ -58,13 +76,23 @@ export function* iterationSaga() {
         Actions.setTeam.type
     );
 
-    const teamService = Services.getService<ITeamService>(TeamServiceId);
-    const iterations = yield call(
-        [teamService, teamService.getIterationsForTeam],
-        action.payload
-    );
+    console.log('createSaga: iterationSaga - Starting for team:', action.payload);
 
-    yield put(Actions.setIterations(iterations));
+    try {
+        const teamService = Services.getService<ITeamService>(TeamServiceId);
+        console.log('createSaga: iterationSaga - Got team service');
+        
+        const iterations = yield call(
+            [teamService, teamService.getIterationsForTeam],
+            action.payload
+        );
+        console.log('createSaga: iterationSaga - Iterations fetched successfully:', iterations);
+        yield put(Actions.setIterations(iterations));
+    } catch (error) {
+        console.error('createSaga: iterationSaga - Failed to fetch iterations:', error);
+        // Set empty iterations array so UI doesn't stay in loading state
+        yield put(Actions.setIterations([]));
+    }
 }
 
 export function* createSessionSaga() {

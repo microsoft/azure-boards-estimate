@@ -53,6 +53,11 @@
             "path": "node_modules/azure-devops-extension-sdk",
             "addressable": true,
             "packagePath": "lib"
+        },
+        {
+            "path": "node_modules/azure-devops-extension-api",
+            "addressable": true,
+            "packagePath": "lib"
         }
     ],
     "contributions": [
