@@ -46,8 +46,13 @@
             "addressable": true
         },
         {
-            "path": "build",
+            "path": "dist",
             "addressable": true
+        },
+        {
+            "path": "node_modules/azure-devops-extension-sdk",
+            "addressable": true,
+            "packagePath": "lib"
         }
     ],
     "contributions": [
@@ -58,7 +63,7 @@
             "properties": {
                 "name": "Estimate",
                 "order": 100,
-                "uri": "build/index.html",
+                "uri": "dist/index.html",
                 "icon": {
                     "light": "marketplace/icon-light.png",
                     "dark": "marketplace/icon-dark.png"
@@ -76,7 +81,7 @@
                 "text": "Estimate work item(s)",
                 "title": "Start estimation session",
                 "group": "actions",
-                "uri": "build/index.html?context",
+                "uri": "dist/index.html?context",
                 "registeredObjectId": "estimate-context-menu"
             }
         }

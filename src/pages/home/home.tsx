@@ -157,11 +157,11 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                     )}
                 </div>
 
-                {match.path.indexOf("/create") !== -1 && (
+                {match && match.path && match.path.indexOf("/create") !== -1 && (
                     <CreatePanel
                         onDismiss={this.closeCreate}
                         workItemIds={
-                            (this.props.match.params.ids &&
+                            (this.props.match && this.props.match.params && this.props.match.params.ids &&
                                 this.props.match.params.ids
                                     .split(",")
                                     .map((x: string) => parseInt(x, 10))) ||
@@ -170,7 +170,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                     />
                 )}
 
-                {match.path.indexOf("/settings") !== -1 && (
+                {match && match.path && match.path.indexOf("/settings") !== -1 && (
                     <SettingsPanel onDismiss={this.closeSettings} />
                 )}
             </div>

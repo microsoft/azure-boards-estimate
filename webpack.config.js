@@ -8,13 +8,23 @@ module.exports = (env, argv) => {
 
     return {
         entry: "./src/index.tsx",
+        devtool: "inline-source-map",
+        devServer: {
+            server: 'https',
+            port: 3000,
+            open: false,
+            hot: true,
+            static: {
+                directory: path.join(__dirname, "./")
+            }
+        },
 
         output: {
-            path: path.resolve(__dirname, "build"),
+            publicPath: "/dist/",
             filename: isProduction
                 ? "assets/[name].[contenthash].js"
                 : "assets/[name].js",
-            publicPath: "/",
+            path: path.resolve(__dirname, "dist"),
             clean: true
         },
 
@@ -23,12 +33,6 @@ module.exports = (env, argv) => {
             alias: {
                 "@": path.resolve(__dirname, "src")
             }
-        },
-
-        externals: {
-            "azure-devops-extension-sdk": "SDK",
-            "azure-devops-extension-api": "API",
-            "azure-devops-ui": "UI"
         },
 
         module: {
@@ -103,18 +107,5 @@ module.exports = (env, argv) => {
                   ]
                 : [])
         ],
-
-        devServer: {
-            static: {
-                directory: path.join(__dirname, "public")
-            },
-            port: 3000,
-            host: "0.0.0.0",
-            server: "https",
-            hot: true,
-            historyApiFallback: true
-        },
-
-        devtool: isProduction ? "source-map" : "inline-source-map"
     };
 };

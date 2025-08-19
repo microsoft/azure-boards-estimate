@@ -55,8 +55,9 @@
   },
   "scripts": {
     "dev": "webpack serve --mode development",
-    "build": "webpack --mode production",
-    "build:release": "webpack --mode production",
+    "build": "webpack --mode development",
+    "build:prod": "webpack --mode production",
+    "preinstall": "npm i webpack -g && npm i tfx-cli -g",
     "preview": "webpack serve --mode production --open",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --ext ts,tsx --fix",
@@ -64,7 +65,7 @@
     "test": "echo \"Tests not yet configured\"",
     "package-dev": "npm run build && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/dev.json --root ./",
     "package-test": "npm run build && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/test.json --root ./",
-    "package-release": "npm run build:release && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/release.json --root ./"
+    "package-release": "npm run build:prod && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/release.json --root ./"
   },
   "browserslist": {
     "production": [
