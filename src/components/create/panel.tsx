@@ -46,7 +46,7 @@ const renderOptionWithTooltip: IRenderFunction<IChoiceGroupOption> = (
     option: any,
     defaultRender: any
 ) => {
-    return <div title={option!.title}>{defaultRender!(option)}</div>;
+    return <Tooltip text={option!.title}>{defaultRender!(option)}</Tooltip>;
 };
 
 const modeOptions: IChoiceGroupOption[] = [
@@ -143,7 +143,6 @@ class CreatePanel extends React.Component<
 > {
     public componentDidMount() {
         const { workItemIds } = this.props;
-        console.log('CreatePanel componentDidMount - initializing with workItemIds:', workItemIds);
         this.props.onInit(workItemIds);
     }
 
@@ -162,18 +161,19 @@ class CreatePanel extends React.Component<
 
         return (
             <Panel
+                titleProps={{
+                    text: "Create new session",
+                    size: TitleSize.Large
+                }}
                 onDismiss={onDismiss}
-                titleProps={{ text: "Create Session", size: TitleSize.Large }}
+                blurDismiss={false}
                 footerButtonProps={[
+                    { onClick: this.dismiss, text: "Cancel" },
                     {
+                        onClick: this.onCreate,
                         text: "Create",
-                        primary: true,
                         disabled: !isValid,
-                        onClick: this.onCreate
-                    },
-                    {
-                        text: "Cancel",
-                        onClick: onDismiss
+                        primary: true
                     }
                 ]}
             >
@@ -194,7 +194,7 @@ class CreatePanel extends React.Component<
                         </label>
                         <ChoiceGroup
                             selectedKey={mode.toString()}
-                            onChange={this.onChangeMode}
+                            onChanged={this.onChangeMode}
                             options={modeOptions}
                         />
                     </div>
@@ -206,7 +206,7 @@ class CreatePanel extends React.Component<
                         <ChoiceGroup
                             disabled={sourceLocked}
                             selectedKey={source.toString()}
-                            onChange={this.onChangeSource}
+                            onChanged={this.onChangeSource}
                             options={sourceOptions}
                         />
 
@@ -249,8 +249,6 @@ class CreatePanel extends React.Component<
             iteration,
             queryId
         } = this.props;
-        
-        console.log('renderSourceSelection - source:', source, 'teams:', teams, 'iterations:', iterations);
 
         switch (source) {
             case SessionSource.Query:
@@ -291,35 +289,33 @@ class CreatePanel extends React.Component<
                         <Dropdown
                             onChange={this.onSetTeam}
                             label="Team"
-                            placeholder="Select Team"
+                            placeHolder="Select Team"
                             selectedKey={team}
-                            disabled={false}
+                            disabled={teams === null}
                             options={
                                 (teams &&
                                     teams.map(t => ({
                                         key: t.id,
                                         text: t.name
                                     }))) || [
-                                    { key: "default-team", text: "Default Team" },
-                                    { key: "loading", text: "Loading teams..." }
+                                    { key: "loading", text: "Loading" }
                                 ]
                             }
                         />
 
                         <Dropdown
                             label="Sprint"
-                            onChange={this.onSetIteration}
-                            placeholder="Select Sprint"
+                            onChanged={this.onSetIteration}
+                            placeHolder="Select Sprint"
                             selectedKey={iteration}
-                            disabled={false}
+                            disabled={iterations === null}
                             options={
                                 (iterations &&
                                     iterations.map(t => ({
                                         key: t.id,
                                         text: t.name
                                     }))) || [
-                                    { key: "current-sprint", text: "Current Sprint" },
-                                    { key: "loading", text: "Loading sprints..." }
+                                    { key: "loading", text: "Loading" }
                                 ]
                             }
                         />
@@ -333,17 +329,13 @@ class CreatePanel extends React.Component<
       onSetName(value);
         
     };
-    private onChangeMode = (ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
-        if (option) {
-            const { onSetMode } = this.props;
-            onSetMode(parseInt(option.key, 10) as SessionMode);
-        }
+    private onChangeMode = (option: IChoiceGroupOption) => {
+        const { onSetMode } = this.props;
+        onSetMode(parseInt(option.key, 10) as SessionMode);
     };
-    private onChangeSource = (ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
-        if (option) {
-            const { onSetSource } = this.props;
-            onSetSource(parseInt(option.key, 10) as SessionSource);
-        }
+    private onChangeSource = (option: IChoiceGroupOption) => {
+        const { onSetSource } = this.props;
+        onSetSource(parseInt(option.key, 10) as SessionSource);
     };
 
     private onSetTeam = (
@@ -354,11 +346,9 @@ class CreatePanel extends React.Component<
         onSetTeam(option!.key as string);
     };
 
-    private onSetIteration = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number) => {
-        if (option) {
-            const { onSetIteration } = this.props;
-            onSetIteration(option.key as string);
-        }
+    private onSetIteration = (option: IDropdownOption) => {
+        const { onSetIteration } = this.props;
+        onSetIteration(option.key as string);
     };
 
     private onSetQuery = (queryId: string) => {

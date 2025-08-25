@@ -1,7 +1,7 @@
-import * as AzureDevOpsAPI from "azure-devops-extension-api";
-import { ProjectInfo } from "azure-devops-extension-api/Core";
-import { getService } from "azure-devops-extension-sdk";
-import { all, call, put, select, take } from "redux-saga/effects";
+import { getClient, CommonServiceIds, IProjectPageService } from "azure-devops-extension-api";
+import { ProjectInfo, CoreRestClient } from "azure-devops-extension-api/Core";
+import * as SDK from "azure-devops-extension-sdk";
+import { all, call, put, select, take, apply } from "redux-saga/effects";
 import history from "../../lib/history";
 import { ISession } from "../../model/session";
 import { IState } from "../../reducer";
@@ -24,41 +24,73 @@ export function* initSaga() {
     yield all([loadTeams(), loadCardSets()]);
 }
 
+/** Isolated test for project and team context */
+export function* testProjectAndTeamContext() {
+  try {
+    console.log('⏳ STEP 1: Initializing Azure DevOps SDK...');
+    yield call([SDK, SDK.init]);
+    yield call([SDK, SDK.ready]);
+
+    // 1) Token check (will hang if handshake/auth isn’t OK)
+    const token = yield call([SDK, SDK.getAccessToken]);
+    console.log('token length', token?.length);
+
+    console.log('✅ STEP 1: SDK ready');
+
+    console.log('🔍 STEP 2: Getting project service...');
+    const projSvc: IProjectPageService = yield call(
+      [SDK, SDK.getService],
+      // Prefer the constant to avoid typos:
+      // CommonServiceIds.ProjectPageService
+      "ms.vss-tfs-web.tfs-page-data-service"
+    );
+    const project = yield call([projSvc, projSvc.getProject]);
+        // 2) Raw fetch fallback (bypasses the client to isolate fetch/CORS issues)
+    const host = yield call([SDK, SDK.getHost]);
+    const base = host?.baseUri ?? host?.uri; // should look like https://dev.azure.com/{org}/
+    const resp: Response = yield call(fetch, `${base}_apis/projects/${project.id}/teams?api-version=7.1-preview.3`, {
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include',
+    });
+    console.log('raw fetch status', resp.status);
+    const json = yield call([resp, resp.json]);
+    console.log('raw fetch teams count', json?.value?.length);
+    if (!project?.id) throw new Error('No project ID');
+
+    console.log('🚀 STEP 3: Getting CoreRestClient for teams...');
+    const coreClient: CoreRestClient = yield call(getClient, CoreRestClient);
+
+    console.log('📡 STEP 3: Calling getTeams...');
+    const teams = yield apply(coreClient, coreClient.getTeams, [project.id, false, 200, 0]);
+
+    console.log('🎯 Teams:', teams?.map(t => ({ id: t.id, name: t.name })));
+    return {
+      project: { id: project.id, name: project.name },
+      teams: teams?.map(t => ({ id: t.id, name: t.name })) ?? []
+    };
+  } catch (error) {
+    console.error('❌ FAILED', error);
+    throw error;
+  }
+}
 /** Load teams */
 export function* loadTeams() {
-    console.log('createSaga: loadTeams - Starting');
+    console.log('🔄 createSaga: loadTeams - Starting teams fetch process...');
     
     try {
-        const projectService: AzureDevOpsAPI.IProjectPageService = yield call(
-            getService,
-            "ms.vss-tfs-web.tfs-page-data-service"
-        );
-        console.log('createSaga: loadTeams - Got project service');
+        // Run isolated test first
+        const testResult = yield call(testProjectAndTeamContext);
+        console.log('✅ Isolated test passed, using results for loadTeams');
         
-        const projectInfo: ProjectInfo = yield call([
-            projectService,
-            projectService.getProject
-        ]);
-        console.log('createSaga: loadTeams - Got project info:', projectInfo);
-
-        // TODO: Get source from state?
-        const teamService = Services.getService<ITeamService>(TeamServiceId);
-        console.log('createSaga: loadTeams - Got team service, fetching teams for project:', projectInfo?.id);
+        // Process teams data for Redux store
+        const processedTeams = testResult.teams.sort((a: any, b: any) => a.name.localeCompare(b.name));
         
-        if (!projectInfo || !projectInfo.id) {
-            throw new Error('No project information available');
-        }
+        yield put(Actions.setTeams(processedTeams));
+        console.log('✅ createSaga: loadTeams - Teams dispatched to Redux store');
         
-        const teams = yield call(
-            [teamService, teamService.getAllTeams],
-            projectInfo.id
-        );
-        console.log('createSaga: loadTeams - Teams fetched successfully:', teams);
-        yield put(Actions.setTeams(teams));
     } catch (error) {
-        console.error('createSaga: loadTeams - Failed to fetch teams:', error);
-        // Set empty teams array so UI doesn't stay in loading state
-        yield put(Actions.setTeams([]));
+        console.error('❌ createSaga: loadTeams - Failed:', error);
+        yield put(Actions.setTeams([])); // Set empty array on failure
     }
 }
 
@@ -76,30 +108,20 @@ export function* iterationSaga() {
         Actions.setTeam.type
     );
 
-    console.log('createSaga: iterationSaga - Starting for team:', action.payload);
+    const teamService = Services.getService<ITeamService>(TeamServiceId);
+    const iterations = yield call(
+        [teamService, teamService.getIterationsForTeam],
+        action.payload
+    );
 
-    try {
-        const teamService = Services.getService<ITeamService>(TeamServiceId);
-        console.log('createSaga: iterationSaga - Got team service');
-        
-        const iterations = yield call(
-            [teamService, teamService.getIterationsForTeam],
-            action.payload
-        );
-        console.log('createSaga: iterationSaga - Iterations fetched successfully:', iterations);
-        yield put(Actions.setIterations(iterations));
-    } catch (error) {
-        console.error('createSaga: iterationSaga - Failed to fetch iterations:', error);
-        // Set empty iterations array so UI doesn't stay in loading state
-        yield put(Actions.setIterations([]));
-    }
+    yield put(Actions.setIterations(iterations));
 }
 
 export function* createSessionSaga() {
     while (true) {
         yield take(Actions.create.type);
 
-        let session: ISession = yield select((state: IState) => state.create.session);
+        let session: ISession = yield select(x => x.create.session);
 
         // Generate new id
         session = {
