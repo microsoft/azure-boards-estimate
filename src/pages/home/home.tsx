@@ -121,7 +121,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                     {sessions && sessions.length > 0 && (
                         <Card className="flex-grow">
                             <SessionList
-                                history={history}
+                                history={history as any}
                                 sessions={sessions}
                                 onEndSession={deleteSession}
                           
@@ -136,7 +136,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
                             className="flex-grow legacy-sessions"
                         >
                             <SessionList
-                                history={history}
+                                history={history as any}
                                 sessions={legacySessions}
                                 onEndSession={deleteSession}
                                 hideContextMenu={true}

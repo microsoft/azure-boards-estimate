@@ -6,7 +6,7 @@ export function addPolyFills() {
             var depth = arguments[0];
             depth = depth === undefined ? 1 : Math.floor(depth);
             if (depth < 1) return Array.prototype.slice.call(this);
-            return (function flat(arr, depth) {
+            return (function flat(arr: any[], depth: number): any[] {
                 var len = arr.length >>> 0;
                 var flattened: any[] = [];
                 var i = 0;
@@ -20,7 +20,7 @@ export function addPolyFills() {
                     i++;
                 }
                 return flattened;
-            })(this, depth);
+            })(this as any, depth);
         };
     }
 }

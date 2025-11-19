@@ -50,6 +50,9 @@
             "addressable": true
         }
     ],
+    "dataStorage": {
+        "id": "default"
+    },
     "contributions": [
         {
             "id": "estimate-hub",

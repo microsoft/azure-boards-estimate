@@ -98,4 +98,4 @@ if (!window.location.search || !window.location.search.trim()) {
     });
 }
 
-registerServiceWorker();
+// registerServiceWorker(); // Disabled for Azure DevOps extension

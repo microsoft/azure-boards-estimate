@@ -96,7 +96,7 @@ export function* channelSenderSaga(sessionId: string, channel: IChannel) {
 /**
  * Take channel actions and map them to redux actions
  */
-export function* channelListenerSaga(channel: IChannel) {
+export function* channelListenerSaga(channel: IChannel): Generator {
     const subscription: Channel<{}> = yield call(subscribe, channel);
     while (true) {
         const action = yield take(subscription);

@@ -41,7 +41,7 @@ interface ISessionParams {
 }
 
 interface ISessionProps extends IPageProps<ISessionParams> {
-    identity: IIdentity;
+    identity: IIdentity | null;
     status: {
         loading: boolean;
         message: string;
@@ -276,4 +276,4 @@ export default connect(
         };
     },
     Actions
-)(Session);
+)(Session as any);
