@@ -91,6 +91,9 @@ const setTeam = reducerAction(
     Actions.setTeam,
     (state: ICreateSessionState, teamId) => {
         state.team = teamId;
+        // Clear iterations when team changes to prevent showing old team's iterations
+        state.iterations = [];
+        state.iteration = "";
         state.session.sourceData = `${state.team};${state.iteration}`;
     }
 );

@@ -74,7 +74,7 @@ export class Card extends React.Component<ICardComponentProps> {
             selected
         } = this.props;
 
-        let BaseElement: string;
+        let BaseElement: React.ElementType;
         if (onClick) {
             BaseElement = "button";
         } else {

@@ -1,4 +1,4 @@
-import produce, { Draft } from "immer";
+import { produce, Draft } from "immer";
 import { Action, ActionCreator } from "typescript-fsa";
 
 export default function reducerMap<TState>(

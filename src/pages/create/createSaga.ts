@@ -1,7 +1,8 @@
 import { IProjectPageService } from "azure-devops-extension-api";
 import { ProjectInfo } from "azure-devops-extension-api/Core";
 import { getService } from "azure-devops-extension-sdk";
-import { all, call, put, select, take } from "redux-saga/effects";
+import { all, call, put, select, take, takeEvery } from "redux-saga/effects";
+import { SagaIterator } from "redux-saga";
 import history from "../../lib/history";
 import { ISession } from "../../model/session";
 import { IState } from "../../reducer";
@@ -25,7 +26,7 @@ export function* initSaga() {
 }
 
 /** Load teams */
-export function* loadTeams() {
+export function* loadTeams(): Generator {
     const projectService: IProjectPageService = yield call(
         getService,
         "ms.vss-tfs-web.tfs-page-data-service"
@@ -45,7 +46,7 @@ export function* loadTeams() {
 }
 
 /**  */
-export function* loadCardSets() {
+export function* loadCardSets(): Generator {
     const cardSetService = Services.getService<ICardSetService>(
         CardSetServiceId
     );
@@ -53,18 +54,16 @@ export function* loadCardSets() {
     yield put(Actions.setCardSets(cardSets));
 }
 
-export function* iterationSaga() {
-    const action: ReturnType<typeof Actions.setTeam> = yield take(
-        Actions.setTeam.type
-    );
+export function* iterationSaga(): Generator {
+    yield takeEvery(Actions.setTeam.type, function* (action: ReturnType<typeof Actions.setTeam>): Generator {
+        const teamService = Services.getService<ITeamService>(TeamServiceId);
+        const iterations = yield call(
+            [teamService, teamService.getIterationsForTeam],
+            action.payload
+        );
 
-    const teamService = Services.getService<ITeamService>(TeamServiceId);
-    const iterations = yield call(
-        [teamService, teamService.getIterationsForTeam],
-        action.payload
-    );
-
-    yield put(Actions.setIterations(iterations));
+        yield put(Actions.setIterations(iterations));
+    });
 }
 
 export function* createSessionSaga() {

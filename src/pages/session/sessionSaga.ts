@@ -45,7 +45,7 @@ export function* rootSessionSaga() {
     yield takeLatest(loadSession.type, sessionSaga);
 }
 
-export function* sessionSaga(action: ReturnType<typeof loadSession>) {
+export function* sessionSaga(action: ReturnType<typeof loadSession>): Generator {
     try {
         // Get project
         const projectService: IProjectPageService = yield call(
@@ -213,7 +213,7 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>) {
         yield cancel(channelTask);
         // Navigate back to session list
         history.push("/");
-    } catch (e) {
+    } catch (e: any) {
         yield put(fatalError("Could not load session: " + e.message));
 
         // Navigate back to session list

@@ -15,21 +15,21 @@ DevOps.getService<IHostNavigationService>(
 ).then(navService => {
     
     const navigate = (hash: string) => {
-        history.replace(hash.replace("#", ""));
+        const path = hash ? hash.replace("#", "") : "";
+        history.replace(path || "/");
     };
 
     // Listen to initial navigation update from host frame
     navService.getHash().then(navigate, () => {
-        /* ignore */
+        // If getHash fails, default to home route
+        history.replace("/");
     });
 
     navService.onHashChanged(navigate);
 
     // Send navigation updates to host frame
-    history.listen(x => {
-  
-   navService.replaceHash(x.pathname);
-
+    history.listen((location: any) => {
+        navService.replaceHash(location.pathname || "/");
     });
 });
 
@@ -39,7 +39,7 @@ class App extends React.Component {
     public render() {
         return (
             <Surface background={SurfaceBackground.neutral}>
-                <Router history={history}>
+                <Router history={history as any}>
                     <>
                         <Switch>
                             <Route
