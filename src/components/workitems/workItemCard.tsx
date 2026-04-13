@@ -33,6 +33,7 @@ export const WorkItemCard: React.SFC<IWorkItemCardProps> = props => {
                 selected && "selected"
             )}
             onClick={onClick}
+            style={{ "--wi-color": color ? `#${color}` : "transparent" } as React.CSSProperties}
         >
             <Card>
 

@@ -1,12 +1,26 @@
 @import "azure-devops-ui/Core/_platformCommon.scss";
-.work-item-view {
-margin: 4px 12px;
+
+.work-item-view-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.card-sub-container{
-  padding: 5px 20px;
+.work-item-view {
+    margin: 4px 12px;
+    flex-shrink: 0;
 }
-.votes-container{
+
+.work-item-details {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.card-sub-container {
+    padding: 5px 20px;
+}
+
+.votes-container {
     display: inline-block;
 }
-

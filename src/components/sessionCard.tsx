@@ -69,7 +69,7 @@ export class SessionCard extends React.Component<ICardProps> {
         };
 
         return (
-            <div className="session-card">
+            <div className="session-card" onClick={this.navigate} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" && this.navigate(e)}>
                 <div className="session-card--content">
                     <div className="flex-row">
                         <CardTitle>
@@ -101,6 +101,7 @@ export class SessionCard extends React.Component<ICardProps> {
                                             ]
                                         }
                                     }}
+                                    onClick={(e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation()}
                                 />
 
                                 <Observer

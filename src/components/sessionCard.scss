@@ -9,6 +9,9 @@
     background-color: $transblack-6;
 
     border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 2px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, background-color 0.15s ease;
 
     display: flex;
     flex-direction: column;
@@ -16,6 +19,11 @@
     align-items: stretch;
 
     padding: 10px;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18), 0 0 2px rgba(0, 0, 0, 0.1);
+        background-color: $neutral-8;
+    }
 
     .session-card--content {
         display: flex;
@@ -46,15 +54,20 @@
         dl {
             display: flex;
             flex-direction: row;
+            align-items: baseline;
             margin: 5px 0 0 0;
 
             dt {
-                font-weight: normal;
-                width: 30%;
+                font-weight: bold;
+                min-width: 56px;
+                flex-shrink: 0;
+                color: $primary-text;
             }
 
             dd {
-                margin: 0;
+                margin: 0 0 0 4px;
+                color: $primary-text;
+                word-break: break-word;
             }
         }
     }
