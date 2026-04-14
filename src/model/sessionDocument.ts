@@ -1,4 +1,3 @@
-import { ISessionEstimates } from "./estimate";
 import { IUserInfo } from "./user";
 
 /**
