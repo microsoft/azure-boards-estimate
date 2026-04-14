@@ -4,7 +4,6 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@aspnet/signalr": "^1.0.3",
     "azure-devops-extension-api": "1.152.0",
     "azure-devops-extension-sdk": "2.0.11",
     "azure-devops-ui": "2.167.22",
