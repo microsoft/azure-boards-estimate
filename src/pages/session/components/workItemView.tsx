@@ -1,6 +1,6 @@
 import { Button } from "azure-devops-ui/Button";
 import { CardContent, CustomCard } from "azure-devops-ui/Card";
-import { Header, TitleSize } from "azure-devops-ui/Header";
+import { Header } from "azure-devops-ui/Header";
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -192,9 +192,11 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                 {/* ── Work item details – scrollable ── */}
                 <div className="work-item-details v-scroll-auto custom-scrollbar flex-grow">
                     <CustomCard className="work-item-view">
-                        <Header title="Description" titleSize={TitleSize.Medium} />
                         <CardContent>
-                            <WorkItemDescription workItem={selectedWorkItem} />
+                            <div className="flex-column">
+                                <SubTitle>Description</SubTitle>
+                                <WorkItemDescription workItem={selectedWorkItem} />
+                            </div>
                         </CardContent>
                     </CustomCard>
                 </div>

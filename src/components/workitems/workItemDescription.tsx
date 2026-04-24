@@ -149,13 +149,19 @@ export const WorkItemDescription: React.FC<{
         };
     }, [props.workItem.id]);
 
+    const hasDescription = description && description.trim().length > 0;
+
     return (
         <>
             <div className="work-item">
-                <div
-                    className="html-content"
-                    dangerouslySetInnerHTML={{ __html: description }}
-                />
+                {hasDescription ? (
+                    <div
+                        className="html-content"
+                        dangerouslySetInnerHTML={{ __html: description }}
+                    />
+                ) : (
+                    <span className="no-description">No description</span>
+                )}
             </div>
 
             {acceptanceCriteria &&

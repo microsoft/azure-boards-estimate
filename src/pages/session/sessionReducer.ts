@@ -46,6 +46,10 @@ const loadedSession = reducerAction(
         state.status.loading = false;
         state.activeUsers = [userInfo];
         state.currentUser = userInfo;
+        state.selectedWorkItem = null;
+        state.ownEstimate = null;
+        state.estimates = {};
+        state.revealed = false;
     }
 );
 
