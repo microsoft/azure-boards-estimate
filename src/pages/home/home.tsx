@@ -1,7 +1,7 @@
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { FilterBar } from "azure-devops-ui/FilterBar";
-import { Header } from "azure-devops-ui/Header";
+import { Header, TitleSize } from "azure-devops-ui/Header";
 import { MessageCard, MessageCardSeverity } from "azure-devops-ui/MessageCard";
 import { Page } from "azure-devops-ui/Page";
 import { Tab, TabBar } from "azure-devops-ui/Tabs";
@@ -80,6 +80,7 @@ class HomePage extends React.Component<IHomePageProps & typeof Actions> {
             <Page className="flex-grow">
                 <Header
                     title="Estimate"
+                    titleSize={TitleSize.Large}
                     commandBarItems={[
                         {
                             id: "action-create",

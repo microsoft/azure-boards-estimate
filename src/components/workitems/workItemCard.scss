@@ -15,6 +15,9 @@ overflow: hidden;
 
     .bolt-card {
         transition: 0.3s linear all;
+        border-left: 4px solid var(--wi-color, transparent);
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
 
     &.clickable:hover .bolt-card {

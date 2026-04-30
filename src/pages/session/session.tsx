@@ -1,7 +1,8 @@
 import {
     CustomHeader,
     HeaderTitle,
-    HeaderTitleArea
+    HeaderTitleArea,
+    TitleSize
 } from "azure-devops-ui/Header";
 import {
     HeaderCommandBar,
@@ -182,7 +183,7 @@ class Session extends React.Component<
             >
                 <CustomHeader className="bolt-header-with-commandbar">
                     <HeaderTitleArea>
-                        <HeaderTitle>{session.name}</HeaderTitle>
+                        <HeaderTitle titleSize={TitleSize.Large}>{session.name}</HeaderTitle>
                     </HeaderTitleArea>
 
                     <div className="session--active-users flex-row flex-justify-end flex-center flex-self-stretch">

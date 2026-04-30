@@ -4,19 +4,19 @@ import { IWorkItemFormNavigationService} from "azure-devops-extension-api/WorkIt
 import * as DevOps from "azure-devops-extension-sdk";
 import { IWorkItem } from "../../model/workitem";
 import { WorkItemTypeIcon } from "./typeIcon";
+import { Icon } from "azure-devops-ui/Icon";
 import "./workItemHeader.scss";
 import { ILocationService } from "azure-devops-extension-api";
 
 
 
-
 export interface IWorkItemHeaderProps {
     workItem: IWorkItem;
-
+    estimateDisplay?: string;
 }
 export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
 
-    const { workItem: { id, project, title, workItemType, icon, color, } } = props;
+    const { workItem: { id, project, title, workItemType, icon, color }, estimateDisplay } = props;
     const [currentUrl ,setCurrentUrl] = React.useState<string>("#")
     
    React.useEffect(() => {
@@ -41,23 +41,28 @@ export const WorkItemHeader: React.FC<IWorkItemHeaderProps> =  (props) => {
 
 let currentCustomUrl = `${currentUrl}/${project}/_workitems/edit/${id}/`
    return (
-      <div>
-          <div className="work-item-header">
-              <div className="work-item-header--header">
-                  <a
-                      className="work-item-header--info"
-                      href={currentCustomUrl ? currentCustomUrl : "#"}
-                      target="_blank">
-                      <div onClick={(ev) => openWi(ev)}>
-                          <WorkItemTypeIcon icon={icon} color={color} />
-                          {workItemType} {id}
-                      </div>
-                  </a>
-                  <div className="work-item-header--title">{title}</div>
-              </div>
+      <div className="work-item-header">
+          <div className="work-item-header--header">
+              <a
+                  className="work-item-header--info"
+                  href={currentCustomUrl ? currentCustomUrl : "#"}
+                  target="_blank"
+                  title={`Open ${workItemType} ${id} in Azure DevOps`}>
+                  <div onClick={(ev) => openWi(ev)}>
+                      <WorkItemTypeIcon icon={icon} color={color} />
+                      {workItemType} {id}
+                      <Icon className="work-item-header--link-icon" iconName="OpenInNewWindow" />
+                  </div>
+              </a>
+              <div className="work-item-header--title">{title}</div>
           </div>
+          {estimateDisplay !== undefined && (
+              <div className="work-item-header--estimate-badge">
+                  <div className="estimate-badge--label">Estimate</div>
+                  <div className="estimate-badge--value">{estimateDisplay}</div>
+              </div>
+          )}
       </div>
   )
 }
-
 
