@@ -28,8 +28,12 @@ DevOps.getService<IHostNavigationService>(
     navService.onHashChanged(navigate);
 
     // Send navigation updates to host frame
-    history.listen((location: any) => {
-        navService.replaceHash(location.pathname || "/");
+    // history v5 changed listener signature from (location, action) to ({ location, action })
+    history.listen((locationOrUpdate: any) => {
+        const pathname = locationOrUpdate.pathname
+            ?? locationOrUpdate.location?.pathname
+            ?? "/";
+        navService.replaceHash(pathname);
     });
 });
 
