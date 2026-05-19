@@ -111,8 +111,33 @@ const estimate = reducerAction(
     (state: ISessionState, estimate) => {
         if (estimate.cardIdentifier === null) {
             state.ownEstimate = null;
+            // Remove own estimate from the shared estimates table
+            const { workItemId, identity } = estimate;
+            if (state.estimates[workItemId]) {
+                const idx = state.estimates[workItemId].findIndex(
+                    e => e.identity.id === identity.id
+                );
+                if (idx >= 0) {
+                    state.estimates[workItemId].splice(idx, 1);
+                }
+            }
         } else {
             state.ownEstimate = estimate;
+            // Also add/update own estimate in the shared estimates table so it
+            // appears in the votes panel without requiring a channel round-trip
+            const { workItemId } = estimate;
+            if (!state.estimates[workItemId]) {
+                state.estimates[workItemId] = [estimate];
+            } else {
+                const idx = state.estimates[workItemId].findIndex(
+                    e => e.identity.id === estimate.identity.id
+                );
+                if (idx === -1) {
+                    state.estimates[workItemId].push(estimate);
+                } else {
+                    state.estimates[workItemId][idx] = estimate;
+                }
+            }
         }
     }
 );
@@ -186,6 +211,7 @@ export default <TPayload>(
         [Actions.loadSession.type]: loadSession,
         [Actions.loadedSession.type]: loadedSession,
         [Actions.leaveSession.type]: leaveSession,
+        [Actions.selectWorkItem.type]: workItemSelected,
         [Actions.workItemSelected.type]: workItemSelected,
         [Actions.revealed.type]: revealed,
         [Actions.estimateSet.type]: estimateSet,

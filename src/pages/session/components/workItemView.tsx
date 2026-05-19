@@ -169,8 +169,14 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             {showAverage && (
                                                 <>
                                                   <SubTitle>Average</SubTitle>
-                                                    <div className="flex-column flex-self-start">
-                                                   { average}
+                                                    <div className="flex-row flex-self-start" style={{ gap: 8, alignItems: "center" }}>
+                                                        <span>{average}</span>
+                                                        <Button
+                                                            primary
+                                                            onClick={() => this.props.commitEstimate(average)}
+                                                        >
+                                                            Save Average
+                                                        </Button>
                                                     </div>
                                                 </>
                                             )}

@@ -231,10 +231,16 @@ function* sessionEstimationSaga(): SagaIterator {
         );
         const value = action.payload;
 
+        console.log("[commitEstimate] received value:", value);
+
         const workItem: IWorkItem = yield select<IState>(
             s => s.session.selectedWorkItem
         );
-        if (!workItem || !value) {
+
+        console.log("[commitEstimate] workItem:", workItem?.id, "estimationFieldRefName:", workItem?.estimationFieldRefName);
+
+        if (!workItem || value === null || value === undefined) {
+            console.warn("[commitEstimate] skipping – workItem:", !!workItem, "value:", value);
             continue;
         }
 
@@ -253,6 +259,7 @@ function* sessionEstimationSaga(): SagaIterator {
         }
 
         try {
+            console.log("[commitEstimate] calling saveEstimate", workItem.id, workItem.estimationFieldRefName, value);
             // Save estimate to work item
             const workItemService = Services.getService<IWorkItemService>(
                 WorkItemServiceId
@@ -281,7 +288,9 @@ function* sessionEstimationSaga(): SagaIterator {
                     ? workItems[idx + 1].id
                     : workItems[0].id;
             yield put(selectWorkItem(nextWorkItemId));
-        } catch (e) {}
+        } catch (e) {
+            console.error("[commitEstimate] saveEstimate failed:", e);
+        }
     }
 }
 

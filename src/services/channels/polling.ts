@@ -52,6 +52,8 @@ export class PollingChannel implements IChannel {
             null,
             this.currentUserId
         );
+        // Trigger reveal locally — own actions are filtered out in the poll loop
+        await this.revealed.incoming(undefined);
     });
 
     join = defineOperation<IUserInfo>(async userInfo => {
