@@ -49,6 +49,20 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions, { vo
         this.state = { votingCollapsed: false, descriptionCollapsed: false, descriptionFullscreen: false };
     }
 
+    componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyDown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.handleKeyDown);
+    }
+
+    private handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && this.state.descriptionFullscreen) {
+            this.setState({ descriptionFullscreen: false });
+        }
+    };
+
     render() {
         const {
             canPerformAdminActions,
