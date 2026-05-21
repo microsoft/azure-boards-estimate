@@ -4,21 +4,96 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+    height: 100%;
 }
 
-.work-item-view {
-    margin: 4px 12px;
+.estimate-section {
+    margin: 4px 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     flex-shrink: 0;
-}
 
-.work-item-details {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-bottom: 20px;
+    &.flex-grow {
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
+
+    &--title {
+        font-size: 16px;
+        font-weight: 600;
+        color: $primary-text;
+        margin-left: 8px;
+    }
+
+    &--header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0 6px;
+        user-select: none;
+        cursor: pointer;
+        border-radius: 3px;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+
+            .estimate-section--title,
+            .estimate-section--icon {
+                color: $communication-foreground;
+            }
+        }
+    }
+
+    &--separator {
+        height: 1px;
+        background-color: rgba(0, 0, 0, 0.1);
+        margin-bottom: 8px;
+    }
+
+    &--actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+    }
+
+    &--icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 2px;
+        font-size: 16px;
+        color: $primary-text;
+        margin-right: 8px;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.06);
+        }
+    }
+
+    &--content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
+
+    &--fullscreen {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background-color: $neutral-0;
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 .card-sub-container {
-    padding: 5px 20px;
+    padding: 5px 4px;
 }
 
 .votes-container {
