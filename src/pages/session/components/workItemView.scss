@@ -5,12 +5,20 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    height: 100%;
 }
 
 .estimate-section {
     margin: 4px 16px;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    flex-shrink: 0;
+
+    &.flex-grow {
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
 
     &--title {
         font-size: 16px;
