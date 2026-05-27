@@ -1,7 +1,5 @@
 import { Button } from "azure-devops-ui/Button";
-import { CardContent, CustomCard } from "azure-devops-ui/Card";
-import { Header } from "azure-devops-ui/Header";
-import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
+import { Icon } from "azure-devops-ui/Icon";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Card } from "../../../components/cards/card";
@@ -45,7 +43,26 @@ const Actions = {
 
 };
 
-class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
+class WorkItemView extends React.Component<IWorkItemProps & typeof Actions, { votingCollapsed: boolean; descriptionCollapsed: boolean; descriptionFullscreen: boolean }> {
+    constructor(props: IWorkItemProps & typeof Actions) {
+        super(props);
+        this.state = { votingCollapsed: false, descriptionCollapsed: false, descriptionFullscreen: false };
+    }
+
+    componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyDown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.handleKeyDown);
+    }
+
+    private handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && this.state.descriptionFullscreen) {
+            this.setState({ descriptionFullscreen: false });
+        }
+    };
+
     render() {
         const {
             canPerformAdminActions,
@@ -88,21 +105,34 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
         return (
             <div className="work-item-view-container flex-column flex-grow">
 
-                {/* ── Voting section – always visible ── */}
-                <CustomCard className="work-item-view">
-                    <Header>
-                        <WorkItemHeader
-                            workItem={selectedWorkItem}
-                            estimateDisplay={(() => {
-                                const est = selectedWorkItem.estimate;
-                                if (est == null) return "-";
-                                const card = cardSet.cards.find(c => c.value == est);
-                                return card ? card.identifier : `${est}`;
-                            })()}
-                        />
-                    </Header>
+                {/* ── Voting section ── */}
+                <div className="estimate-section">
+                    <div
+                        className="estimate-section--header"
+                        role="button"
+                        tabIndex={0}
+                        title={this.state.votingCollapsed ? "Expand voting" : "Collapse voting"}
+                        onClick={() => this.setState(s => ({ votingCollapsed: !s.votingCollapsed }))}
+                        onKeyDown={e => e.key === "Enter" && this.setState(s => ({ votingCollapsed: !s.votingCollapsed }))}
+                    >
+                        <span className="estimate-section--title">Voting</span>
+                        <div className="estimate-section--icon">
+                            <Icon iconName={this.state.votingCollapsed ? "ChevronDown" : "ChevronUp"} />
+                        </div>
+                    </div>
+                    <div className="estimate-section--separator" />
 
-                    <CardContent>
+                    <WorkItemHeader
+                        workItem={selectedWorkItem}
+                        estimateDisplay={(() => {
+                            const est = selectedWorkItem.estimate;
+                            if (est == null) return "-";
+                            const card = cardSet.cards.find(c => c.value == est);
+                            return card ? card.identifier : `${est}`;
+                        })()}
+                    />
+
+                    {!this.state.votingCollapsed && (
                         <div className="card-sub-container">
                             <SubTitle>Your vote </SubTitle>
                             <div className="card-container">
@@ -169,14 +199,8 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                             {showAverage && (
                                                 <>
                                                   <SubTitle>Average</SubTitle>
-                                                    <div className="flex-row flex-self-start" style={{ gap: 8, alignItems: "center" }}>
-                                                        <span>{average}</span>
-                                                        <Button
-                                                            primary
-                                                            onClick={() => this.props.commitEstimate(average)}
-                                                        >
-                                                            Save Average
-                                                        </Button>
+                                                    <div className="flex-column flex-self-start">
+                                                   { average}
                                                     </div>
                                                 </>
                                             )}
@@ -192,19 +216,45 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions> {
                                 </>
                             )}
                         </div>
-                    </CardContent>
-                </CustomCard>
+                    )}
+                </div>
 
-                {/* ── Work item details – scrollable ── */}
-                <div className="work-item-details v-scroll-auto custom-scrollbar flex-grow">
-                    <CustomCard className="work-item-view">
-                        <CardContent>
-                            <div className="flex-column">
-                                <SubTitle>Description</SubTitle>
-                                <WorkItemDescription workItem={selectedWorkItem} />
+                {/* ── Description section ── */}
+                <div className={`estimate-section flex-column${this.state.descriptionFullscreen ? " estimate-section--fullscreen" : (!this.state.descriptionCollapsed ? " flex-grow" : "")}`}>
+                    <div
+                        className="estimate-section--header"
+                        role="button"
+                        tabIndex={0}
+                        title={this.state.descriptionCollapsed ? "Expand description" : "Collapse description"}
+                        onClick={() => !this.state.descriptionFullscreen && this.setState(s => ({ descriptionCollapsed: !s.descriptionCollapsed }))}
+                        onKeyDown={e => e.key === "Enter" && !this.state.descriptionFullscreen && this.setState(s => ({ descriptionCollapsed: !s.descriptionCollapsed }))}
+                    >
+                        <span className="estimate-section--title">Description</span>
+                        <div className="estimate-section--actions">
+                            <div
+                                className="estimate-section--icon"
+                                role="button"
+                                tabIndex={0}
+                                title={this.state.descriptionFullscreen ? "Exit fullscreen" : "Expand to fullscreen"}
+                                onClick={e => { e.stopPropagation(); this.setState(s => ({ descriptionFullscreen: !s.descriptionFullscreen })); }}
+                                onKeyDown={e => { if (e.key === "Enter") { e.stopPropagation(); this.setState(s => ({ descriptionFullscreen: !s.descriptionFullscreen })); } }}
+                            >
+                                <Icon iconName={this.state.descriptionFullscreen ? "BackToWindow" : "FullScreen"} />
                             </div>
-                        </CardContent>
-                    </CustomCard>
+                            {!this.state.descriptionFullscreen && (
+                                <div className="estimate-section--icon">
+                                    <Icon iconName={this.state.descriptionCollapsed ? "ChevronDown" : "ChevronUp"} />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="estimate-section--separator" />
+
+                    {(!this.state.descriptionCollapsed || this.state.descriptionFullscreen) && (
+                        <div className="estimate-section--content custom-scrollbar">
+                            <WorkItemDescription workItem={selectedWorkItem} />
+                        </div>
+                    )}
                 </div>
 
             </div>
