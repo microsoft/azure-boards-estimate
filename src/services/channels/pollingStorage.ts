@@ -53,79 +53,62 @@ export class PollingStorage {
     }
 
     /**
-     * Save the session document with optimistic concurrency.
-     * Retries on conflict up to maxRetries times.
+     * Atomically fetch, mutate, and save the session document (compare-and-swap).
+     * On optimistic-concurrency conflicts the full fetch + mutate is re-applied to
+     * the freshly fetched document, preventing stale overwrites (C-4).
+     *
+     * @param mutate  Called with the latest document.  Return `false` to skip the
+     *                save (no-op).  Throw to propagate errors.
      */
-    async saveSessionDocument(
-        doc: ISessionDocument,
+    private async modifyDocument(
+        sessionId: string,
+        mutate: (doc: ISessionDocument) => boolean | void,
         maxRetries: number = 3
     ): Promise<ISessionDocument> {
         const manager = await this.getManager();
-
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
-                const saved = await manager.setDocument(
-                    PollingCollection,
-                    doc
-                );
+                const doc = await this.getSessionDocument(sessionId);
+                const changed = mutate(doc);
+                if (changed === false) {
+                    return doc; // no-op — caller signalled nothing to save
+                }
+                const saved = await manager.setDocument(PollingCollection, doc);
                 return saved as ISessionDocument;
             } catch (e: any) {
-                if (attempt < maxRetries) {
-                    // Refetch and retry
-                    const fresh = await this.getSessionDocument(doc.id);
-                    doc = { ...doc, __etag: fresh.__etag };
-                } else {
-                    throw e;
-                }
+                if (attempt >= maxRetries) throw e;
+                // Conflict: next iteration re-fetches a fresh document before
+                // re-applying the mutation, so no stale content is ever written.
             }
         }
-
-        // Unreachable, but TypeScript needs this
-        throw new Error("Failed to save session document");
+        throw new Error("Failed to modify session document");
     }
 
     /**
      * Append an action to the session document's action log.
-     * Handles optimistic concurrency conflicts by refetching and retrying.
      */
     async appendAction(
         sessionId: string,
         type: ChannelActionType,
         payload: any,
-        senderId: string,
-        maxRetries: number = 3
+        senderId: string
     ): Promise<ISessionDocument> {
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                const doc = await this.getSessionDocument(sessionId);
-                const action: IChannelAction = {
-                    seq: doc.nextSeq,
-                    type,
-                    payload,
-                    senderId,
-                    timestamp: Date.now()
-                };
-
-                doc.actions.push(action);
-                doc.nextSeq = doc.nextSeq + 1;
-
-                // Prune old entries if over the limit
-                if (doc.actions.length > MAX_ACTION_LOG_SIZE) {
-                    doc.actions = doc.actions.slice(
-                        doc.actions.length - MAX_ACTION_LOG_SIZE
-                    );
-                }
-
-                return await this.saveSessionDocument(doc, 0);
-            } catch (e: any) {
-                if (attempt >= maxRetries) {
-                    throw e;
-                }
-                // Retry on conflict
+        return this.modifyDocument(sessionId, doc => {
+            const action: IChannelAction = {
+                seq: doc.nextSeq,
+                type,
+                payload,
+                senderId,
+                timestamp: Date.now()
+            };
+            doc.actions.push(action);
+            doc.nextSeq++;
+            if (doc.actions.length > MAX_ACTION_LOG_SIZE) {
+                doc.actions = doc.actions.slice(
+                    doc.actions.length - MAX_ACTION_LOG_SIZE
+                );
             }
-        }
-
-        throw new Error("Failed to append action");
+        });
     }
 
     /**
@@ -133,34 +116,18 @@ export class PollingStorage {
      */
     async joinSession(
         sessionId: string,
-        userInfo: IUserInfo,
-        maxRetries: number = 3
+        userInfo: IUserInfo
     ): Promise<ISessionDocument> {
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                const doc = await this.getSessionDocument(sessionId);
-
-                // Remove any existing entry for this user
-                doc.activeUsers = doc.activeUsers.filter(
-                    u => u.userInfo.tfId !== userInfo.tfId
-                );
-
-                // Add fresh entry
-                const activeUser: IActiveUser = {
-                    userInfo,
-                    lastSeen: Date.now()
-                };
-                doc.activeUsers.push(activeUser);
-
-                return await this.saveSessionDocument(doc, 0);
-            } catch (e: any) {
-                if (attempt >= maxRetries) {
-                    throw e;
-                }
-            }
-        }
-
-        throw new Error("Failed to join session");
+        return this.modifyDocument(sessionId, doc => {
+            doc.activeUsers = doc.activeUsers.filter(
+                u => u.userInfo.tfId !== userInfo.tfId
+            );
+            const activeUser: IActiveUser = {
+                userInfo,
+                lastSeen: Date.now()
+            };
+            doc.activeUsers.push(activeUser);
+        });
     }
 
     /**
@@ -168,52 +135,30 @@ export class PollingStorage {
      */
     async leaveSession(
         sessionId: string,
-        tfId: string,
-        maxRetries: number = 3
+        tfId: string
     ): Promise<ISessionDocument> {
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                const doc = await this.getSessionDocument(sessionId);
-                doc.activeUsers = doc.activeUsers.filter(
-                    u => u.userInfo.tfId !== tfId
-                );
-                return await this.saveSessionDocument(doc, 0);
-            } catch (e: any) {
-                if (attempt >= maxRetries) {
-                    throw e;
-                }
-            }
-        }
-
-        throw new Error("Failed to leave session");
+        return this.modifyDocument(sessionId, doc => {
+            doc.activeUsers = doc.activeUsers.filter(
+                u => u.userInfo.tfId !== tfId
+            );
+        });
     }
 
     /**
      * Update the heartbeat timestamp for a user.
      */
-    async heartbeat(
-        sessionId: string,
-        tfId: string,
-        maxRetries: number = 3
-    ): Promise<void> {
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                const doc = await this.getSessionDocument(sessionId);
+    async heartbeat(sessionId: string, tfId: string): Promise<void> {
+        try {
+            await this.modifyDocument(sessionId, doc => {
                 const user = doc.activeUsers.find(
                     u => u.userInfo.tfId === tfId
                 );
-                if (user) {
-                    user.lastSeen = Date.now();
-                    await this.saveSessionDocument(doc, 0);
-                }
-                return;
-            } catch (e: any) {
-                if (attempt >= maxRetries) {
-                    // Heartbeat failure is non-fatal, just log
-                    console.warn("Heartbeat update failed", e);
-                    return;
-                }
-            }
+                if (!user) return false; // user already removed — nothing to save
+                user.lastSeen = Date.now();
+            });
+        } catch {
+            // Heartbeat failure is non-fatal
+            console.warn("Heartbeat update failed");
         }
     }
 

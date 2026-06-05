@@ -9,6 +9,7 @@ export type IHandler<TPayload> = (payload: TPayload) => void;
  */
 export interface IIncoming<TPayload> {
     attachHandler(handler: IHandler<TPayload>): void;
+    detachHandler(handler: IHandler<TPayload>): void;
 }
 
 /**  */
@@ -36,6 +37,10 @@ export function defineIncomingOperation<TPayload>(): IInternalIncoming<
         attachHandler: (handler: IHandler<TPayload>): void => {
             handlers.push(handler);
         },
+        detachHandler: (handler: IHandler<TPayload>): void => {
+            const idx = handlers.indexOf(handler);
+            if (idx !== -1) handlers.splice(idx, 1);
+        },
         incoming: (payload: TPayload) => {
             for (const handler of handlers) {
                 handler(payload);
@@ -54,6 +59,10 @@ export function defineOperation<TPayload>(
     return Object.assign(f, {
         attachHandler: (handler: IHandler<TPayload>): void => {
             handlers.push(handler);
+        },
+        detachHandler: (handler: IHandler<TPayload>): void => {
+            const idx = handlers.indexOf(handler);
+            if (idx !== -1) handlers.splice(idx, 1);
         },
         incoming: (payload: TPayload) => {
             for (const handler of handlers) {

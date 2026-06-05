@@ -80,10 +80,20 @@ export class PollingChannel implements IChannel {
     private storage = new PollingStorage();
     private sessionId: string = "";
     private currentUserId: string = "";
+    private currentUserInfo: IUserInfo | undefined;
     private lastSeenSeq: number = 0;
-    private pollingTimer: ReturnType<typeof setInterval> | undefined;
+    private alive: boolean = false;
+    private errorCount: number = 0;
     private heartbeatTimer: ReturnType<typeof setInterval> | undefined;
     private knownActiveUserIds: Set<string> = new Set();
+    private wakeUp: (() => void) | undefined;
+
+    // LT-1: Stored as a field so the same reference can be removed in end()
+    private readonly handleVisibilityChange = (): void => {
+        if (!document.hidden && this.wakeUp) {
+            this.wakeUp();
+        }
+    };
 
     async start(sessionId: string): Promise<void> {
         this.sessionId = sessionId;
@@ -93,6 +103,11 @@ export class PollingChannel implements IChannel {
         );
         const identity = identityService.getCurrentIdentity();
         this.currentUserId = identity.id;
+        this.currentUserInfo = {
+            tfId: identity.id,
+            name: identity.displayName,
+            imageUrl: identity.imageUrl
+        };
 
         const maxRetries = 5;
         const retryDelay = 5000;
@@ -118,11 +133,11 @@ export class PollingChannel implements IChannel {
                 });
                 this.knownActiveUserIds.add(identity.id);
 
-                // Start polling
-                this.pollingTimer = setInterval(
-                    () => this.poll(),
-                    POLLING_INTERVAL_MS
-                );
+                // Start polling (CO-1: self-scheduling loop prevents overlapping requests)
+                this.alive = true;
+                this.errorCount = 0;
+                document.addEventListener("visibilitychange", this.handleVisibilityChange);
+                this.pollLoop();
 
                 // Start heartbeat
                 this.heartbeatTimer = setInterval(
@@ -162,10 +177,27 @@ export class PollingChannel implements IChannel {
     }
 
     async end(): Promise<void> {
-        if (this.pollingTimer) {
-            clearInterval(this.pollingTimer);
-            this.pollingTimer = undefined;
+        // C-1: Announce departure immediately; other clients no longer wait up to
+        // STALE_USER_TIMEOUT_MS (30 s) to detect this user has gone
+        try {
+            await this.storage.appendAction(
+                this.sessionId,
+                ChannelActionType.Left,
+                this.currentUserId,
+                this.currentUserId
+            );
+        } catch {
+            // Best-effort; do not block teardown
         }
+
+        // L-1: Signal the poll loop to exit and abort any in-flight sleep
+        this.alive = false;
+        if (this.wakeUp) {
+            this.wakeUp();
+        }
+
+        // LT-1: Remove visibility listener
+        document.removeEventListener("visibilitychange", this.handleVisibilityChange);
 
         if (this.heartbeatTimer) {
             clearInterval(this.heartbeatTimer);
@@ -183,22 +215,100 @@ export class PollingChannel implements IChannel {
     }
 
     /**
+     * Self-scheduling poll loop (CO-1). Replaces setInterval to prevent
+     * overlapping concurrent requests. Skips while the tab is hidden (LT-1).
+     */
+    private async pollLoop(): Promise<void> {
+        while (this.alive) {
+            if (!document.hidden) {
+                await this.poll();
+            }
+            if (!this.alive) break;
+            await this.sleep(POLLING_INTERVAL_MS);
+        }
+    }
+
+    /**
+     * Cancellable sleep. Resolves early when end() signals shutdown or a
+     * visibility-change event wakes the loop (LT-1, L-1).
+     */
+    private sleep(ms: number): Promise<void> {
+        return new Promise(resolve => {
+            const id = setTimeout(() => {
+                this.wakeUp = undefined;
+                resolve();
+            }, ms);
+            this.wakeUp = () => {
+                clearTimeout(id);
+                this.wakeUp = undefined;
+                resolve();
+            };
+        });
+    }
+
+    /**
      * Poll the session document for new actions from other participants.
+     * Guards against stale dispatch after end() (L-1) and applies exponential
+     * backoff on repeated failures to avoid hammering a throttled endpoint (R-1).
      */
     private async poll(): Promise<void> {
+        if (!this.alive) return;                              // L-1 pre-guard
         try {
             const doc = await this.storage.getSessionDocument(this.sessionId);
+            if (!this.alive) return;                          // L-1 post-fetch guard
             this.processNewActions(doc);
             this.detectUserChanges(doc);
-        } catch (e) {
-            console.warn("Polling failed", e);
+            this.errorCount = 0;
+        } catch (e: any) {
+            this.errorCount++;
+            const backoffMs =
+                Math.min(30000, 1000 * Math.pow(2, this.errorCount)) +
+                Math.random() * 1000;
+            console.warn(
+                `Polling failed (attempt ${this.errorCount}), backing off ${backoffMs.toFixed(0)} ms`,
+                e
+            );
+            if (this.alive) {
+                await this.sleep(backoffMs);
+            }
+        }
+    }
+
+    /**
+     * Re-announce our presence to trigger a fresh snapshot from other
+     * participants. Used when the action log has been pruned past our cursor
+     * and we cannot recover by replaying the partial history (C-3).
+     */
+    private async requestSnapshot(): Promise<void> {
+        if (!this.currentUserInfo) return;
+        try {
+            await this.storage.appendAction(
+                this.sessionId,
+                ChannelActionType.Join,
+                this.currentUserInfo,
+                this.currentUserId
+            );
+        } catch {
+            // Best-effort
         }
     }
 
     /**
      * Process any new actions in the document that we haven't seen yet.
+     * Detects log-truncation desync and triggers a snapshot re-sync (C-3).
      */
     private processNewActions(doc: ISessionDocument): void {
+        // C-3: If our cursor falls below the oldest surviving entry the log was
+        // pruned past us — we have silently missed events.  Request a snapshot.
+        if (doc.actions.length > 0) {
+            const minSeq = doc.actions[0].seq;
+            if (this.lastSeenSeq < minSeq - 1) {
+                this.requestSnapshot();
+                this.lastSeenSeq = doc.nextSeq - 1;
+                return;
+            }
+        }
+
         const newActions = doc.actions.filter(
             a => a.seq > this.lastSeenSeq && a.senderId !== this.currentUserId
         );
