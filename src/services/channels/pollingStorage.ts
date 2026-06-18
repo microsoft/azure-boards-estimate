@@ -72,14 +72,21 @@ export class PollingStorage {
                 const saved = await manager.setDocument(PollingCollection, doc);
                 return saved as ISessionDocument;
             } catch (e: any) {
-                // Only retry on optimistic-concurrency conflicts (409).
-                // A 400 Bad Request or any other non-conflict error is not
-                // recoverable by retrying and must be propagated immediately.
+                // Azure DevOps signals an OCC etag mismatch as either:
+                //   - HTTP 409 (standard conflict), or
+                //   - HTTP 400 with typeKey "InvalidDocumentVersionException"
+                //     (error 1660003 — "The document version does not match")
+                // Both are safe to retry after re-fetching the document.
+                // Any other error is not recoverable and must propagate immediately.
+                const status = e?.status ?? e?.statusCode;
+                const typeKey = e?.serverError?.typeKey ?? "";
                 const isConflict =
-                    e && (e.status === 409 || e.statusCode === 409);
+                    status === 409 ||
+                    (status === 400 &&
+                        typeKey === "InvalidDocumentVersionException");
                 if (attempt >= maxRetries || !isConflict) {
                     console.error(
-                        `[PollingStorage] modifyDocument failed (session: ${sessionId}, attempt: ${attempt}, status: ${e?.status ?? e?.statusCode ?? "unknown"}):`,
+                        `[PollingStorage] modifyDocument failed (session: ${sessionId}, attempt: ${attempt}, status: ${status ?? "unknown"}):`,
                         e
                     );
                     throw e;
