@@ -40,16 +40,12 @@ export class PollingStorage {
         };
 
         const manager = await this.getManager();
-        try {
-            const document = await manager.getDocument(
-                PollingCollection,
-                sessionId,
-                { defaultValue }
-            );
-            return document as ISessionDocument;
-        } catch {
-            return defaultValue;
-        }
+        const document = await manager.getDocument(
+            PollingCollection,
+            sessionId,
+            { defaultValue }
+        );
+        return document as ISessionDocument;
     }
 
     /**
@@ -76,7 +72,18 @@ export class PollingStorage {
                 const saved = await manager.setDocument(PollingCollection, doc);
                 return saved as ISessionDocument;
             } catch (e: any) {
-                if (attempt >= maxRetries) throw e;
+                // Only retry on optimistic-concurrency conflicts (409).
+                // A 400 Bad Request or any other non-conflict error is not
+                // recoverable by retrying and must be propagated immediately.
+                const isConflict =
+                    e && (e.status === 409 || e.statusCode === 409);
+                if (attempt >= maxRetries || !isConflict) {
+                    console.error(
+                        `[PollingStorage] modifyDocument failed (session: ${sessionId}, attempt: ${attempt}, status: ${e?.status ?? e?.statusCode ?? "unknown"}):`,
+                        e
+                    );
+                    throw e;
+                }
                 // Conflict: next iteration re-fetches a fresh document before
                 // re-applying the mutation, so no stale content is ever written.
             }
