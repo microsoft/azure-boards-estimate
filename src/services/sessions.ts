@@ -147,7 +147,7 @@ export class SessionService implements ISessionService {
                 version: 1,
                 createdAt: legacySession.createdAt,
                 createdBy: legacySession.creatorId,
-                cardSet: defaultCardSets[0].id, // Always use the first card set for migrated sessions
+                cardSet: defaultCardSets[0].id, // Always use the first card set for migrated sessions, // Always use the first card set for migrated sessions
                 isLegacy: true
             };
         } catch {

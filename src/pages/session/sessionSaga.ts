@@ -46,7 +46,35 @@ export function* rootSessionSaga() {
 }
 
 export function* sessionSaga(action: ReturnType<typeof loadSession>): Generator {
-    try {
+    const maxStartupRetries = 3;
+    const startupRetryDelay = 2000;
+
+    for (let attempt = 0; attempt <= maxStartupRetries; attempt++) {
+        try {
+            yield call(sessionSagaInner, action);
+            return;
+        } catch (e: any) {
+            // TF400893 "Unable to contact the server" is a NetworkException thrown
+            // when the XDM channel to the ADO host frame isn't warmed up yet on the
+            // first request after page load (test / production env only).
+            // Retry automatically a few times with a short delay before giving up.
+            const isTransient = e?.name === "NetworkException";
+            if (attempt < maxStartupRetries && isTransient) {
+                yield put(updateStatus(`Connecting... (attempt ${attempt + 2}/${maxStartupRetries + 1})`));
+                yield call(() => new Promise<void>(r => setTimeout(r, startupRetryDelay)));
+                continue;
+            }
+
+            yield put(fatalError("Could not load session: " + e.message));
+
+            // Navigate back to session list
+            history.push("/");
+            return;
+        }
+    }
+}
+
+function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
         // Get project
         const projectService: IProjectPageService = yield call(
             getService,
@@ -213,12 +241,6 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>): Generator 
         yield cancel(channelTask);
         // Navigate back to session list
         history.push("/");
-    } catch (e: any) {
-        yield put(fatalError("Could not load session: " + e.message));
-
-        // Navigate back to session list
-        history.push("/");
-    }
 }
 
 /**
