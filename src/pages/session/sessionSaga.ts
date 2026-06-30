@@ -46,7 +46,35 @@ export function* rootSessionSaga() {
 }
 
 export function* sessionSaga(action: ReturnType<typeof loadSession>): Generator {
-    try {
+    const maxStartupRetries = 3;
+    const startupRetryDelay = 2000;
+
+    for (let attempt = 0; attempt <= maxStartupRetries; attempt++) {
+        try {
+            yield call(sessionSagaInner, action);
+            return;
+        } catch (e: any) {
+            // TF400893 "Unable to contact the server" is a NetworkException thrown
+            // when the XDM channel to the ADO host frame isn't warmed up yet on the
+            // first request after page load (test / production env only).
+            // Retry automatically a few times with a short delay before giving up.
+            const isTransient = e?.name === "NetworkException";
+            if (attempt < maxStartupRetries && isTransient) {
+                yield put(updateStatus(`Connecting... (attempt ${attempt + 2}/${maxStartupRetries + 1})`));
+                yield call(() => new Promise<void>(r => setTimeout(r, startupRetryDelay)));
+                continue;
+            }
+
+            yield put(fatalError("Could not load session: " + e.message));
+
+            // Navigate back to session list
+            history.push("/");
+            return;
+        }
+    }
+}
+
+function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
         // Get project
         const projectService: IProjectPageService = yield call(
             getService,
@@ -213,12 +241,6 @@ export function* sessionSaga(action: ReturnType<typeof loadSession>): Generator 
         yield cancel(channelTask);
         // Navigate back to session list
         history.push("/");
-    } catch (e: any) {
-        yield put(fatalError("Could not load session: " + e.message));
-
-        // Navigate back to session list
-        history.push("/");
-    }
 }
 
 /**
@@ -231,10 +253,16 @@ function* sessionEstimationSaga(): SagaIterator {
         );
         const value = action.payload;
 
+        console.log("[commitEstimate] received value:", value);
+
         const workItem: IWorkItem = yield select<IState>(
             s => s.session.selectedWorkItem
         );
-        if (!workItem || !value) {
+
+        console.log("[commitEstimate] workItem:", workItem?.id, "estimationFieldRefName:", workItem?.estimationFieldRefName);
+
+        if (!workItem || value === null || value === undefined) {
+            console.warn("[commitEstimate] skipping – workItem:", !!workItem, "value:", value);
             continue;
         }
 
@@ -253,6 +281,7 @@ function* sessionEstimationSaga(): SagaIterator {
         }
 
         try {
+            console.log("[commitEstimate] calling saveEstimate", workItem.id, workItem.estimationFieldRefName, value);
             // Save estimate to work item
             const workItemService = Services.getService<IWorkItemService>(
                 WorkItemServiceId
@@ -281,7 +310,9 @@ function* sessionEstimationSaga(): SagaIterator {
                     ? workItems[idx + 1].id
                     : workItems[0].id;
             yield put(selectWorkItem(nextWorkItemId));
-        } catch (e) {}
+        } catch (e) {
+            console.error("[commitEstimate] saveEstimate failed:", e);
+        }
     }
 }
 

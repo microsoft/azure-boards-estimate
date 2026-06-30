@@ -12,10 +12,11 @@ import {
 import { Action } from "typescript-fsa";
 import { ISession } from "../../model/session";
 import { ISnapshot } from "../../model/snapshots";
+import { IUserInfo } from "../../model/user";
 import { IChannel } from "../../services/channels/channels";
 import { connected } from "./channelActions";
 import { getChannel } from "./channelFactory";
-import { getSnapshot } from "./selector";
+import { getActiveUsers, getSnapshot } from "./selector";
 import {
     estimate,
     estimateSet,
@@ -53,6 +54,7 @@ export function* channelSaga(session: ISession): SagaIterator {
         ]);
     } finally {
         if (yield cancelled()) {
+            statusChannel.close(); // L-3: Close the status channel on teardown
             yield call([channel, channel.end]);
         }
     }
@@ -103,9 +105,20 @@ export function* channelListenerSaga(channel: IChannel): Generator {
 
         switch (action.type) {
             case userJoined.type: {
-                // New user has joined, send snapshot
+                // C-2: Prevent snapshot write storm — with N connected participants,
+                // every client previously responded to each Join with a snapshot
+                // write, causing N-1 optimistic-concurrency failures per join.
+                // Only the participant with the lexicographically smallest tfId
+                // sends the snapshot; all others skip.
                 const snapshot: ISnapshot = yield select(getSnapshot);
-                yield call([channel, channel.snapshot], snapshot);
+                const activeUsers: IUserInfo[] = yield select(getActiveUsers);
+                const currentUserId: string = snapshot.userInfo.tfId;
+                const isSmallestId = !activeUsers.some(
+                    u => u.tfId < currentUserId
+                );
+                if (isSmallestId) {
+                    yield call([channel, channel.snapshot], snapshot);
+                }
                 break;
             }
         }
@@ -116,42 +129,41 @@ export function* channelListenerSaga(channel: IChannel): Generator {
 
 export function subscribe(channel: IChannel) {
     return eventChannel(emit => {
-        channel.setWorkItem.attachHandler(workItemId => {
+        const workItemHandler = (workItemId: number) =>
             emit(workItemSelected(workItemId));
-        });
+        channel.setWorkItem.attachHandler(workItemHandler);
 
-        channel.estimate.attachHandler(e => {
-            emit(estimateSet(e));
-        });
+        const estimateHandler = (e: any) => emit(estimateSet(e));
+        channel.estimate.attachHandler(estimateHandler);
 
-        channel.estimateUpdated.attachHandler(e => {
-            emit(
-                estimateUpdated({
-                    ...e,
-                    remote: true
-                })
-            );
-        });
+        const estimateUpdatedHandler = (e: any) =>
+            emit(estimateUpdated({ ...e, remote: true }));
+        channel.estimateUpdated.attachHandler(estimateUpdatedHandler);
 
-        channel.join.attachHandler(payload => {
-            emit(userJoined(payload));
-        });
+        const joinHandler = (payload: IUserInfo) => emit(userJoined(payload));
+        channel.join.attachHandler(joinHandler);
 
-        channel.left.attachHandler(payload => {
-            emit(userLeft(payload));
-        });
+        const leftHandler = (payload: string) => emit(userLeft(payload));
+        channel.left.attachHandler(leftHandler);
 
-        channel.revealed.attachHandler(() => {
-            emit(revealed());
-        });
+        const revealedHandler = () => emit(revealed());
+        channel.revealed.attachHandler(revealedHandler);
 
-        channel.snapshot.attachHandler(snapshot => {
-            // Snapshot received
+        const snapshotHandler = (snapshot: ISnapshot) =>
             emit(snapshotReceived(snapshot));
-        });
+        channel.snapshot.attachHandler(snapshotHandler);
 
-        // tslint:disable-next-line:no-empty
-        return () => {};
+        // L-2: Return a proper cleanup so handlers are detached when the saga's
+        // eventChannel is closed, preventing accumulation across reconnections
+        return () => {
+            channel.setWorkItem.detachHandler(workItemHandler);
+            channel.estimate.detachHandler(estimateHandler);
+            channel.estimateUpdated.detachHandler(estimateUpdatedHandler);
+            channel.join.detachHandler(joinHandler);
+            channel.left.detachHandler(leftHandler);
+            channel.revealed.detachHandler(revealedHandler);
+            channel.snapshot.detachHandler(snapshotHandler);
+        };
     });
 }
 

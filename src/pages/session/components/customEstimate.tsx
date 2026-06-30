@@ -23,6 +23,8 @@ const containsNumber = ()=> {
         return "text"
     }
      
+    const resolvedValue = value || props.checkIfIsEqual() || null;
+
 return (
         <div className="flex-row">
             <input
@@ -32,8 +34,11 @@ return (
               />
             <Button
                 className="custom-values-input"
+                disabled={resolvedValue === null}
                 onClick={() => {
-                    props.commitEstimate(value || props.checkIfIsEqual());
+                    if (resolvedValue !== null) {
+                        props.commitEstimate(resolvedValue);
+                    }
                 }}
             >  Save
             </Button>
