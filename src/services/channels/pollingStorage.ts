@@ -13,6 +13,28 @@ import { IUserInfo } from "../../model/user";
 const PollingCollection = "pollingSessions";
 
 /**
+ * Returns true when an Extension Data Service error indicates that the target
+ * collection (or document) simply doesn't exist yet, rather than a real
+ * failure. Azure DevOps reports a never-created collection as error 1660002
+ * ("The collection does not exist") or a plain HTTP 404. This is expected the
+ * first time any session is opened, before the first document is written.
+ */
+function isCollectionOrDocumentMissing(e: any): boolean {
+    const status = e?.status ?? e?.statusCode;
+    const message: string = e?.message ?? e?.serverError?.message ?? "";
+    const typeKey: string = e?.serverError?.typeKey ?? "";
+    return (
+        status === 404 ||
+        /1660002/.test(message) ||
+        /collection does not exist/i.test(message) ||
+        /document does not exist/i.test(message) ||
+        typeKey === "DocumentCollectionDoesNotExistException" ||
+        typeKey === "DocumentDoesNotExistException"
+    );
+}
+
+
+/**
  * Storage helper for the shared session document used by PollingChannel.
  * Encapsulates read/write with optimistic concurrency retry.
  */
@@ -40,12 +62,40 @@ export class PollingStorage {
         };
 
         const manager = await this.getManager();
-        const document = await manager.getDocument(
-            PollingCollection,
-            sessionId,
-            { defaultValue }
-        );
-        return document as ISessionDocument;
+        try {
+            const document = await manager.getDocument(
+                PollingCollection,
+                sessionId,
+                { defaultValue }
+            );
+            console.log(
+                `[PollingStorage] getSessionDocument OK (session: ${sessionId}, nextSeq: ${(document as ISessionDocument)?.nextSeq}, activeUsers: ${(document as ISessionDocument)?.activeUsers?.length ?? 0}, actions: ${(document as ISessionDocument)?.actions?.length ?? 0})`
+            );
+            return document as ISessionDocument;
+        } catch (e: any) {
+            // The Extension Data Service throws "The collection does not exist"
+            // (error 1660002) when reading from a collection that has never had
+            // a document written to it. The `defaultValue` option only covers a
+            // missing *document*, not a missing *collection*.
+            //
+            // Because the very first read for any session happens (in start())
+            // before the first write (join), the `pollingSessions` collection is
+            // never created, so every online session fails to connect. Treat a
+            // missing collection/document as an empty session; the first
+            // subsequent setDocument() will create the collection.
+            if (isCollectionOrDocumentMissing(e)) {
+                console.warn(
+                    `[PollingStorage] '${PollingCollection}' collection/document not found for session ${sessionId} — bootstrapping empty session. ` +
+                        `The next write will create the collection. (status: ${e?.status ?? e?.statusCode ?? "n/a"}, typeKey: ${e?.serverError?.typeKey ?? "n/a"}, message: ${e?.message ?? e?.serverError?.message ?? "n/a"})`
+                );
+                return defaultValue;
+            }
+            console.error(
+                `[PollingStorage] getSessionDocument FAILED (session: ${sessionId}) with an unexpected error — not treated as missing collection:`,
+                e
+            );
+            throw e;
+        }
     }
 
     /**
@@ -70,6 +120,9 @@ export class PollingStorage {
                     return doc; // no-op — caller signalled nothing to save
                 }
                 const saved = await manager.setDocument(PollingCollection, doc);
+                console.log(
+                    `[PollingStorage] setDocument OK (session: ${sessionId}, attempt: ${attempt}, nextSeq: ${(saved as ISessionDocument)?.nextSeq}) — collection '${PollingCollection}' is now guaranteed to exist`
+                );
                 return saved as ISessionDocument;
             } catch (e: any) {
                 // Azure DevOps signals an OCC etag mismatch as either:

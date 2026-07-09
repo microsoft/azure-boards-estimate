@@ -116,6 +116,9 @@ export class PollingChannel implements IChannel {
             try {
                 // Fetch or create the session document
                 const doc = await this.storage.getSessionDocument(sessionId);
+                console.log(
+                    `[PollingChannel] start: fetched session document (session: ${sessionId}, attempt: ${attempt})`
+                );
 
                 // Set the initial sequence cursor to skip all existing actions
                 this.lastSeenSeq = doc.nextSeq - 1;
@@ -132,6 +135,9 @@ export class PollingChannel implements IChannel {
                     imageUrl: identity.imageUrl
                 });
                 this.knownActiveUserIds.add(identity.id);
+                console.log(
+                    `[PollingChannel] start: joined session and connected (session: ${sessionId}, userId: ${identity.id})`
+                );
 
                 // Start polling (CO-1: self-scheduling loop prevents overlapping requests)
                 this.alive = true;
@@ -156,6 +162,10 @@ export class PollingChannel implements IChannel {
                 return;
             } catch (error) {
                 if (attempt < maxRetries) {
+                    console.warn(
+                        `[PollingChannel] start: connection attempt ${attempt + 1}/${maxRetries} failed for session ${sessionId}, retrying in ${retryDelay / 1000}s`,
+                        error
+                    );
                     if (this.onStatus) {
                         this.onStatus({
                             message: `Connection attempt failed. Retrying ${attempt + 1}/${maxRetries} in ${retryDelay / 1000} seconds...`,
@@ -166,6 +176,10 @@ export class PollingChannel implements IChannel {
                         setTimeout(resolve, retryDelay)
                     );
                 } else {
+                    console.error(
+                        `[PollingChannel] start: giving up after ${maxRetries} retries for session ${sessionId}`,
+                        error
+                    );
                     const failMsg = `If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.`;
                     if (this.onStatus) {
                         this.onStatus({ message: failMsg, type: "error" });

@@ -6,6 +6,7 @@ import { IWorkItemType, IField } from "../../model/workItemType";
 export const initialState = {
     workItemTypes: [] as IWorkItemType[],
     fields: null as IField[] | null,
+    classicLayout: false,
     loading: true
 };
 
@@ -21,7 +22,14 @@ export default <TPayload>(
             (state, payload) => {
                 state.workItemTypes = payload.workItemTypes;
                 state.fields = payload.fields;
+                state.classicLayout = payload.classicLayout;
                 state.loading = false;
+            }
+        ),
+        [Actions.setLayout.type]: reducerAction(
+            Actions.setLayout,
+            (state, payload) => {
+                state.classicLayout = payload.classicLayout;
             }
         ),
         [Actions.setField.type]: reducerAction(

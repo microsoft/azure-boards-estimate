@@ -24,7 +24,7 @@ import { CardSetServiceId, ICardSetService } from "../../services/cardSets";
 import { IdentityServiceId, IIdentityService } from "../../services/identity";
 import { IQueriesService, QueriesServiceId } from "../../services/queries";
 import { Services } from "../../services/services";
-import { ISessionService, SessionServiceId } from "../../services/sessions";
+import { ISessionService, SessionServiceId, LayoutConfiguration } from "../../services/sessions";
 import { ISprintService, SprintServiceId } from "../../services/sprints";
 import { IWorkItemService, WorkItemServiceId } from "../../services/workItems";
 import { fatalError } from "../home/sessionsActions";
@@ -40,6 +40,7 @@ import {
     selectWorkItem,
     updateStatus
 } from "./sessionActions";
+import { setLayout } from "../settings/settingsActions";
 
 export function* rootSessionSaga() {
     yield takeLatest(loadSession.type, sessionSaga);
@@ -89,6 +90,13 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
         const sessionService = Services.getService<ISessionService>(
             SessionServiceId
         );
+
+        // Load layout preference
+        const layoutConfig: { classicLayout: boolean } | null = yield call(
+            [sessionService, sessionService.getUserSettingsValue as any],
+            LayoutConfiguration
+        );
+        yield put(setLayout({ classicLayout: !!(layoutConfig && layoutConfig.classicLayout) }));
 
         let session: ISession | undefined;
         session = yield call(

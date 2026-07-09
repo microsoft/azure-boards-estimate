@@ -8,15 +8,17 @@ import { Services } from "../../services/services";
 import {
     ISessionService,
     SessionServiceId,
-    FieldConfiguration
+    FieldConfiguration,
+    LayoutConfiguration
 } from "../../services/sessions";
 import { IWorkItemService, WorkItemServiceId } from "../../services/workItems";
-import { init, loaded, setField } from "./settingsActions";
+import { init, loaded, setField, setLayout } from "./settingsActions";
 
 export function* rootSettingsSaga(): SagaIterator {
     yield takeEvery(init.type, initSaga);
 
     yield takeEvery(setField.type, setFieldSaga);
+    yield takeEvery(setLayout.type, setLayoutSaga);
 }
 
 function* initSaga(): SagaIterator {
@@ -43,10 +45,17 @@ function* initSaga(): SagaIterator {
         projectInfo.id
     );
 
+    const service = Services.getService<ISessionService>(SessionServiceId);
+    const layoutConfig: { classicLayout: boolean } | null = yield call(
+        [service, service.getUserSettingsValue as any],
+        LayoutConfiguration
+    );
+
     yield put(
         loaded({
             workItemTypes,
-            fields
+            fields,
+            classicLayout: !!(layoutConfig && layoutConfig.classicLayout)
         })
     );
 }
@@ -83,5 +92,19 @@ export function* setFieldSaga(
         projectInfo.id,
         FieldConfiguration,
         configuration
+    );
+}
+
+export function* setLayoutSaga(
+    action: ReturnType<typeof setLayout>
+): SagaIterator {
+    const { classicLayout } = action.payload;
+
+    const service = Services.getService<ISessionService>(SessionServiceId);
+
+    yield call(
+        [service, service.setUserSettingsValue as any],
+        LayoutConfiguration,
+        { classicLayout }
     );
 }
