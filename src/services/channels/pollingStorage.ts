@@ -212,16 +212,44 @@ export class PollingStorage {
     }
 
     /**
-     * Update the heartbeat timestamp for a user.
+     * Update the heartbeat timestamp for a user, and opportunistically prune
+     * any users that have gone stale (no heartbeat within the threshold).
+     *
+     * Pruning is folded into the heartbeat write so the participant list
+     * self-heals after abrupt disconnects (tab close / refresh / network loss)
+     * where end()/leaveSession never ran — without incurring an extra write.
+     * The current user is always retained, even if its timestamp looks stale.
      */
     async heartbeat(sessionId: string, tfId: string): Promise<void> {
         try {
             await this.modifyDocument(sessionId, doc => {
+                const now = Date.now();
+
+                // Prune stale ghosts (keep the current user regardless).
+                const before = doc.activeUsers.length;
+                doc.activeUsers = doc.activeUsers.filter(
+                    u =>
+                        u.userInfo.tfId === tfId ||
+                        now - u.lastSeen <= STALE_USER_TIMEOUT_MS
+                );
+                const prunedCount = before - doc.activeUsers.length;
+                if (prunedCount > 0) {
+                    console.log(
+                        `[PollingStorage] heartbeat pruned ${prunedCount} stale user(s) from session ${sessionId}`
+                    );
+                }
+
+                // Refresh our own heartbeat timestamp.
                 const user = doc.activeUsers.find(
                     u => u.userInfo.tfId === tfId
                 );
-                if (!user) return false; // user already removed — nothing to save
-                user.lastSeen = Date.now();
+                if (user) {
+                    user.lastSeen = now;
+                } else if (prunedCount === 0) {
+                    // We are no longer in the list and nothing was pruned —
+                    // nothing to persist.
+                    return false;
+                }
             });
         } catch {
             // Heartbeat failure is non-fatal
