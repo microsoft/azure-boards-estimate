@@ -10,12 +10,19 @@ export const IdentityServiceId = "IdentityService";
 
 export class IdentityService implements IIdentityService {
     getCurrentIdentity(): IIdentity {
-        const currentUser = DevOps.getUser()!;
+        const currentUser = DevOps.getUser() as any;
+        const avatarHref =
+            currentUser &&
+            currentUser._links &&
+            currentUser._links.avatar &&
+            currentUser._links.avatar.href;
 
         return {
             id: currentUser.id,
             displayName: currentUser.displayName,
-            imageUrl: currentUser.imageUrl
+            imageUrl: currentUser.imageUrl,
+            descriptor: currentUser.descriptor,
+            avatarHref
         };
     }
 }

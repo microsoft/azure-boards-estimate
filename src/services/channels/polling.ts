@@ -106,7 +106,9 @@ export class PollingChannel implements IChannel {
         this.currentUserInfo = {
             tfId: identity.id,
             name: identity.displayName,
-            imageUrl: identity.imageUrl
+            imageUrl: identity.imageUrl,
+            descriptor: identity.descriptor,
+            avatarHref: identity.avatarHref
         };
 
         const maxRetries = 5;
@@ -129,7 +131,9 @@ export class PollingChannel implements IChannel {
                 await this.join({
                     tfId: identity.id,
                     name: identity.displayName,
-                    imageUrl: identity.imageUrl
+                    imageUrl: identity.imageUrl,
+                    descriptor: identity.descriptor,
+                    avatarHref: identity.avatarHref
                 });
                 this.knownActiveUserIds.add(identity.id);
 

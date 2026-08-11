@@ -5,7 +5,7 @@
     "name": "Estimate",
     "description": "Planning Poker in Azure Boards.",
     "publisher": "ms-devlabs",
-    "scopes": ["vso.project", "vso.work", "vso.work_write"],
+    "scopes": ["vso.project", "vso.work", "vso.work_write", "vso.graph"],
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"

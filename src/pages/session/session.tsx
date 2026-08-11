@@ -13,10 +13,10 @@ import { Dialog } from "azure-devops-ui/Dialog";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
-import { VssPersona } from "azure-devops-ui/VssPersona";
 import { Spinner, SpinnerSize } from "office-ui-fabric-react";
 import * as React from "react";
 import { connect } from "react-redux";
+import { ResolvedPersona } from "../../components/resolvedPersona";
 import { IWorkItemCardProps, WorkItemCard } from "../../components/workitems/workItemCard";
 import { ICardSet } from "../../model/cards";
 import { ISessionEstimates } from "../../model/estimate";
@@ -190,12 +190,11 @@ class Session extends React.Component<
                         {activeUsers.map(u => (
                             <Tooltip key={u.tfId} text={u.name}>
                                 <div>
-                                    <VssPersona
-                                        identityDetailsProvider={{
-                                            getDisplayName: () => u.name,
-                                            getIdentityImageUrl: () =>
-                                                u.imageUrl
-                                        }}
+                                    <ResolvedPersona
+                                        displayName={u.name}
+                                        imageUrl={u.imageUrl}
+                                        descriptor={u.descriptor}
+                                        avatarHref={u.avatarHref}
                                         size="small"
                                     />
                                 </div>

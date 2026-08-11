@@ -206,7 +206,9 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
                 userInfo: {
                     tfId: identity.id,
                     name: identity.displayName,
-                    imageUrl: identity.imageUrl
+                    imageUrl: identity.imageUrl,
+                    descriptor: identity.descriptor,
+                    avatarHref: identity.avatarHref
                 }
             })
         );
