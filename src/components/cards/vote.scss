@@ -12,3 +12,15 @@
     color: $primary-text;
 }
 
+.vote-avatar {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+    overflow: hidden;
+    border-radius: 50%;
+    line-height: 0;
+}
+

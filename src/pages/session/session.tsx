@@ -189,14 +189,12 @@ class Session extends React.Component<
                     <div className="session--active-users flex-row flex-justify-end flex-center flex-self-stretch">
                         {activeUsers.map(u => (
                             <Tooltip key={u.tfId} text={u.name}>
-                                <div>
+                                <div className="session-avatar">
                                     <VssPersona
-                                        identityDetailsProvider={{
-                                            getDisplayName: () => u.name,
-                                            getIdentityImageUrl: () =>
-                                                u.imageUrl
-                                        }}
+                                        imageUrl={u.imageUrl}
+                                        displayName={u.name}
                                         size="small"
+                                        showInitialsOnImageError={true}
                                     />
                                 </div>
                             </Tooltip>

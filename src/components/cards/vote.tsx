@@ -32,14 +32,13 @@ export class Vote extends React.Component<IVoteProps> {
                     disabled={true}
                 />
 
-        <Tooltip text={identity.displayName}>
-                    <div >
+                <Tooltip text={identity.displayName}>
+                    <div className="vote-avatar">
                         <VssPersona
-                            identityDetailsProvider={{
-                                getDisplayName: () => identity.displayName,
-                                getIdentityImageUrl: () => identity.imageUrl
-                            }}
+                            imageUrl={identity.imageUrl}
+                            displayName={identity.displayName}
                             size="small"
+                            showInitialsOnImageError={true}
                         />
                     </div>
                 </Tooltip>

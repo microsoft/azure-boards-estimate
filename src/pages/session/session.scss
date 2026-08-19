@@ -8,8 +8,30 @@
 }
 
 .session--active-users {
-    .vss-Persona {
+    .session-avatar {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 24px;
+        overflow: hidden;
+        border-radius: 50%;
+        line-height: 0;
         margin-left: 5px;
+
+        .vss-Persona-content {
+            align-items: center;
+
+            span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+                line-height: normal;
+            }
+        }
     }
 }
 
