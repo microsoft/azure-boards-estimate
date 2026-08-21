@@ -138,6 +138,19 @@ class SettingsPanel extends React.Component<
                     </div>
                 ) : (
                     <div className="settings-panel--content  ">
+                        <div className="settings-panel--layout-toggle">
+                            <p>
+                                <strong>Layout</strong>
+                            </p>
+                            <Toggle
+                                checked={classicLayout}
+                                onChange={this.onLayoutToggle}
+                                text="Classic layout (description at top, voting at bottom)"
+                            />
+                        </div>
+
+                        <div className="settings-panel--section-divider" />
+
                         <p>
                             Select a field to store the estimation for each work
                             item type you are planning to estimate.
@@ -156,17 +169,6 @@ class SettingsPanel extends React.Component<
                             }
                             className="table-color"
                         />
-
-                        <div className="settings-panel--layout-toggle">
-                            <p>
-                                <strong>Layout</strong>
-                            </p>
-                            <Toggle
-                                checked={classicLayout}
-                                onChange={this.onLayoutToggle}
-                                text="Classic layout (description at top, voting at bottom)"
-                            />
-                        </div>
                     </div>
                 )}
             </Panel>

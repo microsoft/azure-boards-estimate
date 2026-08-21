@@ -91,9 +91,9 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
             SessionServiceId
         );
 
-        // Load layout preference
+        // Load layout preference (shared across all users)
         const layoutConfig: { classicLayout: boolean } | null = yield call(
-            [sessionService, sessionService.getUserSettingsValue as any],
+            [sessionService, sessionService.getGlobalSettingsValue as any],
             LayoutConfiguration
         );
         yield put(setLayout({ classicLayout: !!(layoutConfig && layoutConfig.classicLayout) }));

@@ -86,7 +86,17 @@ export class PollingChannel implements IChannel {
     private errorCount: number = 0;
     private heartbeatTimer: ReturnType<typeof setInterval> | undefined;
     private knownActiveUserIds: Set<string> = new Set();
+    private initialActiveUsers: IUserInfo[] = [];
     private wakeUp: (() => void) | undefined;
+
+    /**
+     * Users already active in the session document when this client connected.
+     * The action-log cursor skips their historical Join broadcasts, so the
+     * session saga uses this to seed the participant list.
+     */
+    getKnownUsers(): IUserInfo[] {
+        return this.initialActiveUsers;
+    }
 
     // LT-1: Stored as a field so the same reference can be removed in end()
     private readonly handleVisibilityChange = (): void => {
@@ -127,6 +137,13 @@ export class PollingChannel implements IChannel {
                 this.knownActiveUserIds = new Set(
                     doc.activeUsers.map(u => u.userInfo.tfId)
                 );
+
+                // Capture participants already in the session so the saga can
+                // seed the local participant list — their Join broadcasts are
+                // older than our log cursor and would otherwise never be seen.
+                this.initialActiveUsers = doc.activeUsers
+                    .filter(u => u.userInfo.tfId !== identity.id)
+                    .map(u => u.userInfo);
 
                 // Register current user
                 await this.join({

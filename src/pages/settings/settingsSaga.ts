@@ -47,7 +47,7 @@ function* initSaga(): SagaIterator {
 
     const service = Services.getService<ISessionService>(SessionServiceId);
     const layoutConfig: { classicLayout: boolean } | null = yield call(
-        [service, service.getUserSettingsValue as any],
+        [service, service.getGlobalSettingsValue as any],
         LayoutConfiguration
     );
 
@@ -103,7 +103,7 @@ export function* setLayoutSaga(
     const service = Services.getService<ISessionService>(SessionServiceId);
 
     yield call(
-        [service, service.setUserSettingsValue as any],
+        [service, service.setGlobalSettingsValue as any],
         LayoutConfiguration,
         { classicLayout }
     );

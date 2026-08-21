@@ -45,6 +45,14 @@ export function* channelSaga(session: ISession): SagaIterator {
 
     yield call([channel, channel.start], session.id);
 
+    // Seed the participant list with users who were already active before we
+    // joined — their Join broadcasts predate our action-log cursor and would
+    // otherwise never reach us, leaving the local participant count too low.
+    const knownUsers = channel.getKnownUsers ? channel.getKnownUsers() : [];
+    for (const userInfo of knownUsers) {
+        yield put(userJoined(userInfo));
+    }
+
     yield put(connected());
 
     try {

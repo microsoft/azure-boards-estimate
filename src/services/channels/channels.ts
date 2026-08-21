@@ -121,5 +121,12 @@ export interface IChannel {
      */
     end(): Promise<void>;
 
+    /**
+     * Users already active in the session before this client joined (excluding self).
+     * Used to seed the participant list for latecomers, since the action log
+     * cursor skips past their historical Join broadcasts.
+     */
+    getKnownUsers?(): IUserInfo[];
+
     onStatus?(status: { message: string, type?: string }): void;
 }

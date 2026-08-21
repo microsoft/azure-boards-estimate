@@ -30,9 +30,9 @@ export interface ISessionService extends IService {
 
     setSettingsValue<T>(projectId: string, id: string, value: T): Promise<void>;
 
-    getUserSettingsValue<T>(id: string): Promise<T>;
+    getGlobalSettingsValue<T>(id: string): Promise<T>;
 
-    setUserSettingsValue<T>(id: string, value: T): Promise<void>;
+    setGlobalSettingsValue<T>(id: string, value: T): Promise<void>;
 }
 
 export const SessionServiceId = "SessionService";
@@ -71,16 +71,17 @@ export class SessionService implements ISessionService {
         await manager.setValue(`${projectId}-${id}`, value);
     }
 
-    async getUserSettingsValue<T>(id: string): Promise<T> {
+    // Uses the default (shared) scope so the value applies to every user of the extension.
+    async getGlobalSettingsValue<T>(id: string): Promise<T> {
         const manager = await this.getManager();
 
-        return manager.getValue<T>(id, { scopeType: "User", scopeValue: "Me" });
+        return manager.getValue<T>(id);
     }
 
-    async setUserSettingsValue<T>(id: string, value: T): Promise<void> {
+    async setGlobalSettingsValue<T>(id: string, value: T): Promise<void> {
         const manager = await this.getManager();
 
-        await manager.setValue(id, value, { scopeType: "User", scopeValue: "Me" });
+        await manager.setValue(id, value);
     }
 
     async getSessions(): Promise<ISession[]> {
