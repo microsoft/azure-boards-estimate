@@ -15,7 +15,6 @@ import { ISnapshot } from "../../model/snapshots";
 import { IUserInfo } from "../../model/user";
 import { IChannel } from "../../services/channels/channels";
 import { connected } from "./channelActions";
-import { getChannel } from "./channelFactory";
 import { getActiveUsers, getSnapshot } from "./selector";
 import {
     estimate,
@@ -31,9 +30,7 @@ import {
     updateStatusError
 } from "./sessionActions";
 
-export function* channelSaga(session: ISession): SagaIterator {
-    const channel: IChannel = yield call(getChannel, session.id, session.mode);
-
+export function* channelSaga(session: ISession, channel: IChannel): SagaIterator {
     const statusChannel: Channel<{message: string, type?: string}> = eventChannel(emit => {
         channel.onStatus = (status: { message: string; type?: string }) => {
             emit(status);

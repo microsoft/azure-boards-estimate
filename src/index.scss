@@ -19,18 +19,21 @@ body {
     scrollbar-width: thin;
 }
 
-.bolt-panel-content::-webkit-scrollbar {
+.bolt-panel-content::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
     width: 18px;
 }
 
-.bolt-panel-content::-webkit-scrollbar-thumb {
+.bolt-panel-content::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
     border: 6px solid transparent;
     background: $transblack-20;
     border-radius: 10px;
     background-clip: padding-box;
 }
 
-.bolt-panel-content::-webkit-scrollbar-thumb:hover {
+.bolt-panel-content::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: $transblack-30;
     background-clip: padding-box;
 }

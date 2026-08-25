@@ -30,6 +30,8 @@ import { IWorkItemService, WorkItemServiceId } from "../../services/workItems";
 import { fatalError } from "../home/sessionsActions";
 import { connected } from "./channelActions";
 import { channelSaga } from "./channelSaga";
+import { getChannel } from "./channelFactory";
+import { IChannel } from "../../services/channels/channels";
 import {
     commitEstimate,
     endSession,
@@ -187,15 +189,21 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
             workItemIds
         );
 
-        yield put(updateStatus("Connecting to server..."));
+        yield put(updateStatus("Joining session..."));
 
-        // Start communication channel
-        const channelTask: Task = yield fork(channelSaga, session);
+        // Start communication channel. The channel is created here (rather than
+        // inside channelSaga) so we can disconnect it directly on leave.
+        const channel: IChannel = yield call(
+            getChannel,
+            session.id,
+            session.mode
+        );
+        const channelTask: Task = yield fork(channelSaga, session, channel);
 
         // Wait for connection
         yield take(connected.type);
 
-        yield put(updateStatus("Connected."));
+        yield put(updateStatus("Session ready."));
 
         // Session is now loaded
         const identityService = Services.getService<IIdentityService>(
@@ -245,6 +253,11 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
                 break;
             }
         }
+
+        // Disconnect immediately so the leave write is issued on this action
+        // rather than being deferred behind the cancel/finally teardown (which
+        // otherwise lets a navigation-triggered leave lag behind the button).
+        yield call([channel, channel.end]);
 
         yield cancel(channelTask);
         // Navigate back to session list

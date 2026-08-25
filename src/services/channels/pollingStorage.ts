@@ -212,6 +212,31 @@ export class PollingStorage {
     }
 
     /**
+     * Best-effort synchronous departure for page/iframe unload, where the normal
+     * read-modify-write can't complete. Reuses the last polled document (and its
+     * etag) to issue a single fire-and-forget write with the user removed. The
+     * underlying XDM postMessage is dispatched synchronously, so it may reach the
+     * host frame before teardown. Not guaranteed — the stale timeout is the
+     * authoritative fallback.
+     */
+    leaveSessionSync(lastDoc: ISessionDocument, tfId: string): void {
+        if (!this.manager) {
+            return;
+        }
+        const doc: ISessionDocument = {
+            ...lastDoc,
+            activeUsers: lastDoc.activeUsers.filter(
+                u => u.userInfo.tfId !== tfId
+            )
+        };
+        try {
+            this.manager.setDocument(PollingCollection, doc).catch(() => {});
+        } catch {
+            // Best-effort only
+        }
+    }
+
+    /**
      * Update the heartbeat timestamp for a user, and opportunistically prune
      * any users that have gone stale (no heartbeat within the threshold).
      *
