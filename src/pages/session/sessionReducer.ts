@@ -44,8 +44,14 @@ const loadedSession = reducerAction(
         state.cardSet = cardSet;
         state.workItems = workItems;
         state.status.loading = false;
-        state.activeUsers = [userInfo];
         state.currentUser = userInfo;
+        // Preserve any participants the channel already reported before this
+        // action fired; only ensure the current user is present. Overwriting
+        // with [userInfo] here previously wiped seeded users, leaving a
+        // rejoining client showing only itself.
+        if (!state.activeUsers.find(x => x.tfId === userInfo.tfId)) {
+            state.activeUsers = [userInfo, ...state.activeUsers];
+        }
         state.selectedWorkItem = null;
         state.ownEstimate = null;
         state.estimates = {};
@@ -62,6 +68,8 @@ const leaveSession = reducerAction(
         state.estimates = {};
         state.ownEstimate = null;
         state.selectedWorkItem = null;
+        state.activeUsers = [];
+        state.currentUser = null;
     }
 );
 

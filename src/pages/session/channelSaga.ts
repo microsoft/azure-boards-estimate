@@ -15,7 +15,6 @@ import { ISnapshot } from "../../model/snapshots";
 import { IUserInfo } from "../../model/user";
 import { IChannel } from "../../services/channels/channels";
 import { connected } from "./channelActions";
-import { getChannel } from "./channelFactory";
 import { getActiveUsers, getSnapshot } from "./selector";
 import {
     estimate,
@@ -31,9 +30,7 @@ import {
     updateStatusError
 } from "./sessionActions";
 
-export function* channelSaga(session: ISession): SagaIterator {
-    const channel: IChannel = yield call(getChannel, session.id, session.mode);
-
+export function* channelSaga(session: ISession, channel: IChannel): SagaIterator {
     const statusChannel: Channel<{message: string, type?: string}> = eventChannel(emit => {
         channel.onStatus = (status: { message: string; type?: string }) => {
             emit(status);
@@ -44,6 +41,14 @@ export function* channelSaga(session: ISession): SagaIterator {
     yield fork(statusHandlerSaga, statusChannel);
 
     yield call([channel, channel.start], session.id);
+
+    // Seed the participant list with users who were already active before we
+    // joined — their Join broadcasts predate our action-log cursor and would
+    // otherwise never reach us, leaving the local participant count too low.
+    const knownUsers = channel.getKnownUsers ? channel.getKnownUsers() : [];
+    for (const userInfo of knownUsers) {
+        yield put(userJoined(userInfo));
+    }
 
     yield put(connected());
 

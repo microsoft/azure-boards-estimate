@@ -99,6 +99,12 @@ class Session extends React.Component<
         }
     }
 
+    componentWillUnmount() {
+        // Leave the session on any navigation away from the route, not just the
+        // Leave/End buttons (e.g. clicking the extension icon in the sidebar).
+        this.props.leaveSession();
+    }
+
     render(): JSX.Element {
         const {
             canPerformAdminActions,
@@ -189,14 +195,12 @@ class Session extends React.Component<
                     <div className="session--active-users flex-row flex-justify-end flex-center flex-self-stretch">
                         {activeUsers.map(u => (
                             <Tooltip key={u.tfId} text={u.name}>
-                                <div>
+                                <div className="session-avatar">
                                     <VssPersona
-                                        identityDetailsProvider={{
-                                            getDisplayName: () => u.name,
-                                            getIdentityImageUrl: () =>
-                                                u.imageUrl
-                                        }}
+                                        imageUrl={u.imageUrl}
+                                        displayName={u.name}
                                         size="small"
+                                        showInitialsOnImageError={true}
                                     />
                                 </div>
                             </Tooltip>

@@ -83,16 +83,39 @@ export class PollingChannel implements IChannel {
     private currentUserInfo: IUserInfo | undefined;
     private lastSeenSeq: number = 0;
     private alive: boolean = false;
+    private ended: boolean = false;
     private errorCount: number = 0;
     private heartbeatTimer: ReturnType<typeof setInterval> | undefined;
     private knownActiveUserIds: Set<string> = new Set();
+    private initialActiveUsers: IUserInfo[] = [];
+    private lastDoc: ISessionDocument | undefined;
     private wakeUp: (() => void) | undefined;
+
+    /**
+     * Users already active in the session document when this client connected.
+     * The action-log cursor skips their historical Join broadcasts, so the
+     * session saga uses this to seed the participant list.
+     */
+    getKnownUsers(): IUserInfo[] {
+        return this.initialActiveUsers;
+    }
 
     // LT-1: Stored as a field so the same reference can be removed in end()
     private readonly handleVisibilityChange = (): void => {
         if (!document.hidden && this.wakeUp) {
             this.wakeUp();
         }
+    };
+
+    // Best-effort departure on full page/iframe unload (e.g. switching hubs via
+    // the ADO sidebar), where componentWillUnmount and async cleanup can't run.
+    // Reuses the last polled document to issue one synchronous fire-and-forget
+    // write; the stale timeout is the authoritative fallback.
+    private readonly handlePageHide = (): void => {
+        if (this.ended || !this.lastDoc || !this.currentUserId) {
+            return;
+        }
+        this.storage.leaveSessionSync(this.lastDoc, this.currentUserId);
     };
 
     async start(sessionId: string): Promise<void> {
@@ -116,6 +139,9 @@ export class PollingChannel implements IChannel {
             try {
                 // Fetch or create the session document
                 const doc = await this.storage.getSessionDocument(sessionId);
+                console.log(
+                    `[PollingChannel] start: fetched session document (session: ${sessionId}, attempt: ${attempt})`
+                );
 
                 // Set the initial sequence cursor to skip all existing actions
                 this.lastSeenSeq = doc.nextSeq - 1;
@@ -125,6 +151,13 @@ export class PollingChannel implements IChannel {
                     doc.activeUsers.map(u => u.userInfo.tfId)
                 );
 
+                // Capture participants already in the session so the saga can
+                // seed the local participant list — their Join broadcasts are
+                // older than our log cursor and would otherwise never be seen.
+                this.initialActiveUsers = doc.activeUsers
+                    .filter(u => u.userInfo.tfId !== identity.id)
+                    .map(u => u.userInfo);
+
                 // Register current user
                 await this.join({
                     tfId: identity.id,
@@ -132,11 +165,16 @@ export class PollingChannel implements IChannel {
                     imageUrl: identity.imageUrl
                 });
                 this.knownActiveUserIds.add(identity.id);
+                console.log(
+                    `[PollingChannel] start: joined session and connected (session: ${sessionId}, userId: ${identity.id})`
+                );
 
                 // Start polling (CO-1: self-scheduling loop prevents overlapping requests)
                 this.alive = true;
                 this.errorCount = 0;
                 document.addEventListener("visibilitychange", this.handleVisibilityChange);
+                window.addEventListener("pagehide", this.handlePageHide);
+                window.addEventListener("beforeunload", this.handlePageHide);
                 this.pollLoop();
 
                 // Start heartbeat
@@ -156,6 +194,10 @@ export class PollingChannel implements IChannel {
                 return;
             } catch (error) {
                 if (attempt < maxRetries) {
+                    console.warn(
+                        `[PollingChannel] start: connection attempt ${attempt + 1}/${maxRetries} failed for session ${sessionId}, retrying in ${retryDelay / 1000}s`,
+                        error
+                    );
                     if (this.onStatus) {
                         this.onStatus({
                             message: `Connection attempt failed. Retrying ${attempt + 1}/${maxRetries} in ${retryDelay / 1000} seconds...`,
@@ -166,6 +208,10 @@ export class PollingChannel implements IChannel {
                         setTimeout(resolve, retryDelay)
                     );
                 } else {
+                    console.error(
+                        `[PollingChannel] start: giving up after ${maxRetries} retries for session ${sessionId}`,
+                        error
+                    );
                     const failMsg = `If the issue persists, please <a href="https://github.com/microsoft/azure-boards-estimate/issues" target="_blank">report the issue on GitHub</a> or create an offline session.`;
                     if (this.onStatus) {
                         this.onStatus({ message: failMsg, type: "error" });
@@ -177,8 +223,45 @@ export class PollingChannel implements IChannel {
     }
 
     async end(): Promise<void> {
-        // C-1: Announce departure immediately; other clients no longer wait up to
-        // STALE_USER_TIMEOUT_MS (30 s) to detect this user has gone
+        // Idempotent: end() may be called both directly on leave and again from
+        // the saga's finally teardown.
+        if (this.ended) {
+            return;
+        }
+        this.ended = true;
+
+        // Stop the poll loop and heartbeat first so nothing re-adds us after we
+        // remove ourselves below.
+        this.alive = false;
+        if (this.wakeUp) {
+            this.wakeUp();
+        }
+
+        // LT-1: Remove visibility listener
+        document.removeEventListener("visibilitychange", this.handleVisibilityChange);
+        window.removeEventListener("pagehide", this.handlePageHide);
+        window.removeEventListener("beforeunload", this.handlePageHide);
+
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
+            this.heartbeatTimer = undefined;
+        }
+
+        // Remove ourselves from the authoritative active-user list FIRST. Other
+        // clients derive presence from doc.activeUsers, so this is what actually
+        // makes us leave; doing it first means a teardown/navigation interrupt
+        // can't strand us in the list until the stale timeout elapses.
+        try {
+            await this.storage.leaveSession(
+                this.sessionId,
+                this.currentUserId
+            );
+        } catch {
+            // Best-effort cleanup
+        }
+
+        // C-1: Fast departure hint so other clients don't wait for their next
+        // poll. Purely advisory — the removal above is authoritative.
         try {
             await this.storage.appendAction(
                 this.sessionId,
@@ -188,29 +271,6 @@ export class PollingChannel implements IChannel {
             );
         } catch {
             // Best-effort; do not block teardown
-        }
-
-        // L-1: Signal the poll loop to exit and abort any in-flight sleep
-        this.alive = false;
-        if (this.wakeUp) {
-            this.wakeUp();
-        }
-
-        // LT-1: Remove visibility listener
-        document.removeEventListener("visibilitychange", this.handleVisibilityChange);
-
-        if (this.heartbeatTimer) {
-            clearInterval(this.heartbeatTimer);
-            this.heartbeatTimer = undefined;
-        }
-
-        try {
-            await this.storage.leaveSession(
-                this.sessionId,
-                this.currentUserId
-            );
-        } catch {
-            // Best-effort cleanup
         }
     }
 
@@ -256,6 +316,22 @@ export class PollingChannel implements IChannel {
         try {
             const doc = await this.storage.getSessionDocument(this.sessionId);
             if (!this.alive) return;                          // L-1 post-fetch guard
+            this.lastDoc = doc;
+
+            // Self-heal: a delayed teardown from a previous connection (rapid
+            // leave + rejoin) can remove us from the active list while we're
+            // still here. Re-register so we don't vanish from other clients.
+            if (
+                this.currentUserInfo &&
+                !doc.activeUsers.some(
+                    u => u.userInfo.tfId === this.currentUserId
+                )
+            ) {
+                this.storage
+                    .joinSession(this.sessionId, this.currentUserInfo)
+                    .catch(() => {});
+            }
+
             this.processNewActions(doc);
             this.detectUserChanges(doc);
             this.errorCount = 0;
@@ -326,17 +402,35 @@ export class PollingChannel implements IChannel {
     }
 
     /**
-     * Detect users who have joined or left by comparing known users to the document.
+     * Reconcile the local participant list against the authoritative
+     * `doc.activeUsers`. Emits joins for users that are active but not yet
+     * known locally, and lefts for users no longer active (or gone stale).
+     *
+     * The active-user list — not the action log — is the source of truth here.
+     * Join actions can be pruned out of the bounded log (MAX_ACTION_LOG_SIZE) or
+     * missed while a tab is backgrounded, and a transiently stale user (throttled
+     * background heartbeat) must be re-added once their heartbeat resumes. Relying
+     * on the log alone left the participant count permanently short (e.g. 3/2).
      */
     private detectUserChanges(doc: ISessionDocument): void {
         const staleIds = new Set(this.storage.getStaleUserIds(doc));
+        const activeUsers = doc.activeUsers.filter(
+            u => !staleIds.has(u.userInfo.tfId)
+        );
         const currentActiveIds = new Set(
-            doc.activeUsers
-                .filter(u => !staleIds.has(u.userInfo.tfId))
-                .map(u => u.userInfo.tfId)
+            activeUsers.map(u => u.userInfo.tfId)
         );
 
-        // Detect users who have left (were known but are no longer active or are stale)
+        // Emit joins for active users we don't yet know about (self excluded —
+        // the local client is added when the session loads).
+        for (const activeUser of activeUsers) {
+            const id = activeUser.userInfo.tfId;
+            if (id !== this.currentUserId && !this.knownActiveUserIds.has(id)) {
+                this.join.incoming(activeUser.userInfo);
+            }
+        }
+
+        // Emit lefts for users that were known but are no longer active or stale.
         for (const knownId of this.knownActiveUserIds) {
             if (
                 knownId !== this.currentUserId &&
@@ -363,6 +457,7 @@ export class PollingChannel implements IChannel {
                 break;
 
             case ChannelActionType.Join:
+                this.knownActiveUserIds.add(payload.tfId);
                 this.join.incoming(payload);
                 break;
 
@@ -370,12 +465,16 @@ export class PollingChannel implements IChannel {
                 this.setWorkItem.incoming(payload);
                 break;
 
-            case ChannelActionType.Left:
-                this.left.incoming(payload);
-                break;
-
             case ChannelActionType.Reveal:
                 this.revealed.incoming(payload);
+                break;
+
+            case ChannelActionType.Left:
+                // Fast-path departure hint. leaveSession has already removed the
+                // user from doc.activeUsers, so keep knownActiveUserIds in sync
+                // to avoid a desync with detectUserChanges on a later rejoin.
+                this.knownActiveUserIds.delete(payload);
+                this.left.incoming(payload);
                 break;
 
             case ChannelActionType.Snapshot:

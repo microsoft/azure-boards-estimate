@@ -24,12 +24,14 @@ import { CardSetServiceId, ICardSetService } from "../../services/cardSets";
 import { IdentityServiceId, IIdentityService } from "../../services/identity";
 import { IQueriesService, QueriesServiceId } from "../../services/queries";
 import { Services } from "../../services/services";
-import { ISessionService, SessionServiceId } from "../../services/sessions";
+import { ISessionService, SessionServiceId, LayoutConfiguration } from "../../services/sessions";
 import { ISprintService, SprintServiceId } from "../../services/sprints";
 import { IWorkItemService, WorkItemServiceId } from "../../services/workItems";
 import { fatalError } from "../home/sessionsActions";
 import { connected } from "./channelActions";
 import { channelSaga } from "./channelSaga";
+import { getChannel } from "./channelFactory";
+import { IChannel } from "../../services/channels/channels";
 import {
     commitEstimate,
     endSession,
@@ -40,6 +42,7 @@ import {
     selectWorkItem,
     updateStatus
 } from "./sessionActions";
+import { setLayout } from "../settings/settingsActions";
 
 export function* rootSessionSaga() {
     yield takeLatest(loadSession.type, sessionSaga);
@@ -89,6 +92,13 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
         const sessionService = Services.getService<ISessionService>(
             SessionServiceId
         );
+
+        // Load layout preference (shared across all users)
+        const layoutConfig: { classicLayout: boolean } | null = yield call(
+            [sessionService, sessionService.getGlobalSettingsValue as any],
+            LayoutConfiguration
+        );
+        yield put(setLayout({ classicLayout: !!(layoutConfig && layoutConfig.classicLayout) }));
 
         let session: ISession | undefined;
         session = yield call(
@@ -179,15 +189,21 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
             workItemIds
         );
 
-        yield put(updateStatus("Connecting to server..."));
+        yield put(updateStatus("Joining session..."));
 
-        // Start communication channel
-        const channelTask: Task = yield fork(channelSaga, session);
+        // Start communication channel. The channel is created here (rather than
+        // inside channelSaga) so we can disconnect it directly on leave.
+        const channel: IChannel = yield call(
+            getChannel,
+            session.id,
+            session.mode
+        );
+        const channelTask: Task = yield fork(channelSaga, session, channel);
 
         // Wait for connection
         yield take(connected.type);
 
-        yield put(updateStatus("Connected."));
+        yield put(updateStatus("Session ready."));
 
         // Session is now loaded
         const identityService = Services.getService<IIdentityService>(
@@ -237,6 +253,11 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
                 break;
             }
         }
+
+        // Disconnect immediately so the leave write is issued on this action
+        // rather than being deferred behind the cancel/finally teardown (which
+        // otherwise lets a navigation-triggered leave lag behind the button).
+        yield call([channel, channel.end]);
 
         yield cancel(channelTask);
         // Navigate back to session list

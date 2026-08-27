@@ -29,6 +29,10 @@ export interface ISessionService extends IService {
     getSettingsValue<T>(projectId: string, id: string): Promise<T>;
 
     setSettingsValue<T>(projectId: string, id: string, value: T): Promise<void>;
+
+    getGlobalSettingsValue<T>(id: string): Promise<T>;
+
+    setGlobalSettingsValue<T>(id: string, value: T): Promise<void>;
 }
 
 export const SessionServiceId = "SessionService";
@@ -37,6 +41,11 @@ export const SessionServiceId = "SessionService";
  * Storage key for the field configuration
  */
 export const FieldConfiguration = "field-configuration";
+
+/**
+ * Storage key for the layout configuration
+ */
+export const LayoutConfiguration = "layout-configuration";
 
 export class SessionService implements ISessionService {
     private manager: IExtensionDataManager | undefined;
@@ -60,6 +69,19 @@ export class SessionService implements ISessionService {
         const manager = await this.getManager();
 
         await manager.setValue(`${projectId}-${id}`, value);
+    }
+
+    // Uses the default (shared) scope so the value applies to every user of the extension.
+    async getGlobalSettingsValue<T>(id: string): Promise<T> {
+        const manager = await this.getManager();
+
+        return manager.getValue<T>(id);
+    }
+
+    async setGlobalSettingsValue<T>(id: string, value: T): Promise<void> {
+        const manager = await this.getManager();
+
+        await manager.setValue(id, value);
     }
 
     async getSessions(): Promise<ISession[]> {

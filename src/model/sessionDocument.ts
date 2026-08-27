@@ -68,10 +68,10 @@ export interface ISessionDocument {
 export const MAX_ACTION_LOG_SIZE = 100;
 
 /** Timeout in milliseconds after which a user is considered stale */
-export const STALE_USER_TIMEOUT_MS = 30000;
+export const STALE_USER_TIMEOUT_MS = 12000;
 
 /** Polling interval in milliseconds */
 export const POLLING_INTERVAL_MS = 2000;
 
 /** Heartbeat interval in milliseconds */
-export const HEARTBEAT_INTERVAL_MS = 10000;
+export const HEARTBEAT_INTERVAL_MS = 4000;

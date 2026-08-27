@@ -9,6 +9,7 @@ import {
     SimpleTableCell,
     Table
 } from "azure-devops-ui/Table";
+import { Toggle } from "azure-devops-ui/Toggle";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { Spinner, SpinnerSize } from "office-ui-fabric-react";
 import * as React from "react";
@@ -16,7 +17,7 @@ import { connect } from "react-redux";
 import { IField, IWorkItemType } from "../../model/workItemType";
 import { IState } from "../../reducer";
 import "./settings.scss";
-import { close, init, setField } from "./settingsActions";
+import { close, init, setField, setLayout } from "./settingsActions";
 
 export interface ISettingsPanelOwnProps {
     onDismiss(): void;
@@ -25,10 +26,11 @@ export interface ISettingsPanelOwnProps {
 interface ISettingsPanelProps {
     workItemTypes: IWorkItemType[];
     fields: null | IField[];
+    classicLayout: boolean;
     loading: boolean;
 }
 
-const Actions = { init, close, setField };
+const Actions = { init, close, setField, setLayout };
 
 class SettingsPanel extends React.Component<
     ISettingsPanelProps & typeof Actions & ISettingsPanelOwnProps
@@ -117,7 +119,7 @@ class SettingsPanel extends React.Component<
     }
 
     public render(): JSX.Element {
-        const { loading } = this.props;
+        const { loading, classicLayout } = this.props;
 
         return (
             <Panel
@@ -136,6 +138,19 @@ class SettingsPanel extends React.Component<
                     </div>
                 ) : (
                     <div className="settings-panel--content  ">
+                        <div className="settings-panel--layout-toggle">
+                            <p>
+                                <strong>Layout</strong>
+                            </p>
+                            <Toggle
+                                checked={classicLayout}
+                                onChange={this.onLayoutToggle}
+                                text="Classic layout (description at top, voting at bottom)"
+                            />
+                        </div>
+
+                        <div className="settings-panel--section-divider" />
+
                         <p>
                             Select a field to store the estimation for each work
                             item type you are planning to estimate.
@@ -166,12 +181,17 @@ class SettingsPanel extends React.Component<
         const { onDismiss } = this.props;
         onDismiss();
     };
+
+    private onLayoutToggle = (_: any, checked: boolean) => {
+        this.props.setLayout({ classicLayout: checked });
+    };
 }
 
 export default connect(
     (state: IState) => ({
         workItemTypes: state.settings.workItemTypes,
         fields: state.settings.fields,
+        classicLayout: state.settings.classicLayout,
         loading: state.settings.loading
     }),
     Actions

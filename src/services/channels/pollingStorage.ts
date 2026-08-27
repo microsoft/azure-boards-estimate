@@ -13,6 +13,28 @@ import { IUserInfo } from "../../model/user";
 const PollingCollection = "pollingSessions";
 
 /**
+ * Returns true when an Extension Data Service error indicates that the target
+ * collection (or document) simply doesn't exist yet, rather than a real
+ * failure. Azure DevOps reports a never-created collection as error 1660002
+ * ("The collection does not exist") or a plain HTTP 404. This is expected the
+ * first time any session is opened, before the first document is written.
+ */
+function isCollectionOrDocumentMissing(e: any): boolean {
+    const status = e?.status ?? e?.statusCode;
+    const message: string = e?.message ?? e?.serverError?.message ?? "";
+    const typeKey: string = e?.serverError?.typeKey ?? "";
+    return (
+        status === 404 ||
+        /1660002/.test(message) ||
+        /collection does not exist/i.test(message) ||
+        /document does not exist/i.test(message) ||
+        typeKey === "DocumentCollectionDoesNotExistException" ||
+        typeKey === "DocumentDoesNotExistException"
+    );
+}
+
+
+/**
  * Storage helper for the shared session document used by PollingChannel.
  * Encapsulates read/write with optimistic concurrency retry.
  */
@@ -40,12 +62,40 @@ export class PollingStorage {
         };
 
         const manager = await this.getManager();
-        const document = await manager.getDocument(
-            PollingCollection,
-            sessionId,
-            { defaultValue }
-        );
-        return document as ISessionDocument;
+        try {
+            const document = await manager.getDocument(
+                PollingCollection,
+                sessionId,
+                { defaultValue }
+            );
+            console.log(
+                `[PollingStorage] getSessionDocument OK (session: ${sessionId}, nextSeq: ${(document as ISessionDocument)?.nextSeq}, activeUsers: ${(document as ISessionDocument)?.activeUsers?.length ?? 0}, actions: ${(document as ISessionDocument)?.actions?.length ?? 0})`
+            );
+            return document as ISessionDocument;
+        } catch (e: any) {
+            // The Extension Data Service throws "The collection does not exist"
+            // (error 1660002) when reading from a collection that has never had
+            // a document written to it. The `defaultValue` option only covers a
+            // missing *document*, not a missing *collection*.
+            //
+            // Because the very first read for any session happens (in start())
+            // before the first write (join), the `pollingSessions` collection is
+            // never created, so every online session fails to connect. Treat a
+            // missing collection/document as an empty session; the first
+            // subsequent setDocument() will create the collection.
+            if (isCollectionOrDocumentMissing(e)) {
+                console.warn(
+                    `[PollingStorage] '${PollingCollection}' collection/document not found for session ${sessionId} — bootstrapping empty session. ` +
+                        `The next write will create the collection. (status: ${e?.status ?? e?.statusCode ?? "n/a"}, typeKey: ${e?.serverError?.typeKey ?? "n/a"}, message: ${e?.message ?? e?.serverError?.message ?? "n/a"})`
+                );
+                return defaultValue;
+            }
+            console.error(
+                `[PollingStorage] getSessionDocument FAILED (session: ${sessionId}) with an unexpected error — not treated as missing collection:`,
+                e
+            );
+            throw e;
+        }
     }
 
     /**
@@ -70,6 +120,9 @@ export class PollingStorage {
                     return doc; // no-op — caller signalled nothing to save
                 }
                 const saved = await manager.setDocument(PollingCollection, doc);
+                console.log(
+                    `[PollingStorage] setDocument OK (session: ${sessionId}, attempt: ${attempt}, nextSeq: ${(saved as ISessionDocument)?.nextSeq}) — collection '${PollingCollection}' is now guaranteed to exist`
+                );
                 return saved as ISessionDocument;
             } catch (e: any) {
                 // Azure DevOps signals an OCC etag mismatch as either:
@@ -159,16 +212,69 @@ export class PollingStorage {
     }
 
     /**
-     * Update the heartbeat timestamp for a user.
+     * Best-effort synchronous departure for page/iframe unload, where the normal
+     * read-modify-write can't complete. Reuses the last polled document (and its
+     * etag) to issue a single fire-and-forget write with the user removed. The
+     * underlying XDM postMessage is dispatched synchronously, so it may reach the
+     * host frame before teardown. Not guaranteed — the stale timeout is the
+     * authoritative fallback.
+     */
+    leaveSessionSync(lastDoc: ISessionDocument, tfId: string): void {
+        if (!this.manager) {
+            return;
+        }
+        const doc: ISessionDocument = {
+            ...lastDoc,
+            activeUsers: lastDoc.activeUsers.filter(
+                u => u.userInfo.tfId !== tfId
+            )
+        };
+        try {
+            this.manager.setDocument(PollingCollection, doc).catch(() => {});
+        } catch {
+            // Best-effort only
+        }
+    }
+
+    /**
+     * Update the heartbeat timestamp for a user, and opportunistically prune
+     * any users that have gone stale (no heartbeat within the threshold).
+     *
+     * Pruning is folded into the heartbeat write so the participant list
+     * self-heals after abrupt disconnects (tab close / refresh / network loss)
+     * where end()/leaveSession never ran — without incurring an extra write.
+     * The current user is always retained, even if its timestamp looks stale.
      */
     async heartbeat(sessionId: string, tfId: string): Promise<void> {
         try {
             await this.modifyDocument(sessionId, doc => {
+                const now = Date.now();
+
+                // Prune stale ghosts (keep the current user regardless).
+                const before = doc.activeUsers.length;
+                doc.activeUsers = doc.activeUsers.filter(
+                    u =>
+                        u.userInfo.tfId === tfId ||
+                        now - u.lastSeen <= STALE_USER_TIMEOUT_MS
+                );
+                const prunedCount = before - doc.activeUsers.length;
+                if (prunedCount > 0) {
+                    console.log(
+                        `[PollingStorage] heartbeat pruned ${prunedCount} stale user(s) from session ${sessionId}`
+                    );
+                }
+
+                // Refresh our own heartbeat timestamp.
                 const user = doc.activeUsers.find(
                     u => u.userInfo.tfId === tfId
                 );
-                if (!user) return false; // user already removed — nothing to save
-                user.lastSeen = Date.now();
+                if (user) {
+                    user.lastSeen = now;
+                } else if (prunedCount === 0) {
+                    // We are no longer in the list and nothing was pruned —
+                    // nothing to persist.
+                    return false;
+                }
             });
         } catch {
             // Heartbeat failure is non-fatal

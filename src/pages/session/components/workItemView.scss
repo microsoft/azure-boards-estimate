@@ -82,6 +82,10 @@
         padding-bottom: 20px;
     }
 
+    &--content-noscroll {
+        padding-bottom: 20px;
+    }
+
     &--fullscreen {
         position: fixed;
         inset: 0;
@@ -98,4 +102,11 @@
 
 .votes-container {
     display: inline-block;
+}
+
+.classic-layout-scroll {
+    overflow-y: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
