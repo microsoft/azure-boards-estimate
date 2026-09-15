@@ -26,7 +26,7 @@ resources:
     - repository: pipeline-templates
       type: git
       name: DevLabs Extensions/pipeline-templates
-      ref: main
+      ref: new-build-and-package
 
 stages:
 - stage: 'Build'
@@ -44,6 +44,8 @@ stages:
       parameters:
         extensionName: $(extensionName)
         outputPath: 'out'
+        publisherId: $(publisherId)
+        useMarketplaceVersioning: true
 
 - stage: 'DeployDev'
   displayName: 'Deploy to dev'
