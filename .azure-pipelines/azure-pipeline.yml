@@ -44,8 +44,6 @@ stages:
       parameters:
         extensionName: $(extensionName)
         outputPath: 'out'
-        publisherId: $(publisherId)
-        useMarketplaceVersioning: true
 
 - stage: 'DeployDev'
   displayName: 'Deploy to dev'
