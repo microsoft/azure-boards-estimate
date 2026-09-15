@@ -44,6 +44,8 @@ stages:
       parameters:
         extensionName: $(extensionName)
         outputPath: 'out'
+        publisherId: $(publisherId)
+        useMarketplaceVersioning: true
 
 - stage: 'DeployDev'
   displayName: 'Deploy to dev'
@@ -58,6 +60,7 @@ stages:
       publisherId: $(publisherId)
       publicExtensionName: $(publicExtensionName)
       updateTaskVersion: true
+      useMarketplaceVersioning: true
 
 - stage: 'DeployTest'
   displayName: 'Deploy to Test'
@@ -72,6 +75,7 @@ stages:
       publisherId: $(publisherId)
       publicExtensionName: $(publicExtensionName)
       updateTaskVersion: true
+      useMarketplaceVersioning: true
 
 - stage: 'DeployRelease'
   displayName: 'Deploy Release'
@@ -87,4 +91,5 @@ stages:
       publicExtensionName: $(publicExtensionName)
       extensionVisibility: 'public'
       updateTaskVersion: true
+      useMarketplaceVersioning: true
 
