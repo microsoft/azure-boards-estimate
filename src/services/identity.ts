@@ -15,7 +15,8 @@ export class IdentityService implements IIdentityService {
         return {
             id: currentUser.id,
             displayName: currentUser.displayName,
-            imageUrl: currentUser.imageUrl
+            imageUrl: currentUser.imageUrl,
+            descriptor: currentUser.descriptor
         };
     }
 }

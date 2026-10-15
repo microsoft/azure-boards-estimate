@@ -109,7 +109,7 @@ export class PollingStorage {
     private async modifyDocument(
         sessionId: string,
         mutate: (doc: ISessionDocument) => boolean | void,
-        maxRetries: number = 3
+        maxRetries: number = 5
     ): Promise<ISessionDocument> {
         const manager = await this.getManager();
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -146,6 +146,10 @@ export class PollingStorage {
                 }
                 // Conflict: next iteration re-fetches a fresh document before
                 // re-applying the mutation, so no stale content is ever written.
+                // Jittered delay stops competing writers from colliding in lockstep.
+                await new Promise(resolve =>
+                    setTimeout(resolve, 100 * (attempt + 1) + Math.random() * 300)
+                );
             }
         }
         throw new Error("Failed to modify session document");

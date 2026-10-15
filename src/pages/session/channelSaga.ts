@@ -72,29 +72,34 @@ export function* channelSenderSaga(sessionId: string, channel: IChannel) {
     yield takeEvery(
         [estimate.type, estimateUpdated.type, selectWorkItem.type, reveal.type],
         function*(action: Action<any>) {
-            switch (action.type) {
-                case estimate.type:
-                    yield call([channel, channel.estimate], action.payload);
-                    break;
+            // A failed write must not bubble up and tear down the whole session.
+            try {
+                switch (action.type) {
+                    case estimate.type:
+                        yield call([channel, channel.estimate], action.payload);
+                        break;
 
-                case estimateUpdated.type:
-                    if (!action.payload.remote) {
-                        // Only send if this wasn't a remote action
-                        yield call(
-                            [channel, channel.estimateUpdated],
-                            action.payload
-                        );
+                    case estimateUpdated.type:
+                        if (!action.payload.remote) {
+                            // Only send if this wasn't a remote action
+                            yield call(
+                                [channel, channel.estimateUpdated],
+                                action.payload
+                            );
+                        }
+                        break;
+
+                    case selectWorkItem.type:
+                        yield call([channel, channel.setWorkItem], action.payload);
+                        break;
+
+                    case reveal.type: {
+                        yield call([channel, channel.revealed], undefined);
+                        break;
                     }
-                    break;
-
-                case selectWorkItem.type:
-                    yield call([channel, channel.setWorkItem], action.payload);
-                    break;
-
-                case reveal.type: {
-                    yield call([channel, channel.revealed], undefined);
-                    break;
                 }
+            } catch (e) {
+                console.error(`Failed to send '${action.type}' to the channel`, e);
             }
         }
     );
@@ -122,7 +127,11 @@ export function* channelListenerSaga(channel: IChannel): Generator {
                     u => u.tfId < currentUserId
                 );
                 if (isSmallestId) {
-                    yield call([channel, channel.snapshot], snapshot);
+                    try {
+                        yield call([channel, channel.snapshot], snapshot);
+                    } catch (e) {
+                        console.error("Failed to send snapshot", e);
+                    }
                 }
                 break;
             }
