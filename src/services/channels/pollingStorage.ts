@@ -68,9 +68,6 @@ export class PollingStorage {
                 sessionId,
                 { defaultValue }
             );
-            console.log(
-                `[PollingStorage] getSessionDocument OK (session: ${sessionId}, nextSeq: ${(document as ISessionDocument)?.nextSeq}, activeUsers: ${(document as ISessionDocument)?.activeUsers?.length ?? 0}, actions: ${(document as ISessionDocument)?.actions?.length ?? 0})`
-            );
             return document as ISessionDocument;
         } catch (e: any) {
             // The Extension Data Service throws "The collection does not exist"
@@ -120,9 +117,6 @@ export class PollingStorage {
                     return doc; // no-op — caller signalled nothing to save
                 }
                 const saved = await manager.setDocument(PollingCollection, doc);
-                console.log(
-                    `[PollingStorage] setDocument OK (session: ${sessionId}, attempt: ${attempt}, nextSeq: ${(saved as ISessionDocument)?.nextSeq}) — collection '${PollingCollection}' is now guaranteed to exist`
-                );
                 return saved as ISessionDocument;
             } catch (e: any) {
                 // Azure DevOps signals an OCC etag mismatch as either:
@@ -262,11 +256,6 @@ export class PollingStorage {
                         now - u.lastSeen <= STALE_USER_TIMEOUT_MS
                 );
                 const prunedCount = before - doc.activeUsers.length;
-                if (prunedCount > 0) {
-                    console.log(
-                        `[PollingStorage] heartbeat pruned ${prunedCount} stale user(s) from session ${sessionId}`
-                    );
-                }
 
                 // Refresh our own heartbeat timestamp.
                 const user = doc.activeUsers.find(
