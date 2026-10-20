@@ -13,7 +13,7 @@ import { Dialog } from "azure-devops-ui/Dialog";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
-import { VssPersona } from "azure-devops-ui/VssPersona";
+import { Avatar } from "../../components/avatar";
 import { Spinner, SpinnerSize } from "office-ui-fabric-react";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -196,11 +196,10 @@ class Session extends React.Component<
                         {activeUsers.map(u => (
                             <Tooltip key={u.tfId} text={u.name}>
                                 <div className="session-avatar">
-                                    <VssPersona
+                                    <Avatar
                                         imageUrl={u.imageUrl}
+                                        descriptor={u.descriptor}
                                         displayName={u.name}
-                                        size="small"
-                                        showInitialsOnImageError={true}
                                     />
                                 </div>
                             </Tooltip>
