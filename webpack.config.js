@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
       main: './src/index.tsx'
     },
     output: {
-      publicPath: "./",
+      publicPath: isProduction ? "./" : "/build/",
       filename: 'assets/[name].js',
       path: path.resolve(__dirname, 'build'),
       clean: true
