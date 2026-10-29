@@ -129,7 +129,8 @@ export class PollingChannel implements IChannel {
         this.currentUserInfo = {
             tfId: identity.id,
             name: identity.displayName,
-            imageUrl: identity.imageUrl
+            imageUrl: identity.imageUrl,
+            descriptor: identity.descriptor
         };
 
         const maxRetries = 5;
@@ -139,9 +140,6 @@ export class PollingChannel implements IChannel {
             try {
                 // Fetch or create the session document
                 const doc = await this.storage.getSessionDocument(sessionId);
-                console.log(
-                    `[PollingChannel] start: fetched session document (session: ${sessionId}, attempt: ${attempt})`
-                );
 
                 // Set the initial sequence cursor to skip all existing actions
                 this.lastSeenSeq = doc.nextSeq - 1;
@@ -162,12 +160,10 @@ export class PollingChannel implements IChannel {
                 await this.join({
                     tfId: identity.id,
                     name: identity.displayName,
-                    imageUrl: identity.imageUrl
+                    imageUrl: identity.imageUrl,
+                    descriptor: identity.descriptor
                 });
                 this.knownActiveUserIds.add(identity.id);
-                console.log(
-                    `[PollingChannel] start: joined session and connected (session: ${sessionId}, userId: ${identity.id})`
-                );
 
                 // Start polling (CO-1: self-scheduling loop prevents overlapping requests)
                 this.alive = true;

@@ -105,8 +105,9 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions, { vo
         return (
             <div className="work-item-view-container flex-column flex-grow">
 
-                {/* ── Voting section ── */}
                 {!classicLayout && (
+                <div className="classic-layout-scroll flex-grow custom-scrollbar">
+                {/* ── Voting section ── */}
                 <div className="estimate-section">
                     <div
                         className="estimate-section--header"
@@ -219,11 +220,9 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions, { vo
                         </div>
                     )}
                 </div>
-                )}
 
                 {/* ── Description section ── */}
-                {!classicLayout && (
-                <div className={`estimate-section flex-column${this.state.descriptionFullscreen ? " estimate-section--fullscreen" : (!this.state.descriptionCollapsed ? " flex-grow" : "")}`}>
+                <div className={`estimate-section flex-column${this.state.descriptionFullscreen ? " estimate-section--fullscreen" : ""}`}>
                     <div
                         className="estimate-section--header"
                         role="button"
@@ -254,10 +253,11 @@ class WorkItemView extends React.Component<IWorkItemProps & typeof Actions, { vo
                     <div className="estimate-section--separator" />
 
                     {(!this.state.descriptionCollapsed || this.state.descriptionFullscreen) && (
-                        <div className="estimate-section--content custom-scrollbar">
+                        <div className={this.state.descriptionFullscreen ? "estimate-section--content custom-scrollbar" : "estimate-section--content-noscroll"}>
                             <WorkItemDescription workItem={selectedWorkItem} />
                         </div>
                     )}
+                </div>
                 </div>
                 )}
 

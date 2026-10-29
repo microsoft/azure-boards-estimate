@@ -93,11 +93,17 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
             SessionServiceId
         );
 
-        // Load layout preference (shared across all users)
-        const layoutConfig: { classicLayout: boolean } | null = yield call(
-            [sessionService, sessionService.getGlobalSettingsValue as any],
-            LayoutConfiguration
-        );
+        // Load layout preference (shared across all users). Non-critical, so a
+        // storage failure must not block loading the session.
+        let layoutConfig: { classicLayout: boolean } | null = null;
+        try {
+            layoutConfig = yield call(
+                [sessionService, sessionService.getGlobalSettingsValue as any],
+                LayoutConfiguration
+            );
+        } catch (e) {
+            console.warn("Could not load layout preference, using default", e);
+        }
         yield put(setLayout({ classicLayout: !!(layoutConfig && layoutConfig.classicLayout) }));
 
         let session: ISession | undefined;
@@ -222,7 +228,8 @@ function* sessionSagaInner(action: ReturnType<typeof loadSession>): Generator {
                 userInfo: {
                     tfId: identity.id,
                     name: identity.displayName,
-                    imageUrl: identity.imageUrl
+                    imageUrl: identity.imageUrl,
+                    descriptor: identity.descriptor
                 }
             })
         );

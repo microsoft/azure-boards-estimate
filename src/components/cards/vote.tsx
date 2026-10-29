@@ -3,7 +3,7 @@ import * as React from "react";
 import { ICard } from "../../model/cards";
 import { IIdentity } from "../../model/identity";
 import { Card } from "./card";
-import { VssPersona } from "azure-devops-ui/VssPersona";
+import { Avatar } from "../avatar";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 
 export interface IVoteProps {
@@ -34,11 +34,10 @@ export class Vote extends React.Component<IVoteProps> {
 
                 <Tooltip text={identity.displayName}>
                     <div className="vote-avatar">
-                        <VssPersona
+                        <Avatar
                             imageUrl={identity.imageUrl}
+                            descriptor={identity.descriptor}
                             displayName={identity.displayName}
-                            size="small"
-                            showInitialsOnImageError={true}
                         />
                     </div>
                 </Tooltip>
