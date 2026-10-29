@@ -25,10 +25,32 @@
     "watch": "webpack serve --mode development",
     "build": "webpack --mode production",
     "build:release": "webpack --mode production",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "start": "webpack serve --mode development",
     "package-dev": "npm run build && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/dev.json --root ./",
     "package-test": "npm run build && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/test.json --root ./",
     "package-release": "npm run build && tfx extension create --manifest-globs azure-devops-extension.json --overrides-file ./configs/release.json --root ./"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.[jt]sx?$": [
+        "babel-jest",
+        {
+          "presets": [
+            ["@babel/preset-env", { "targets": { "node": "current" } }],
+            ["@babel/preset-react", { "runtime": "classic" }],
+            "@babel/preset-typescript"
+          ],
+          "plugins": [
+            ["@babel/plugin-transform-class-properties", { "loose": true }],
+            ["@babel/plugin-transform-private-methods", { "loose": true }],
+            ["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+          ]
+        }
+      ]
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -38,6 +60,7 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@babel/preset-typescript": "^7.26.0",
+    "babel-jest": "^29.7.0",
     "@types/jest": "^23.1.1",
     "@types/marked": "^5.0.2",
     "@types/node": "^10.3.5",
@@ -49,6 +72,8 @@
     "babel-loader": "^9.2.1",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "html-webpack-plugin": "^5.6.3",
     "sass": "^1.81.0",
     "sass-loader": "^16.0.3",
